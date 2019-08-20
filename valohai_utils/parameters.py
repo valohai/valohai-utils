@@ -1,11 +1,10 @@
 import os
 import json
-
-# config_path = '/valohai/config/inputs.json'
-parameters_config_path = "./tests/config/parameters.json"
+import valohai_utils.paths as config
 
 
 def get_parameter(name, default=None):
+    parameters_config_path = config.get_parameters_config_path()
     if os.path.isfile(parameters_config_path):
         with open(parameters_config_path) as json_file:
             data = json.load(json_file)

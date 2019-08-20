@@ -1,5 +1,3 @@
-
-# -*- coding: utf-8 -*-
 from setuptools import find_packages, setup
 
 from valohai_utils import __version__
