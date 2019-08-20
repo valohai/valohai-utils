@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 import valohai_utils.paths as config
 
 

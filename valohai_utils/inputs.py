@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 import valohai_utils.paths as config
 
@@ -19,9 +19,9 @@ def get_input_paths(name, default=None):
         with open(inputs_config_path) as json_file:
             data = json.load(json_file)
             if name in data:
-                if len(data[name]['files']) > 0:
+                if len(data[name]["files"]) > 0:
                     result = []
-                    for file in data[name]['files']:
-                        result.append(file['path'])
+                    for file in data[name]["files"]:
+                        result.append(file["path"])
                     return result
     return default
