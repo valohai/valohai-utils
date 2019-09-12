@@ -1,7 +1,7 @@
 import json
 import os
 
-import valohai_utils.paths as config
+from . import paths
 
 
 def get_input_path(name, default=""):
@@ -11,7 +11,7 @@ def get_input_path(name, default=""):
 def get_input_paths(name, default=None):
     if default is None:
         default = []
-    inputs_config_path = config.get_inputs_config_path()
+    inputs_config_path = paths.get_inputs_config_path()
     if os.path.isfile(inputs_config_path):
         with open(inputs_config_path) as json_file:
             data = json.load(json_file)
