@@ -17,7 +17,7 @@ def get_input_paths(name, default=None):
             data = json.load(json_file)
         input_info = data.get(name)
         if input_info:
-            files = input_info.get('files', ())
+            files = input_info.get("files", ())
             if files:
-                return [file['path'] for file in files]
+                return [file["path"] for file in files]
     return default
