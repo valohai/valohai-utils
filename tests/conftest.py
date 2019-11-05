@@ -1,10 +1,16 @@
-import os
-
 import pytest
 
-FIXTURES_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "fixtures"))
+from .valohai_test_environment import ValohaiTestEnvironment
 
 
 @pytest.fixture
-def use_test_config_dir(monkeypatch):
-    monkeypatch.setenv("VH_CONFIG_DIR", os.path.join(FIXTURES_PATH, "config"))
+def vte(tmpdir):
+    return ValohaiTestEnvironment(root_dir=str(tmpdir.mkdir("valohai")))
+
+
+@pytest.fixture
+def use_test_config_dir(vte, monkeypatch):
+    vte.build()
+    monkeypatch.setenv("VH_CONFIG_DIR", str(vte.config_path))
+    monkeypatch.setenv("VH_INPUT_DIR", str(vte.inputs_path))
+    monkeypatch.setenv("VH_OUTPUT_DIR", str(vte.outputs_path))
