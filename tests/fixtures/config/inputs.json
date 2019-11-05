@@ -1,17 +1,17 @@
 {
   "herp": {
-  "files": [
-  {
-  "checksums": {
-  "md5": "c8e7e1fc344be6982710f54d47191ef6",
-  "sha1": "628a43d996686e654934e27c99e51afe432fc164",
-  "sha256": "8c712905b799905357b8202d0cb7a244cefeeccf7aa5eb79896645ac50158ffa"
-  },
-  "name": "Example.jpg",
-  "path": "/valohai/inputs/herp/Example.jpg",
-  "size": 27661,
-  "uri": "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg"
-  }
-  ]
+    "files": [
+      {
+        "checksums": {
+          "md5": "c8e7e1fc344be6982710f54d47191ef6",
+          "sha1": "628a43d996686e654934e27c99e51afe432fc164",
+          "sha256": "8c712905b799905357b8202d0cb7a244cefeeccf7aa5eb79896645ac50158ffa"
+        },
+        "name": "Example.jpg",
+        "path": "/valohai/inputs/herp/Example.jpg",
+        "size": 27661,
+        "uri": "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg"
+      }
+    ]
   }
 }
