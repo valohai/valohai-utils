@@ -1,4 +1,4 @@
-from valohai_utils.inputs import get_input_path
+from valohai.inputs import get_input_path
 
 
 def test_get_input_paths(use_test_config_dir):
