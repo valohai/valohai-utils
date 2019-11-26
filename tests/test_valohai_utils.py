@@ -1,4 +1,4 @@
-from valohai_utils.parameters import get_parameter
+from valohai.parameters import get_parameter
 
 
 def test_get_parameters(use_test_config_dir):

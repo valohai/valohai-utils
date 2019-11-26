@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from valohai_utils import __version__
+from valohai import __version__
 
 setup(
     name="valohai-utils",
@@ -8,5 +8,5 @@ setup(
     author="Valohai",
     author_email="hait@valohai.com",
     license="MIT",
-    packages=find_packages(include=("valohai_utils*",)),
+    packages=find_packages(include=("valohai*",)),
 )
