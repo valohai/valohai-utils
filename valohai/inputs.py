@@ -14,7 +14,7 @@ def get_input_info(name) -> Optional[InputInfo]:
             data = json.load(json_file)
         input_info_data = data.get(name)
         if input_info_data:
-            return InputInfo.from_json_data(input_info_data)
+            return InputInfo.from_json_data(name=name, json_data=input_info_data)
     return None
 
 
