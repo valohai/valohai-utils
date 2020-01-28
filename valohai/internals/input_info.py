@@ -5,7 +5,7 @@ from valohai_yaml.objs.base import Item
 
 class FileInfo(Item):
     def __init__(self, *, name=None, path=None, size=None, uri=None, checksums=None):
-        self.name = str(name) if name else None
+        self.name = str(name)
         self.path = str(path) if path else None
         self.size = int(size) if size else None
         self.uri = str(uri) if uri else None

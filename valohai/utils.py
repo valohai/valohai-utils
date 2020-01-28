@@ -29,7 +29,11 @@ def get_inputs_config_json(inputs):
     for name, uris in inputs.items():
         if not isinstance(uris, list):
             uris = [uris]
-        files = [FileInfo(uri=uri) for uri in uris]
+        files = [FileInfo(name=get_name_from_uri(uri), uri=uri) for uri in uris]
         result.update(InputInfo(name=name, files=files).serialize())
 
     return json.dumps(result)
+
+
+def get_name_from_uri(uri):
+    return uri[uri.rfind("/") + 1:]
