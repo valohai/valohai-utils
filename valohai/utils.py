@@ -30,6 +30,6 @@ def get_inputs_config_json(inputs):
         if not isinstance(uris, list):
             uris = [uris]
         files = [FileInfo(uri=uri) for uri in uris]
-        result.update(InputInfo(name=name, files=files).to_serializable_dict())
+        result.update(InputInfo(name=name, files=files).serialize())
 
     return json.dumps(result)
