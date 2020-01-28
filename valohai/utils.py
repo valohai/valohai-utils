@@ -10,8 +10,7 @@ from valohai.paths import get_parameters_config_path, get_inputs_config_path, ge
 def prepare(*, step, parameters={}, inputs={}):
     if not is_running_in_valohai():
         config_path = get_config_path()
-        if not os.path.exists(config_path):
-            os.makedirs(config_path)
+        os.makedirs(config_path, exist_ok=True)
 
         with open(get_parameters_config_path(), "w") as params_file:
             params_file.write(get_parameters_config_json(parameters))
