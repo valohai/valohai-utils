@@ -1,10 +1,10 @@
 class FileInfo:
-    def __init__(self, *, name, path, size, uri, checksums):
+    def __init__(self, *, name, uri, path=None, size=None, checksums=None):
         self.name = str(name)
-        self.path = str(path)
-        self.size = int(size)
         self.uri = str(uri)
         self.checksums = checksums
+        self.path = str(path) if path else None
+        self.size = int(size) if size else None
 
 
 class InputInfo:

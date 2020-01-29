@@ -6,15 +6,29 @@ from . import paths
 from .internals import vfs
 from .internals.input_info import InputInfo
 
+_inputs = {}
+
+
+def uri_to_filename(uri):
+    return uri[uri.rfind("/") + 1:]
+
+
+def add_input_info(name, info):
+    _inputs[name] = info
+
 
 def get_input_info(name) -> Optional[InputInfo]:
+    if name in _inputs:
+        return _inputs[name]
+
     inputs_config_path = paths.get_inputs_config_path()
     if os.path.isfile(inputs_config_path):
         with open(inputs_config_path) as json_file:
             data = json.load(json_file)
-        input_info_data = data.get(name)
-        if input_info_data:
-            return InputInfo.from_json_data(input_info_data)
+            input_info_data = data.get(name)
+            if input_info_data:
+                _inputs[name] = InputInfo.from_json_data(input_info_data)
+                return _inputs[name]
     return None
 
 
