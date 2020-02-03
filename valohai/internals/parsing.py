@@ -11,6 +11,34 @@ def is_module_function_call(node, module, function):
 
 
 class PrepareParser(ast.NodeVisitor):
+    """Parses .py file for Valohai inputs, parameters, step name
+
+    Using AST parser, visits all method calls of a Python file.
+
+    If a call to valohai.prepare() method is found, iterate through
+    it's arguments and look for inputs, parameters and a step name.
+
+    All possible ways to call prepare() are not supported
+
+    Works:
+        valohai.prepare(parameters={"param1": "foobar"})
+
+    Works:
+        parameters={"param1": "foobar"}
+        valohai.prepare(parameters=parameters)
+
+    Fails:
+        import valohai as herpderp
+        herpderp.prepare(parameters={"param1": "foobar"})
+
+    Fails:
+        from valohai import prepare
+        prepare(parameters={"param1": "foobar"})
+
+    Fails:
+        valohai.prepare(parameters=get_parameters())
+
+    """
     def __init__(self):
         self.assignments = {}
         self.parameters = {}
