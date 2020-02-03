@@ -5,3 +5,4 @@ pip-tools
 pydocstyle
 pytest
 pytest-cov
+valohai-yaml
