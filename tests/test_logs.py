@@ -14,7 +14,7 @@ def test_basic_logging(capsys):
 def test_logging_with_unsupported_types(capsys):
     log("herp", ["asdif", 234, None])
     captured, err = capsys.readouterr()
-    assert err == "Warning: Value of the logged item (herp) is not of the expected type (int, str, float)."
+    assert "Warning: Value of the logged item (herp) is not of the expected type (int, str, float)." in err
 
 
 def test_partial_logging(capsys):

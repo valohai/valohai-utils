@@ -9,7 +9,7 @@ def _get_serializable(name, value):
     if isinstance(value, (int, str, float)):
         return {str(name): value}
 
-    sys.stderr.write(f"Warning: Value of the logged item ({name}) is not of the expected type (int, str, float).")
+    print(f"Warning: Value of the logged item ({name}) is not of the expected type (int, str, float).", file=sys.stderr)
     return None
 
 
