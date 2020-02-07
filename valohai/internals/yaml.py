@@ -1,18 +1,28 @@
-import os
 import copy
-from typing import Union, Optional
+import os
+from typing import Optional, Dict, Any
 
 import yaml
-
+from valohai_yaml import parse as yaml_parse
 from valohai_yaml.objs import Parameter, Step, Config
 from valohai_yaml.objs.input import Input
 
+from valohai.internals.merge import _merge_dicts, _merge_simple
 from valohai.internals.parsing import parse
 from valohai.paths import get_repository_path
-from valohai_yaml import parse as yaml_parse
+
+ParameterDict = Dict[str, Any]
+InputDict = Dict[str, str]
 
 
-def update_yaml(*, relative_source_path: str, target_path: str, step: str, parameters: dict, inputs: dict):
+def update_yaml(
+    *,
+    target_path: str,
+    relative_source_path: str,
+    step: str,
+    parameters: ParameterDict,
+    inputs: InputDict
+):
     """Updates (or generates) valohai.yaml
 
     :param target_path: Path to valohai.yaml
@@ -26,8 +36,13 @@ def update_yaml(*, relative_source_path: str, target_path: str, step: str, param
     3. Serializes the updated Config back into valohai.yaml
 
     """
+    new_config = generate_config(
+        relative_source_path=relative_source_path,
+        step=step,
+        parameters=parameters,
+        inputs=inputs,
+    )
     old_config = get_current_config(target_path)
-    new_config = get_config(relative_source_path, step, parameters, inputs)
     if old_config:
         new_config = merge_config(old_config, new_config)
     serialize_config_to_yaml(target_path, new_config)
@@ -35,55 +50,61 @@ def update_yaml(*, relative_source_path: str, target_path: str, step: str, param
 
 def merge_config(a: Config, b: Config) -> Config:
     result = Config()
-
-    for key in list(a.steps.keys()) + list(b.steps.keys()):
-        if key in a.steps and key in b.steps:
-            result.steps[key] = merge_step(a.steps[key], b.steps[key])
-        elif key in a.steps:
-            result.steps[key] = a.steps[key]
-        else:
-            result.steps[key] = b.steps[key]
-
+    result.steps.update(_merge_dicts(a.steps, b.steps, merge_step))
     return result
 
 
-def merge_step(a: Step, b: Step):
+def merge_step(a: Step, b: Step) -> Step:
+    parameters = _merge_dicts(
+        a.parameters, b.parameters, merger=_merge_simple, copier=copy.deepcopy,
+    )
+    inputs = _merge_dicts(
+        a.inputs, b.inputs, merger=_merge_simple, copier=copy.deepcopy,
+    )
     # TODO: Logic for merging with existing command
     result = Step(name=b.name, image=b.image, command=b.command)
-
-    for key in list(a.parameters.keys()) + list(b.parameters.keys()):
-        if key in a.parameters and key in b.parameters:
-            result.parameters[key] = copy.copy(a.parameters[key])
-            result.parameters[key].__dict__.update(b.parameters[key].__dict__)
-        elif key in a.parameters:
-            result.parameters[key] = copy.copy(a.parameters[key])
-        else:
-            result.parameters[key] = copy.copy(b.parameters[key])
-
-    for key in list(a.inputs.keys()) + list(b.inputs.keys()):
-        if key in a.inputs and key in b.inputs:
-            result.inputs[key] = copy.copy(a.inputs[key])
-            result.inputs[key].__dict__.update(b.inputs[key].__dict__)
-        elif key in a.inputs:
-            result.inputs[key] = copy.copy(a.inputs[key])
-        else:
-            result.inputs[key] = copy.copy(b.inputs[key])
-
+    result.parameters.update(parameters)
+    result.inputs.update(inputs)
     return result
 
 
-def get_config(relative_source_path: str, step: str, parameters: dict, inputs: dict) -> Config:
-    config = Config()
-    config_step = Step(name=step, image="", command="python %s {parameters}" % relative_source_path)
-    config.steps[step] = config_step
+def generate_step(
+    *,
+    relative_source_path: str,
+    step: str,
+    parameters: ParameterDict,
+    inputs: InputDict
+) -> Step:
+    config_step = Step(
+        name=step, image="", command="python %s {parameters}" % relative_source_path,
+    )
 
     for key, value in parameters.items():
-        config_step.parameters[key] = \
-            Parameter(name=key, type=get_parameter_type_name(key, value), default=value)
+        config_step.parameters[key] = Parameter(
+            name=key, type=get_parameter_type_name(key, value), default=value,
+        )
 
     for key, value in inputs.items():
-        config_step.inputs[key] = Input(name=key, default=value)
+        config_step.inputs[key] = Input(name=key, default=value,)
 
+    return config_step
+
+
+def generate_config(
+    *,
+    relative_source_path: str,
+    step: str,
+    parameters: ParameterDict,
+    inputs: InputDict
+) -> Config:
+    step = generate_step(
+        relative_source_path=relative_source_path,
+        step=step,
+        parameters=parameters,
+        inputs=inputs,
+    )
+    config = Config()
+    config.steps[step.name] = step
     return config
 
 
@@ -144,11 +165,11 @@ def update_yaml_from_source(source_path: str):
             target_path=target_path,
             step=parsed.step,
             parameters=parsed.parameters,
-            inputs=parsed.inputs)
+            inputs=parsed.inputs,
+        )
 
 
-def get_parameter_type_name(name: str, value: Union[float, int, str, bool]) -> str:
-    print(name, value, isinstance(value, int))
+def get_parameter_type_name(name: str, value: Any) -> str:
     if isinstance(value, bool):
         return "flag"
     if isinstance(value, float):
@@ -159,6 +180,6 @@ def get_parameter_type_name(name: str, value: Union[float, int, str, bool]) -> s
         return "string"
 
     raise ValueError(
-        "Unrecognized parameter type for %s=%s. Supported Python types are float, int, string and bool." % (
-            name, value))
-
+        "Unrecognized parameter type for %s=%s. Supported Python types are float, int, string and bool."
+        % (name, value)
+    )
