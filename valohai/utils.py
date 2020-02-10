@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from valohai.config import is_running_in_valohai
 from valohai.inputs import _uri_to_filename, _add_input_info
@@ -52,6 +53,10 @@ def _parse_parameters(parameters: dict):
     parser = argparse.ArgumentParser()
     for name, default_value in parameters.items():
         parser.add_argument('--%s' % name, type=type(default_value), default=default_value)
-    for name, value in vars(parser.parse_args()).items():
+    known_args, unknown_args = parser.parse_known_args()
+    for name, value in vars(known_args).items():
         add_parameter(name, value)
+    for unknown in unknown_args:
+        print(f'Warning: Unexpected command-line argument {unknown} found.', file=sys.stderr)
+
 

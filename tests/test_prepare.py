@@ -33,7 +33,8 @@ def test_prepare(tmpdir, monkeypatch):
             "--makemetrue=true",
             "--makemeqwer=qwer",
             "--makeme321=321",
-            "--makemenegative=-0.123"
+            "--makemenegative=-0.123",
+            "--some_totally_random_parameter_to_ignore=666"
         ])
         valohai.prepare(step="test", parameters=parameters, inputs=inputs)
 
