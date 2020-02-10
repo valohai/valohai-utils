@@ -20,12 +20,11 @@ def download_url(url, path, force_download=False):
         r.raise_for_status()
         total = (int(r.headers['content-length']) if 'content-length' in r.headers else None)
 
-        t = tqdm(total=total, unit='iB', unit_scale=True)
-        with open(tmp_path, 'wb') as f:
-            for data in r.iter_content(1048576):
-                t.update(len(data))
-                f.write(data)
-        t.close()
+        with tqdm(total=total, unit='iB', unit_scale=True) as t:
+            with open(tmp_path, 'wb') as f:
+                for data in r.iter_content(1048576):
+                    t.update(len(data))
+                    f.write(data)
         os.replace(tmp_path, path)
     else:
         print('Using cached %s' % path)
