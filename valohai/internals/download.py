@@ -1,18 +1,18 @@
 import os
 import tempfile
 
-from tqdm import tqdm
-
 
 # TODO: This is close to valohai-local-run. Possibility to merge.
 def download_url(url, path, force_download=False):
     if not os.path.isfile(path) or force_download:
         try:
             import requests
-        except ImportError:
+            from tqdm import tqdm
+        except ImportError as ie:
             raise RuntimeError(
-                'The `requests` module must be available for download support (attempting to download %s)' % url
-            )
+                'The `requests` and `tqdm` modules must be available '
+                'for download support (attempting to download %s)' % url
+            ) from ie
 
         tmp_path = tempfile.NamedTemporaryFile().name
         print('Downloading %s -> %s' % (url, path))
