@@ -21,7 +21,7 @@ def get_outputs_path() -> str:
     if is_running_in_valohai():
         return os.environ.get("VH_OUTPUTS_DIR", "/valohai/outputs")
     else:
-        return os.path.join(VH_LOCAL_OUTPUTS_DIR, get_execution_guid())
+        return os.environ.get("VH_OUTPUTS_DIR", os.path.join(VH_LOCAL_OUTPUTS_DIR, get_execution_guid()))
 
 
 def get_output_path(output_name: Optional[str] = None, auto_create: bool = True) -> str:
