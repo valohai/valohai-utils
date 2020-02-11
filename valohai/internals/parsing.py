@@ -46,7 +46,11 @@ class PrepareParser(ast.NodeVisitor):
         self.step = None
 
     def visit_Assign(self, node):
-        self.assignments[node.targets[0].id] = ast.literal_eval(node.value)
+        try:
+            self.assignments[node.targets[0].id] = ast.literal_eval(node.value)
+        except ValueError:
+            # We don't care about assignments that can't be literal_eval():ed
+            pass
 
     def visit_Call(self, node):
         if is_module_function_call(node, "valohai", "prepare"):
