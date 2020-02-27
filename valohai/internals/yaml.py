@@ -55,11 +55,17 @@ def merge_config(a: Config, b: Config) -> Config:
 
 
 def merge_step(a: Step, b: Step) -> Step:
+    # If user first types "learning_rage", creates config, and finally fixes the typo,
+    # they don't want to end up with both "learning_rage" and "learning_rate" after the merge.
+    # So only merge parameters and inputs that are part of both configs (a & b).
+    cleaned_parameters_a = {key: a.parameters[key] for key in a.parameters if key in b.parameters.keys()}
+    cleaned_inputs_a = {key: a.inputs[key] for key in a.inputs if key in b.inputs.keys()}
+
     parameters = _merge_dicts(
-        a.parameters, b.parameters, merger=_merge_simple, copier=copy.deepcopy,
+        cleaned_parameters_a, b.parameters, merger=_merge_simple, copier=copy.deepcopy,
     )
     inputs = _merge_dicts(
-        a.inputs, b.inputs, merger=_merge_simple, copier=copy.deepcopy,
+        cleaned_inputs_a, b.inputs, merger=_merge_simple, copier=copy.deepcopy,
     )
     # TODO: Logic for merging with existing command
     result = Step(name=b.name, image=b.image, command=b.command)
