@@ -9,5 +9,9 @@ setup(
     author_email="hait@valohai.com",
     license="MIT",
     packages=find_packages(include=("valohai*",)),
-    install_requires=["tqdm"],
+    install_requires=[
+        "tqdm",
+        "requests",
+        "valohai-yaml"
+        ],
 )
