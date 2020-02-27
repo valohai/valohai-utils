@@ -1,7 +1,8 @@
 import json
 import sys
 
-_partial_logs = {}
+from valohai.internals.global_state import partial_logs
+
 _supported_types = [int, float]
 
 
@@ -45,7 +46,7 @@ def log_partial(name, value):
     """
     serializable = _get_serializable(name, value)
     if serializable:
-        _partial_logs.update(serializable)
+        partial_logs.update(serializable)
 
 
 def flush_logs():
@@ -61,6 +62,6 @@ def flush_logs():
         valohai.flush_logs()
 
     """
-    if _partial_logs:
-        print(json.dumps(_partial_logs))
-        _partial_logs.clear()
+    if partial_logs:
+        print(json.dumps(partial_logs))
+        partial_logs.clear()

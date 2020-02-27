@@ -4,12 +4,11 @@ import os
 from typing import IO, Iterable, List, Optional
 
 from valohai.internals.download_type import DownloadType
+from valohai.internals.global_state import inputs
 from valohai.paths import get_inputs_path
 from . import paths
 from .internals import vfs
 from .internals.input_info import InputInfo
-
-_inputs = {}
 
 
 def get_input_paths(name: str, default: Optional[List[str]] = None, force_download: bool = False) -> Optional[List[str]]:
@@ -121,7 +120,7 @@ def _get_input_vfs(name: str, force_download: bool = False, process_archives: bo
 
 
 def _add_input_info(name: str, info: InputInfo):
-    _inputs[name] = info
+    inputs[name] = info
 
 
 def _get_input_info(name: str, download: Optional[DownloadType] = DownloadType.OPTIONAL) \
@@ -138,8 +137,8 @@ def _get_input_info(name: str, download: Optional[DownloadType] = DownloadType.O
     :param download: Download strategy for the input. (Never, Optional, Always)
     :return: InputInfo instance for this input name
     """
-    if name in _inputs:
-        info = _inputs[name]
+    if name in inputs:
+        info = inputs[name]
         if download == DownloadType.ALWAYS or not info.is_downloaded() and download == DownloadType.OPTIONAL:
             path = get_inputs_path(name)
             os.makedirs(path, exist_ok=True)
@@ -152,6 +151,6 @@ def _get_input_info(name: str, download: Optional[DownloadType] = DownloadType.O
             data = json.load(json_file)
             input_info_data = data.get(name)
             if input_info_data:
-                _inputs[name] = InputInfo.from_json_data(input_info_data)
-                return _inputs[name]
+                inputs[name] = InputInfo.from_json_data(input_info_data)
+                return inputs[name]
     return None
