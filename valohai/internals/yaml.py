@@ -7,6 +7,7 @@ from valohai_yaml import parse as yaml_parse
 from valohai_yaml.objs import Parameter, Step, Config
 from valohai_yaml.objs.input import Input
 
+from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.merge import _merge_dicts, _merge_simple
 from valohai.internals.parsing import parse
 from valohai.paths import get_repository_path
@@ -39,6 +40,7 @@ def update_yaml(
     new_config = generate_config(
         relative_source_path=relative_source_path,
         step=step,
+        image=DEFAULT_DOCKER_IMAGE,
         parameters=parameters,
         inputs=inputs,
     )
@@ -78,11 +80,12 @@ def generate_step(
     *,
     relative_source_path: str,
     step: str,
+    image: str,
     parameters: ParameterDict,
     inputs: InputDict
 ) -> Step:
     config_step = Step(
-        name=step, image="", command="python %s {parameters}" % relative_source_path,
+        name=step, image=image, command="python %s {parameters}" % relative_source_path,
     )
 
     for key, value in parameters.items():
@@ -100,12 +103,14 @@ def generate_config(
     *,
     relative_source_path: str,
     step: str,
+    image: str,
     parameters: ParameterDict,
     inputs: InputDict
 ) -> Config:
     step = generate_step(
         relative_source_path=relative_source_path,
         step=step,
+        image=image,
         parameters=parameters,
         inputs=inputs,
     )
