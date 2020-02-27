@@ -4,7 +4,7 @@
     name: herpderp
 - step:
     command: python ./test.py {parameters}
-    image: ''
+    image: python:3.7
     inputs:
     - default:
       - asdf
