@@ -33,7 +33,6 @@ class InputInfo:
         for f in self.files:
             f.download(path, force_download)
 
-
     @classmethod
     def from_json_data(cls, json_data: dict) -> "InputInfo":
         return cls(files=[FileInfo(**d) for d in json_data.get("files", ())])

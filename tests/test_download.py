@@ -18,8 +18,8 @@ def test_download(tmpdir, monkeypatch, requests_mock):
         "example": "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz",
         "myimages": [
             "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg",
-            "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png"
-        ]
+            "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png",
+        ],
     }
 
     monkeypatch.setattr(sys, "argv", ["myscript.py"])

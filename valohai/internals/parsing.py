@@ -39,6 +39,7 @@ class PrepareParser(ast.NodeVisitor):
         valohai.prepare(parameters=get_parameters())
 
     """
+
     def __init__(self):
         self.assignments = {}
         self.parameters = {}
