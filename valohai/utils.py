@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from valohai.config import is_running_in_valohai
-from valohai.inputs import _uri_to_filename, _add_input_info
+from valohai.inputs import _add_input_info, _uri_to_filename
 from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import add_parameter
 

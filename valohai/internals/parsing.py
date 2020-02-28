@@ -1,6 +1,6 @@
 import ast
-from typing import List
 from collections import namedtuple
+from typing import List
 
 
 def is_module_function_call(node, module, function):

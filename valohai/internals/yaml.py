@@ -1,16 +1,16 @@
 import copy
 import os
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 import yaml
-from valohai_yaml import parse as yaml_parse
-from valohai_yaml.objs import Parameter, Step, Config
-from valohai_yaml.objs.input import Input
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.merge import _merge_dicts, _merge_simple
 from valohai.internals.parsing import parse
 from valohai.paths import get_repository_path
+from valohai_yaml import parse as yaml_parse
+from valohai_yaml.objs import Config, Parameter, Step
+from valohai_yaml.objs.input import Input
 
 ParameterDict = Dict[str, Any]
 InputDict = Dict[str, str]

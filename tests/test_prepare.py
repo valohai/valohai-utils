@@ -1,4 +1,5 @@
 import sys
+
 import valohai
 from valohai.inputs import _get_input_info
 from valohai.internals.download_type import DownloadType
