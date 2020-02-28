@@ -1,11 +1,11 @@
 import json
 import os
-
 from typing import IO, Iterable, List, Optional
 
 from valohai.internals.download_type import DownloadType
 from valohai.internals.global_state import inputs
 from valohai.paths import get_inputs_path
+
 from . import paths
 from .internals import vfs
 from .internals.input_info import InputInfo

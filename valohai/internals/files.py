@@ -1,6 +1,6 @@
-from stat import S_IREAD, S_IRGRP, S_IROTH
 import os
-from typing import List, Union, Iterable
+from stat import S_IREAD, S_IRGRP, S_IROTH
+from typing import Iterable, List, Union
 
 
 def set_file_read_only(path: str):

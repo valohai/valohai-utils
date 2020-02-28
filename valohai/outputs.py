@@ -1,6 +1,6 @@
 import glob
 
-from valohai.internals.files import set_file_read_only, get_glob_pattern
+from valohai.internals.files import get_glob_pattern, set_file_read_only
 
 
 def live_upload(source: str):

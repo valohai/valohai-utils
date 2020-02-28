@@ -1,4 +1,4 @@
-from valohai.logs import log, log_partial, flush_logs
+from valohai.logs import flush_logs, log, log_partial
 
 
 def test_basic_logging(capsys):

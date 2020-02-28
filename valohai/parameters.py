@@ -1,8 +1,9 @@
 import json
 import os
-from typing import Union, Optional
+from typing import Optional, Union
 
 from valohai.internals.global_state import parameters
+
 from . import paths
 
 _supported_types = Union[int, float, bool, str]
