@@ -58,5 +58,3 @@ def _parse_parameters(parameters: dict):
         add_parameter(name, value)
     for unknown in unknown_args:
         print(f'Warning: Unexpected command-line argument {unknown} found.', file=sys.stderr)
-
-

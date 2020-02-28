@@ -103,7 +103,7 @@ def get_input_file_streams(name: str, force_download: bool = False) -> Iterable[
 
 
 def _uri_to_filename(uri: str) -> str:
-    return uri[uri.rfind("/") + 1:]
+    return uri[uri.rfind("/") + 1 :]
 
 
 def _get_input_vfs(name: str, force_download: bool = False, process_archives: bool = True) -> vfs.VFS:

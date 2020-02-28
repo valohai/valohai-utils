@@ -38,6 +38,5 @@ def test_update_yaml_from_source(local_repository_path, original_yaml, source_py
     # Update valohai.yaml based on test.py
     update_yaml_from_source(source_path)
 
-    with open(expected_yaml, "r") as expected_yaml, \
-        open(yaml_path, "r") as updated_yaml:
+    with open(expected_yaml, "r") as expected_yaml, open(yaml_path, "r") as updated_yaml:
         assert updated_yaml.read() == expected_yaml.read()
