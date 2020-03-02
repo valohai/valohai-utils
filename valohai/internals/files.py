@@ -1,6 +1,8 @@
+import glob
 import os
+import pathlib
 from stat import S_IREAD, S_IRGRP, S_IROTH
-from typing import Iterable, List, Union
+from typing import Union, Set
 
 
 def set_file_read_only(path: str):
@@ -14,5 +16,23 @@ def get_glob_pattern(source: str) -> str:
     return source
 
 
-def expand_files(sources: Union[str, List[str]]) -> Iterable[str]:
-    seen = set()
+def expand_globs(sources: Union[str, list], preprocessor: lambda s: s) -> Set[str]:
+    if isinstance(sources, str):
+        sources = [sources]
+    files_to_compress = set()
+    for source_path in sources:
+        source_path = preprocessor(source_path)
+        glob_pattern = get_glob_pattern(source_path)
+        for file_path in glob.glob(glob_pattern):
+            if os.path.isfile(file_path):
+                files_to_compress.add(file_path)
+    if not files_to_compress:
+        raise ValueError("No files to compress at %s" % sources)
+    return files_to_compress
+
+
+def get_canonical_extension(pathname: str) -> str:
+    """
+    Get a canonicalized extension from a pathname. Correctly handles e.g. `tar.gz`.
+    """
+    return "".join(pathlib.Path(pathname).suffixes).lower()
