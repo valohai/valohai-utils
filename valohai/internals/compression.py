@@ -60,11 +60,17 @@ class BaseArchive:
 
 
 class ZipArchive(BaseArchive, zipfile.ZipFile):
+    def __init__(self, file, mode="r", *, compresslevel=1):
+        # Only Python 3.7+ has the compresslevel kwarg here
+        super().__init__(file, mode, compression=zipfile.ZIP_STORED)
+        self.compresslevel = compresslevel
+
     def writestream(self, arcname, data, compress_type, compresslevel):
         # Like `writestr`, but also supports a stream (and doesn't support directories).
         zinfo = zipfile.ZipInfo(filename=arcname)
         zinfo.compress_type = compress_type
-        zinfo._compresslevel = compresslevel
+        if hasattr(zinfo, '_compresslevel'):  # only has an effect on Py3.7+
+            zinfo._compresslevel = compresslevel
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.
         with self._lock:
@@ -83,14 +89,12 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             if guess_compressible(archive_name)
             else zipfile.ZIP_STORED
         )
-        if isinstance(source, str):
-            self.write(
-                filename=source,
-                arcname=archive_name,
-                compress_type=compress_type,
-                compresslevel=self.compresslevel,
-            )
-        else:
+        with contextlib.ExitStack() as es:
+            # Python 3.6's `zipfile` does not have `.compresslevel`,
+            # so let's just always use our `writestream` instead...
+            if isinstance(source, str):
+                source = open(source, "rb")
+                es.enter_context(source)
             self.writestream(
                 arcname=archive_name,
                 data=source,
@@ -118,7 +122,7 @@ class TarArchive(BaseArchive, tarfile.TarFile):
 
 def open_archive(path: str):
     if path.endswith(".zip"):
-        return ZipArchive(path, mode="w", compresslevel=1)
+        return ZipArchive(path, "w")
     elif path.endswith(".tar"):
         return TarArchive.open(path, "w")
     elif path.endswith(".tgz") or path.endswith(".tar.gz"):
