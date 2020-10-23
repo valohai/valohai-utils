@@ -37,7 +37,6 @@ class PrepareParser(ast.NodeVisitor):
 
     Fails:
         valohai.prepare(parameters=get_parameters())
-
     """
 
     def __init__(self):

@@ -33,13 +33,6 @@ def source_codes():
 
 
 @pytest.fixture
-def local_repository_path(tmpdir, monkeypatch):
-    repository_dir = str(tmpdir.mkdir("repository"))
-    monkeypatch.setenv("VH_REPOSITORY_DIR", repository_dir)
-    return repository_dir
-
-
-@pytest.fixture
 def use_test_config_dir(vte, monkeypatch):
     vte.build()
     monkeypatch.setenv("VH_CONFIG_DIR", str(vte.config_path))

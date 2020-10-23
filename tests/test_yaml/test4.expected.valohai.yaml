@@ -36,3 +36,30 @@
     name: herpderp
     image: busybox
     command: python ./yomama.py {parameters}
+- endpoint:
+    name: server-endpoint
+    files:
+    - name: model
+      description: Model output file from TensorFlow
+      path: model.pb
+    image: python:3.6
+    port: 1453
+    server-command: python run_server.py
+- pipeline:
+    name: simple-pipeline
+    edges:
+    - configuration: {}
+      source: generate.output.images*
+      target: train.input.dataset-images
+    - configuration: {}
+      source: generate.output.labels*
+      target: train.input.dataset-labels
+    nodes:
+    - name: generate
+      override: {}
+      step: generate-dataset
+      type: execution
+    - name: train
+      override: {}
+      step: train-model
+      type: execution

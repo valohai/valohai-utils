@@ -1,10 +1,7 @@
 import glob
 import json
 import os
-from collections import namedtuple
-
 import pytest
-
 from valohai.internals.parsing import parse
 
 
@@ -15,7 +12,6 @@ def read_test_data():
         mytest.inputs.json -- Expected parsed inputs
         mytest.parameters.json -- Expected parsed parameters
         mytest.step.json -- Expected parsed step
-
     """
     test_data = []
     for source_path in glob.glob("tests/test_parsing/*.py"):
