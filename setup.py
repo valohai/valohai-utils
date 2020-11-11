@@ -12,6 +12,6 @@ setup(
     install_requires=[
         "tqdm",
         "requests",
-        "valohai-yaml"
-        ],
+        "valohai-yaml>=0.13.0",
+    ],
 )
