@@ -115,7 +115,7 @@ class FileInTar(FileInContainer):
 
 
 def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
-    df.zipfile = zf = ZipFile(df.dir_entry.path)
+    df.zipfile = zf = ZipFile(df.path)
     vr.exit_stack.callback(zf.close)
     vr.files.extend(
         [
@@ -126,7 +126,7 @@ def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
 
 
 def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
-    df.tarfile = tf = TarFile.open(df.dir_entry.path)
+    df.tarfile = tf = TarFile.open(df.path)
     vr.exit_stack.callback(tf.close)
     vr.files.extend(
         [
