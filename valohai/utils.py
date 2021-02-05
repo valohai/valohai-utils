@@ -2,7 +2,6 @@ import argparse
 import sys
 
 from valohai.config import is_running_in_valohai
-from valohai.inputs import _add_input_info, _uri_to_filename
 from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import add_parameter
 
@@ -36,8 +35,9 @@ def _parse_inputs(inputs: dict):
     for name, uris in inputs.items():
         if not isinstance(uris, list):
             uris = [uris]
-        files = [FileInfo(name=_uri_to_filename(uri), uri=uri, path=None, size=None, checksums=None) for uri in uris]
-        _add_input_info(name, InputInfo(files))
+        files = [FileInfo(name=FileInfo.uri_to_filename(uri), uri=uri, path=None, size=None, checksums=None) for uri in uris]
+        input_info = InputInfo(files)
+        input_info.store(name)
 
 
 def _parse_parameters(parameters: dict):

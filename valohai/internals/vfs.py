@@ -96,6 +96,12 @@ class FileInZip(FileInContainer):
             os.path.dirname(self.parent_file.name), self.zipinfo.filename
         )
 
+    @property
+    def path(self) -> str:
+        return os.path.join(
+            os.path.dirname(self.parent_file.path), self.zipinfo.filename
+        )
+
 
 class FileInTar(FileInContainer):
     tarfile: TarFile

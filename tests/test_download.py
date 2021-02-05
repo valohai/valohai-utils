@@ -2,8 +2,8 @@ import os
 import sys
 
 import valohai
-from valohai.inputs import _get_input_info
 from valohai.internals.download_type import DownloadType
+from valohai.internals.input_info import InputInfo
 
 
 def test_download(tmpdir, monkeypatch, requests_mock):
@@ -26,11 +26,11 @@ def test_download(tmpdir, monkeypatch, requests_mock):
     valohai.prepare(step="test", inputs=inputs)
 
     # These calls will trigger downloads
-    assert _get_input_info("example").files[0].uri == \
+    assert InputInfo.load("example").files[0].uri == \
         "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz"
-    assert _get_input_info("myimages").files[0].uri == \
+    assert InputInfo.load("myimages").files[0].uri == \
         "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg"
-    assert _get_input_info("myimages").files[1].uri == \
+    assert InputInfo.load("myimages").files[1].uri == \
         "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png"
 
     assert requests_mock.call_count == 3
@@ -40,5 +40,5 @@ def test_download(tmpdir, monkeypatch, requests_mock):
     assert os.path.isfile(os.path.join(inputs_dir, "myimages", "Example_Wikipedia_sandbox_move_UI.png"))
 
     # Second time around, the file should be cached and not trigger any more downloads
-    _get_input_info("myimages")
+    InputInfo.load("myimages")
     assert requests_mock.call_count == 3
