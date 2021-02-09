@@ -1,10 +1,9 @@
-from valohai.parameters import get_parameter
-
+import valohai
 
 def test_get_parameters(use_test_config_dir):
-    assert get_parameter("foobar") == 123
-    assert get_parameter("foobar", 234) == 123
-    assert get_parameter("test") == "teststr"
-    assert get_parameter("test", "unused_default") == "teststr"
-    assert get_parameter("nonono", "hello") == "hello"
-    assert not get_parameter("nonono")
+    assert valohai.parameters("foobar").value == 123
+    assert valohai.parameters("foobar", 234).value == 123
+    assert valohai.parameters("test").value == "teststr"
+    assert valohai.parameters("test", "unused_default").value == "teststr"
+    assert valohai.parameters("missing_parameter", "hello").value == "hello"
+    assert not valohai.parameters("nonono").value

@@ -3,7 +3,7 @@ import sys
 
 from valohai.config import is_running_in_valohai
 from valohai.internals.input_info import FileInfo, InputInfo
-from valohai.parameters import add_parameter
+from valohai.parameters import Parameter
 
 
 # Step is unused, but it is needed when parsing source code to update valohai.yaml
@@ -55,6 +55,6 @@ def _parse_parameters(parameters: dict):
         parser.add_argument('--%s' % name, type=type(default_value), default=default_value)
     known_args, unknown_args = parser.parse_known_args()
     for name, value in vars(known_args).items():
-        add_parameter(name, value)
+        Parameter(name).value = value
     for unknown in unknown_args:
         print(f'Warning: Unexpected command-line argument {unknown} found.', file=sys.stderr)

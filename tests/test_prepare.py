@@ -3,7 +3,6 @@ import sys
 import valohai
 from valohai.internals.download_type import DownloadType
 from valohai.internals.input_info import InputInfo
-from valohai.parameters import get_parameter
 
 
 def test_prepare(tmpdir, monkeypatch):
@@ -39,14 +38,14 @@ def test_prepare(tmpdir, monkeypatch):
         ])
         valohai.prepare(step="test", parameters=parameters, inputs=inputs)
 
-    assert get_parameter("iambool") == True
-    assert get_parameter("mestringy") == "asdf"
-    assert get_parameter("integerboi") == 123
-    assert get_parameter("floaty") == 0.0001
-    assert get_parameter("makemetrue") == True
-    assert get_parameter("makemeqwer") == "qwer"
-    assert get_parameter("makeme321") == 321
-    assert get_parameter("makemenegative") < 0.0
+    assert valohai.parameters("iambool").value == True
+    assert valohai.parameters("mestringy").value == "asdf"
+    assert valohai.parameters("integerboi").value == 123
+    assert valohai.parameters("floaty").value == 0.0001
+    assert valohai.parameters("makemetrue").value == True
+    assert valohai.parameters("makemeqwer").value == "qwer"
+    assert valohai.parameters("makeme321").value == 321
+    assert valohai.parameters("makemenegative").value < 0.0
 
     assert InputInfo.load("example", download=DownloadType.NEVER).files[0].uri == \
         "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz"
