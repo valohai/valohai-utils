@@ -1,67 +1,74 @@
 import json
 import sys
 
-from valohai.internals.global_state import partial_logs
-
 _supported_types = [int, float]
 
 
-def _get_serializable(name, value):
-    if isinstance(value, (int, str, float)):
-        return {str(name): value}
+class logger(object):
+    def __init__(self):
+        self.partial_logs = {}
 
-    print(f"Warning: Value of the logged item ({name}) is not of the expected type (int, str, float).", file=sys.stderr)
-    return None
+    def __enter__(self):
+        self.partial_logs = {}
+        return self
 
+    def __exit__(self, type, value, traceback):
+        self.flush_logs()
 
-def log(name, value):
-    """Log name/value pair into standard output using Valohai supported format.
+    def log(self, name, value):
+        """Log a single name/value pair to be flushed into standard output later as batch.
 
-    See log_partial() for printing out multiple variables inside your training loop.
+        For a repeating iteration like a machine learning training loop, Valohai expects
+        all logged values to be printed as a batch.
 
-    :param name: Name of the variable being logged (example: accuracy)
-    :param value: Value of the logged variable
+        Example:
+            for epoch in range(10):
+                with logger as valohai.logger():
+                    logger.log("epoch", epoch)
+                    logger.log("accuracy", 0.54)
+                    logger.log("loss", 0.123)
 
-    """
-    serializable = _get_serializable(name, value)
-    if serializable:
-        print(json.dumps(serializable))
+        Example 2:
+            for epoch in range(10):
+                logger = valohai.logger():
+                logger.log("epoch", epoch)
+                logger.log("accuracy", 0.54)
+                logger.log("loss", 0.123)
+                logger.flush_logs()
 
+        Both examples will log all three metrics at once at the end of each epoch.
 
-def log_partial(name, value):
-    """Log a single name/value pair to be flushed into standard output later as batch.
+        :param name: Name of the variable being logged (example: learning_rate)
+        :param value: Value of the logged variable
 
-    For a repeating iteration like a machine learning training loop, Valohai expects
-    all logged values to be printed as a batch.
+        """
+        serializable = self._get_serializable(name, value)
+        if serializable:
+            self.partial_logs.update(serializable)
 
-    Example:
-        valohai.log_partial("epoch", 12)
-        valohai.log_partial("accuracy", 0.54)
-        valohai.log_partial("loss", 0.123)
-        valohai.flush_logs()
+    def flush_logs(self):
+        """Flush all the partial logs into standard as a batch.
 
-    :param name: Name of the variable being logged (example: learning_rate)
-    :param value: Value of the logged variable
+        For a repeating iteration like a machine learning training loop, Valohai expects
+        all logged values to be printed as single batch.
 
-    """
-    serializable = _get_serializable(name, value)
-    if serializable:
-        partial_logs.update(serializable)
+        Example:
+            logger = valohai.logger():
+            logger.log("epoch", epoch)
+            logger.log("accuracy", 0.54)
+            logger.log("loss", 0.123)
+            logger.flush_logs()
 
+        This will log all three metrics at once.
+        """
+        if self.partial_logs:
+            print(json.dumps(self.partial_logs))
+            self.partial_logs.clear()
 
-def flush_logs():
-    """Flush all the partial logs into standard as a batch.
+    def _get_serializable(self, name, value):
+        if isinstance(value, (int, str, float)):
+            return {str(name): value}
 
-    For a repeating iteration like a machine learning training loop, Valohai expects
-    all logged values to be printed as single batch.
-
-    Example:
-        valohai.log_partial("epoch", 12)
-        valohai.log_partial("accuracy", 0.54)
-        valohai.log_partial("loss", 0.123)
-        valohai.flush_logs()
-
-    """
-    if partial_logs:
-        print(json.dumps(partial_logs))
-        partial_logs.clear()
+        print(f"Warning: Value of the logged item ({name}) is not of the expected type (int, str, float).",
+              file=sys.stderr)
+        return None
