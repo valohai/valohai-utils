@@ -2,7 +2,6 @@ import os
 import sys
 
 import valohai
-from valohai.internals.download_type import DownloadType
 from valohai.internals.input_info import InputInfo
 
 
