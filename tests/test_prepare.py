@@ -36,7 +36,7 @@ def test_prepare(tmpdir, monkeypatch):
             "--makemenegative=-0.123",
             "--some_totally_random_parameter_to_ignore=666"
         ])
-        valohai.prepare(step="test", parameters=parameters, inputs=inputs)
+        valohai.prepare(step="test", default_parameters=parameters, default_inputs=inputs)
 
     assert valohai.parameters("iambool").value == True
     assert valohai.parameters("mestringy").value == "asdf"

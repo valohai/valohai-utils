@@ -7,7 +7,7 @@ from valohai.parameters import Parameter
 
 
 # Step is unused, but it is needed when parsing source code to update valohai.yaml
-def prepare(*, step: str, parameters: dict = {}, inputs: dict = {}):
+def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}):
     """Define the name of the step and it's required inputs and parameters
 
     Has dual purpose:
@@ -15,13 +15,13 @@ def prepare(*, step: str, parameters: dict = {}, inputs: dict = {}):
     - Provide entry-point for the parser that generates/updates valohai.yaml integration file
 
     :param step: Step name for valohai.yaml
-    :param parameters: Dict of parameters and default values
-    :param inputs: Dict of inputs with (list of) default URIs
+    :param default_parameters: Dict of parameters and default values
+    :param default_inputs: Dict of inputs with (list of) default URIs
 
     """
     if not is_running_in_valohai():
-        _parse_inputs(inputs)
-    _parse_parameters(parameters)
+        _parse_inputs(default_inputs)
+    _parse_parameters(default_parameters)
 
 
 def _parse_inputs(inputs: dict):

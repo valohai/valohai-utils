@@ -22,7 +22,7 @@ def test_download(tmpdir, monkeypatch, requests_mock):
     }
 
     monkeypatch.setattr(sys, "argv", ["myscript.py"])
-    valohai.prepare(step="test", inputs=inputs)
+    valohai.prepare(step="test", default_inputs=inputs)
 
     # These calls will trigger downloads
     assert InputInfo.load("example").files[0].uri == \
