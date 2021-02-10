@@ -8,15 +8,11 @@ from valohai.internals.files import get_glob_pattern, set_file_read_only, expand
 from valohai.paths import get_outputs_path
 
 
-def outputs(name: str = ""):
-    return Output(name)
-
-
 class Output:
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self, name: str = ""):
+        self.name = str(name)
 
-    def path(self, filename: str, auto_create_folders: bool = True) -> str:
+    def path(self, filename: str, makedirs: bool = True) -> str:
         """Absolute path of an output file
 
         Compress files into a temporary file, which is then copied to the target path.
@@ -25,7 +21,7 @@ class Output:
         Returns the absolute path to the created package.
 
         :param filename: Name of the file. Can also include sub path (example: myfolder/hello.txt)
-        :param auto_create_folders: Auto-create folders if they do not exist.
+        :param makedirs: Auto-create folders if they do not exist.
 
         """
         path = get_outputs_path()
@@ -44,7 +40,7 @@ class Output:
 
         path = os.path.join(path, filename)
 
-        if auto_create_folders:
+        if makedirs:
             os.makedirs(os.path.dirname(path), exist_ok=True)
 
         return path
@@ -68,7 +64,7 @@ class Output:
 
         """
         target_path = self.path(filename)
-        files_to_compress = expand_globs(source, preprocessor=lambda path: self.path(path))
+        files_to_compress = expand_globs(source, preprocessor=self.path)
         common_prefix = os.path.commonprefix(list(files_to_compress))
 
         # We can't use `delete=True` since we need to replace the file later, and moving
@@ -93,3 +89,6 @@ class Output:
                 os.remove(file_path)
 
         return target_path
+
+
+outputs = Output
