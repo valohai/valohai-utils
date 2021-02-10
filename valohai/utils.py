@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from valohai.config import is_running_in_valohai
+from valohai.internals.global_state import input_infos
 from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import Parameter
 
@@ -37,7 +38,7 @@ def _parse_inputs(inputs: dict):
             uris = [uris]
         files = [FileInfo(name=FileInfo.uri_to_filename(uri), uri=uri, path=None, size=None, checksums=None) for uri in uris]
         input_info = InputInfo(files)
-        input_info.store(name)
+        input_infos[name] = input_info
 
 
 def _parse_parameters(parameters: dict):

@@ -2,7 +2,7 @@ import sys
 
 import valohai
 from valohai.internals.download_type import DownloadType
-from valohai.internals.input_info import InputInfo
+from valohai.internals.input_info import InputInfo, load_input_info
 
 
 def test_prepare(tmpdir, monkeypatch):
@@ -47,9 +47,9 @@ def test_prepare(tmpdir, monkeypatch):
     assert valohai.parameters("makeme321").value == 321
     assert valohai.parameters("makemenegative").value < 0.0
 
-    assert InputInfo.load("example", download=DownloadType.NEVER).files[0].uri == \
+    assert load_input_info("example", download=DownloadType.NEVER).files[0].uri == \
         "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz"
-    assert InputInfo.load("myimages", download=DownloadType.NEVER).files[0].uri == \
+    assert load_input_info("myimages", download=DownloadType.NEVER).files[0].uri == \
         "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg"
-    assert InputInfo.load("myimages", download=DownloadType.NEVER).files[1].uri == \
+    assert load_input_info("myimages", download=DownloadType.NEVER).files[1].uri == \
         "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png"
