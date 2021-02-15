@@ -2,12 +2,11 @@ import argparse
 import sys
 
 from valohai.config import is_running_in_valohai
-from valohai.internals.global_state import input_infos
+from valohai.internals import global_state
 from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import Parameter
 
 
-# Step is unused, but it is needed when parsing source code to update valohai.yaml
 def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}):
     """Define the name of the step and it's required inputs and parameters
 
@@ -20,6 +19,7 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
     :param default_inputs: Dict of inputs with (list of) default URIs
 
     """
+    global_state.step_name = step
     if not is_running_in_valohai():
         _parse_inputs(default_inputs)
     _parse_parameters(default_parameters)
@@ -38,7 +38,7 @@ def _parse_inputs(inputs: dict):
             uris = [uris]
         files = [FileInfo(name=FileInfo.uri_to_filename(uri), uri=uri, path=None, size=None, checksums=None) for uri in uris]
         input_info = InputInfo(files)
-        input_infos[name] = input_info
+        global_state.input_infos[name] = input_info
 
 
 def _parse_parameters(parameters: dict):
