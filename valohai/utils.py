@@ -2,13 +2,13 @@ import argparse
 import sys
 
 from valohai.config import is_running_in_valohai
-from valohai.inputs import _add_input_info, _uri_to_filename
+from valohai.internals.global_state import input_infos
 from valohai.internals.input_info import FileInfo, InputInfo
-from valohai.parameters import add_parameter
+from valohai.parameters import Parameter
 
 
 # Step is unused, but it is needed when parsing source code to update valohai.yaml
-def prepare(*, step: str, parameters: dict = {}, inputs: dict = {}):
+def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}):
     """Define the name of the step and it's required inputs and parameters
 
     Has dual purpose:
@@ -16,13 +16,13 @@ def prepare(*, step: str, parameters: dict = {}, inputs: dict = {}):
     - Provide entry-point for the parser that generates/updates valohai.yaml integration file
 
     :param step: Step name for valohai.yaml
-    :param parameters: Dict of parameters and default values
-    :param inputs: Dict of inputs with (list of) default URIs
+    :param default_parameters: Dict of parameters and default values
+    :param default_inputs: Dict of inputs with (list of) default URIs
 
     """
     if not is_running_in_valohai():
-        _parse_inputs(inputs)
-    _parse_parameters(parameters)
+        _parse_inputs(default_inputs)
+    _parse_parameters(default_parameters)
 
 
 def _parse_inputs(inputs: dict):
@@ -36,8 +36,9 @@ def _parse_inputs(inputs: dict):
     for name, uris in inputs.items():
         if not isinstance(uris, list):
             uris = [uris]
-        files = [FileInfo(name=_uri_to_filename(uri), uri=uri, path=None, size=None, checksums=None) for uri in uris]
-        _add_input_info(name, InputInfo(files))
+        files = [FileInfo(name=FileInfo.uri_to_filename(uri), uri=uri, path=None, size=None, checksums=None) for uri in uris]
+        input_info = InputInfo(files)
+        input_infos[name] = input_info
 
 
 def _parse_parameters(parameters: dict):
@@ -55,6 +56,6 @@ def _parse_parameters(parameters: dict):
         parser.add_argument('--%s' % name, type=type(default_value), default=default_value)
     known_args, unknown_args = parser.parse_known_args()
     for name, value in vars(known_args).items():
-        add_parameter(name, value)
+        Parameter(name).value = value
     for unknown in unknown_args:
         print(f'Warning: Unexpected command-line argument {unknown} found.', file=sys.stderr)

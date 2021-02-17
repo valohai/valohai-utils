@@ -60,14 +60,14 @@ class PrepareParser(ast.NodeVisitor):
         self.step = "default"
         if hasattr(node, "keywords"):
             for key in node.keywords:
-                if key.arg == "parameters":
+                if key.arg == "default_parameters":
                     if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
                         self.parameters = self.assignments[key.value.id]
                     elif isinstance(key.value, ast.Dict):
                         self.parameters = ast.literal_eval(key.value)
                     else:
                         raise NotImplementedError()
-                elif key.arg == "inputs":
+                elif key.arg == "default_inputs":
                     if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
                         self.inputs = {
                             key: value if isinstance(value, List) else [value]

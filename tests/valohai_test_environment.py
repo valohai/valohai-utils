@@ -1,5 +1,7 @@
 import json
 import pathlib
+import zipfile
+import os
 
 
 class ValohaiTestEnvironment:
@@ -21,6 +23,14 @@ class ValohaiTestEnvironment:
             json.dumps(self.get_parameters())
         )
         (self.config_path / "inputs.json").write_text(json.dumps(self.get_inputs()))
+
+        zip_dir = os.path.join(self.inputs_path, "input_with_archive")
+        os.makedirs(zip_dir)
+        zip_path = os.path.join(zip_dir, "archive.zip")
+
+        with zipfile.ZipFile(zip_path, "w") as zf:
+            zf.writestr("1hello.txt", b"Hernekeitto")
+            zf.writestr("2world.txt", b"Viina")
 
     def get_inputs(self):
         return {
@@ -62,6 +72,9 @@ class ValohaiTestEnvironment:
                     {
                         "name": "archive.zip",
                         "path": "%s/input_with_archive/archive.zip" % self.inputs_path,
+                        "checksums": {},
+                        "uri": "",
+                        "size": 0
                     }
                 ]
             },

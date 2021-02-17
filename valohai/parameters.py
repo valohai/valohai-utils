@@ -1,27 +1,21 @@
-import json
-import os
-from typing import Optional, Union
-
-from valohai.internals.global_state import parameters
-
-from . import paths
-
-_supported_types = Union[int, float, bool, str]
+from valohai.internals.global_state import parsed_parameters
+from .internals.parameters import load_parameter, supported_types
 
 
-def add_parameter(name: str, value: _supported_types):
-    parameters[name] = value
+class Parameter:
+    def __init__(self, name: str, default: supported_types = None):
+        self.name = str(name)
+        self.default = default
+
+    @property
+    def value(self) -> supported_types:
+        if self.name in parsed_parameters:
+            return parsed_parameters[self.name]
+        return load_parameter(self.name, self.default)
+
+    @value.setter
+    def value(self, value: supported_types):
+        parsed_parameters[self.name] = value
 
 
-def get_parameter(name: str, default: Optional[_supported_types] = None) -> Optional[_supported_types]:
-    if name in parameters:
-        return parameters[name]
-
-    parameters_config_path = paths.get_parameters_config_path()
-    if os.path.isfile(parameters_config_path):
-        with open(parameters_config_path) as json_file:
-            data = json.load(json_file)
-            if name in data:
-                parameters[name] = data[name]
-                return parameters[name]
-    return default
+parameters = Parameter

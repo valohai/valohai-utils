@@ -1,3 +1,3 @@
-inputs = {}
-parameters = {}
-partial_logs = {}
+input_infos = {}
+parsed_parameters = {}
+

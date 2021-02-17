@@ -20,4 +20,4 @@ def prepare(a, b):
 foobar = pd.read_csv("yeah.csv")  # Assignment that can't be evaluated (and should be ignored) by AST parser
 prepare("this should not be parsed", "ever")
 valohai.utils.prepare(step="this should not be parsed either")
-valohai.prepare(step="foobar1", parameters=params, inputs=inputs)
+valohai.prepare(step="foobar1", default_parameters=params, default_inputs=inputs)

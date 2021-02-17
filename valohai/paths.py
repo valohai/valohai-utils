@@ -24,27 +24,6 @@ def get_outputs_path() -> str:
         return os.environ.get("VH_OUTPUTS_DIR", os.path.join(VH_LOCAL_OUTPUTS_DIR, get_execution_guid()))
 
 
-def get_output_path(output_name: Optional[str] = None, auto_create: bool = True) -> str:
-    path = get_outputs_path()
-
-    # To guard against absolute paths.
-    # If the absolute path is in the outputs dir, the path will be made relative.
-    # If it is some other absolute path, an exception is raised.
-    if os.path.isabs(output_name):
-        if output_name.startswith(path):
-            output_name = os.path.relpath(output_name, path)
-        else:
-            raise ValueError("Absolute path used, when relative expected (%s)" % output_name)
-
-    if output_name:
-        path = os.path.join(path, output_name)
-
-    if auto_create:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    return path
-
-
 def get_repository_path() -> str:
     return os.environ.get("VH_REPOSITORY_DIR",
                           "/valohai/repository" if is_running_in_valohai() else VH_LOCAL_REPOSITORY_DIR)

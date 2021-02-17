@@ -16,4 +16,4 @@ def prepare(a, b):
     print("this is fake method %s %s" % (a, b))
 
 
-valohai.prepare(step="foobar1", parameters=params, inputs=inputs)
+valohai.prepare(step="foobar1", default_parameters=params, default_inputs=inputs)
