@@ -3,6 +3,7 @@ from typing import Optional
 
 from valohai.config import is_running_in_valohai
 from valohai.consts import VH_LOCAL_CONFIG_DIR, VH_LOCAL_INPUTS_DIR, VH_LOCAL_OUTPUTS_DIR, VH_LOCAL_REPOSITORY_DIR
+from valohai.internals import global_state
 from valohai.internals.guid import get_execution_guid
 
 
@@ -11,7 +12,11 @@ def get_config_path() -> str:
 
 
 def get_inputs_path(input_name: Optional[str] = None) -> str:
-    path = os.environ.get("VH_INPUTS_DIR", "/valohai/inputs" if is_running_in_valohai() else VH_LOCAL_INPUTS_DIR)
+    if is_running_in_valohai():
+        path = os.environ.get("VH_INPUTS_DIR", "/valohai/inputs")
+    else:
+        path = os.environ.get("VH_INPUTS_DIR", os.path.join(VH_LOCAL_INPUTS_DIR, global_state.step_name))
+
     if input_name:
         path = os.path.join(path, input_name)
     return path
@@ -21,7 +26,7 @@ def get_outputs_path() -> str:
     if is_running_in_valohai():
         return os.environ.get("VH_OUTPUTS_DIR", "/valohai/outputs")
     else:
-        return os.environ.get("VH_OUTPUTS_DIR", os.path.join(VH_LOCAL_OUTPUTS_DIR, get_execution_guid()))
+        return os.environ.get("VH_OUTPUTS_DIR", os.path.join(VH_LOCAL_OUTPUTS_DIR, get_execution_guid(), global_state.step_name))
 
 
 def get_repository_path() -> str:

@@ -5,7 +5,7 @@ from typing import Optional, Iterable
 from valohai import paths
 from valohai.internals.download import download_url
 from valohai.internals.download_type import DownloadType
-from valohai.internals.global_state import input_infos
+from valohai.internals import global_state
 from valohai.paths import get_inputs_path
 
 
@@ -61,8 +61,8 @@ def load_input_info(name: str, download: DownloadType = DownloadType.OPTIONAL) -
     :param download: Download strategy for the input. (Never, Optional, Always)
     :return: InputInfo instance for this input name
     """
-    if name in input_infos:
-        info = input_infos[name]
+    if name in global_state.input_infos:
+        info = global_state.input_infos[name]
         if download == DownloadType.ALWAYS or not info.is_downloaded() and download == DownloadType.OPTIONAL:
             path = get_inputs_path(name)
             os.makedirs(path, exist_ok=True)
@@ -76,5 +76,5 @@ def load_input_info(name: str, download: DownloadType = DownloadType.OPTIONAL) -
             input_info_data = data.get(name)
             if input_info_data:
                 input_info = InputInfo.from_json_data(input_info_data)
-                input_infos[name] = input_info
-                return input_infos[name]
+                global_state.input_infos[name] = input_info
+                return global_state.input_infos[name]
