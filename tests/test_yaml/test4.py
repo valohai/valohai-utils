@@ -9,7 +9,7 @@ params = {
     "param4": 0.0001,
 }
 
-inputs = {"input1": "asdf", "input2": ["yolol", "yalala"]}
+inputs = {"input1": "asdf/*", "input2": ["yolol", "yalala"]}
 
 
 def prepare(a, b):
