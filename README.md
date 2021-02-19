@@ -17,19 +17,19 @@ vh yaml step mycode.py
 vh exec run -a mystep
 ```
 
-# What does it do?
+# What does valohai-utils do?
 
-- Updates `valohai.yaml` based on source code
+- Generates and updates the `valohai.yaml` configuration file based on the source code
 - Agnostic input handling (single file, multiple files, zip, tar)
 - Parse command-line parameters
 - Compress outputs
 - Download inputs for local experiments
-- Straightforward JSON logs
-- Fully reproducible for local vs. cloud
+- Straightforward way to print metrics as Valohai metadata
+- Code parity between local vs. cloud
 
 # Parameters
 
-Parameters are variables & hyper-parameters that are parsed from the command-line. You define a parameters in a dictionary: 
+[Valohai parameters ](https://docs.valohai.com/core-concepts/parameters/) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary: 
 
 ```python
 default_parameters = {
@@ -58,7 +58,7 @@ for i in range(valohai.parameters('iterations').value):
 
 # Inputs
 
-Inputs are the data files required by the experiment. They are automatically downloaded for you. You define a inputs with a dictionary:
+[Valohai inputs](https://docs.valohai.com/valohai-yaml/step-inputs/#option-1-custom-store-url) are the data files required by the experiment. They are automatically downloaded for you, if the data is from a public source. You define inputs with a dictionary:
 
 ```python
 default_inputs = {
@@ -66,13 +66,20 @@ default_inputs = {
 }
 ```
 
-Input can also have list of urls:
+An input can also be a list of URLs or a folder:
 
 ```python
-default_inputs = {'input_name': [
-  'http://example.com/1.png', 
-  'http://example.com/2.png'
-]}
+default_inputs = {
+  'input_name': [
+    'http://example.com/1.png', 
+    'http://example.com/2.png'
+  ],
+  'input_folder': [
+    's3://mybucket/images/*',
+    'azure://mycontainer/images/*',
+    'gs://mybucket/images/*'
+  ]
+}
 ```
 
 Or it can be an archive full of files (uncompressed automagically on-demand):
@@ -104,7 +111,7 @@ with open(valohai.inputs("myinput").path()) as csv_file:
 
 # Logging
 
-Valohai platform parses JSON logs as metadata.
+You can log metrics using the [Valohai metadata system](https://docs.valohai.com/executions/metadata/) and then render interactive graphs on the web interface. The `valohai-utils` logger will print JSON logs that Valohai will parse as metadata.
 
 It is important for visualization that logs for single epoch are flushed out as a single JSON object.
 
