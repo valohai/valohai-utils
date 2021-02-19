@@ -4,7 +4,7 @@ from typing import Any, Dict
 from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.parsing import parse
 from valohai_yaml.objs import Config, Parameter, Step
-from valohai_yaml.objs.input import Input
+from valohai_yaml.objs.input import Input, KeepDirectories
 
 ParameterDict = Dict[str, Any]
 InputDict = Dict[str, str]
@@ -28,7 +28,9 @@ def generate_step(
         )
 
     for key, value in inputs.items():
-        config_step.inputs[key] = Input(name=key, default=value,)
+        has_wildcards = any('*' in uri for uri in value)
+        keep_directories = KeepDirectories.SUFFIX.value if has_wildcards else False
+        config_step.inputs[key] = Input(name=key, default=value, keep_directories=keep_directories)
 
     return config_step
 

@@ -25,7 +25,8 @@
     inputs:
     - name: input1
       default:
-      - asdf
+      - asdf/*
+      keep-directories: suffix
       optional: false
     - name: input2
       default:
