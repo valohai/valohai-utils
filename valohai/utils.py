@@ -1,4 +1,5 @@
 import argparse
+import glob
 import os
 import sys
 from typing import List
@@ -56,8 +57,9 @@ def _load_inputs(args: argparse.Namespace, names: List[str]):
 
         files = []
         for value in values:
-            if "://" not in value and os.path.isfile(value):  # The string is a local path
-                files.append(FileInfo(name=os.path.basename(value), uri=None, path=value, size=None, checksums=None))
+            if "://" not in value:  # The string is a local path
+                for path in glob.glob(value):
+                    files.append(FileInfo(name=os.path.basename(path), uri=None, path=value, size=None, checksums=None))
             else:  # The string is an URI
                 files.append(FileInfo(name=FileInfo.uri_to_filename(value), uri=value, path=None, size=None, checksums=None))
 
