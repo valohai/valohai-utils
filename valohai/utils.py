@@ -50,8 +50,10 @@ def _load_inputs(args: argparse.Namespace, names: List[str]):
     :param names: List of all possible input names
 
     """
-    inputs = {k: v for k, v in vars(args).items() if k in names}
-    for name, values in inputs.items():
+    for name, values in vars(args).items():
+        if name not in names:
+            continue
+
         if not isinstance(values, list):
             values = [values]
 
@@ -77,7 +79,8 @@ def _load_parameters(args: argparse.Namespace, names: List[str]):
     :param names: List of all possible parameters names
 
     """
-    parameters = {k: v for k, v in vars(args).items() if k in names}
-    for name, value in parameters.items():
+    for name, value in vars(args).items():
+        if name not in names:
+            continue
         Parameter(name).value = value
 
