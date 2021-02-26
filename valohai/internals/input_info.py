@@ -24,10 +24,6 @@ class FileInfo:
         self.path = download_url(self.uri, os.path.join(path, self.name), force_download)
         # TODO: Store size & checksums if they become useful
 
-    @staticmethod
-    def uri_to_filename(uri: str) -> str:
-        return uri.rpartition("/")[-1]
-
 
 class InputInfo:
     def __init__(self, files: Iterable[FileInfo]):
@@ -78,3 +74,7 @@ def load_input_info(name: str, download: DownloadType = DownloadType.OPTIONAL) -
                 input_info = InputInfo.from_json_data(input_info_data)
                 global_state.input_infos[name] = input_info
                 return global_state.input_infos[name]
+
+
+def uri_to_filename(uri: str) -> str:
+    return uri.rpartition("/")[-1]

@@ -6,7 +6,7 @@ from typing import List
 
 from valohai.config import is_running_in_valohai
 from valohai.internals import global_state
-from valohai.internals.input_info import FileInfo, InputInfo
+from valohai.internals.input_info import FileInfo, InputInfo, uri_to_filename
 from valohai.parameters import Parameter
 
 
@@ -61,7 +61,7 @@ def _load_inputs(args: argparse.Namespace, names: List[str]):
                 for path in glob.glob(value):
                     files.append(FileInfo(name=os.path.basename(path), uri=None, path=value, size=None, checksums=None))
             else:  # The string is an URI
-                files.append(FileInfo(name=FileInfo.uri_to_filename(value), uri=value, path=None, size=None, checksums=None))
+                files.append(FileInfo(name=uri_to_filename(value), uri=value, path=None, size=None, checksums=None))
 
         input_info = InputInfo(files)
         global_state.input_infos[name] = input_info
