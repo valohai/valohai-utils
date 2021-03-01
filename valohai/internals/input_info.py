@@ -12,7 +12,7 @@ from valohai.paths import get_inputs_path
 class FileInfo:
     def __init__(self, *, name, uri, path, size, checksums):
         self.name = str(name)
-        self.uri = str(uri)
+        self.uri = str(uri) if uri else None
         self.checksums = checksums
         self.path = str(path) if path else None
         self.size = int(size) if size else None
@@ -23,10 +23,6 @@ class FileInfo:
     def download(self, path, force_download: bool = False):
         self.path = download_url(self.uri, os.path.join(path, self.name), force_download)
         # TODO: Store size & checksums if they become useful
-
-    @staticmethod
-    def uri_to_filename(uri: str) -> str:
-        return uri.rpartition("/")[-1]
 
 
 class InputInfo:
