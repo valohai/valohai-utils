@@ -19,16 +19,20 @@ def source_codes():
 
     for python_file in glob.glob(os.path.join(basepath, '*.py')):
         path_without_ext = os.path.splitext(python_file)[0]
-        with open("%s.py" % path_without_ext, "r") as source_python, \
-            open("%s.parameters.json" % path_without_ext, "r") as parameters_json, \
-            open("%s.inputs.json" % path_without_ext, "r") as inputs_json, \
-            open("%s.step.json" % path_without_ext, "r") as step_json:
-            result.append({
-                'source': source_python.read(),
-                'parameters': json.loads(parameters_json.read()),
-                'inputs': json.loads(inputs_json.read()),
-                'step': json.loads(step_json.read()),
-            })
+        with open("%s.py" % path_without_ext, "r") as source_python:
+            source = source_python.read()
+        with open("%s.parameters.json" % path_without_ext, "r") as parameters_json:
+            parameters = json.load(parameters_json)
+        with open("%s.inputs.json" % path_without_ext, "r") as inputs_json:
+            inputs = json.load(inputs_json)
+        with open("%s.step.json" % path_without_ext, "r") as step_json:
+            step = json.load(step_json)
+        result.append({
+            'source': source,
+            'parameters': parameters,
+            'inputs': inputs,
+            'step': step,
+        })
     return result
 
 
