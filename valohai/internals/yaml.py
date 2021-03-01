@@ -1,10 +1,11 @@
 import os
 from typing import Any, Dict
 
-from valohai.consts import DEFAULT_DOCKER_IMAGE
-from valohai.internals.parsing import parse
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
+
+from valohai.consts import DEFAULT_DOCKER_IMAGE
+from valohai.internals.parsing import parse
 
 ParameterDict = Dict[str, Any]
 InputDict = Dict[str, str]
@@ -19,18 +20,24 @@ def generate_step(
     inputs: InputDict
 ) -> Step:
     config_step = Step(
-        name=step, image=image, command="python %s {parameters}" % relative_source_path,
+        name=step,
+        image=image,
+        command="python %s {parameters}" % relative_source_path,
     )
 
     for key, value in parameters.items():
         config_step.parameters[key] = Parameter(
-            name=key, type=get_parameter_type_name(key, value), default=value,
+            name=key,
+            type=get_parameter_type_name(key, value),
+            default=value,
         )
 
     for key, value in inputs.items():
-        has_wildcards = any('*' in uri for uri in value)
+        has_wildcards = any("*" in uri for uri in value)
         keep_directories = KeepDirectories.SUFFIX.value if has_wildcards else False
-        config_step.inputs[key] = Input(name=key, default=value, keep_directories=keep_directories)
+        config_step.inputs[key] = Input(
+            name=key, default=value, keep_directories=keep_directories
+        )
 
     return config_step
 
@@ -77,7 +84,7 @@ def get_source_relative_path(source_path: str, config_path: str) -> str:
 
 
 def parse_config_from_source(source_path: str, config_path: str):
-    with open(source_path, "r") as source_file:
+    with open(source_path) as source_file:
         parsed = parse(source_file.read())
         if not parsed.step:
             raise ValueError("Source is missing a call to valohai.prepare()")

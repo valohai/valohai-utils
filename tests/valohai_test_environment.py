@@ -1,7 +1,7 @@
 import json
+import os
 import pathlib
 import zipfile
-import os
 
 
 class ValohaiTestEnvironment:
@@ -43,7 +43,7 @@ class ValohaiTestEnvironment:
                             "sha256": "8c712905b799905357b8202d0cb7a244cefeeccf7aa5eb79896645ac50158ffa",
                         },
                         "name": "Example.jpg",
-                        "path": "%s/single_image/Example.jpg" % self.inputs_path,
+                        "path": f"{self.inputs_path}/single_image/Example.jpg",
                         "size": 27661,
                         "uri": "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg",
                     }
@@ -71,10 +71,10 @@ class ValohaiTestEnvironment:
                 "files": [
                     {
                         "name": "archive.zip",
-                        "path": "%s/input_with_archive/archive.zip" % self.inputs_path,
+                        "path": f"{self.inputs_path}/input_with_archive/archive.zip",
                         "checksums": {},
                         "uri": "",
-                        "size": 0
+                        "size": 0,
                     }
                 ]
             },

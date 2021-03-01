@@ -13,7 +13,7 @@ inputs = {"input1": "asdf", "input2": ["yolol", "yalala"]}
 
 
 def prepare(a, b):
-    print("this is fake method %s %s" % (a, b))
+    print(f"this is fake method {a} {b}")
 
 
 valohai.prepare(step="foobar1", default_parameters=params, default_inputs=inputs)

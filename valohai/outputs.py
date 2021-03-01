@@ -4,7 +4,7 @@ import tempfile
 from typing import Union
 
 from valohai.internals.compression import open_archive
-from valohai.internals.files import get_glob_pattern, set_file_read_only, expand_globs, get_canonical_extension
+from valohai.internals.files import expand_globs, get_canonical_extension, get_glob_pattern, set_file_read_only
 from valohai.paths import get_outputs_path
 
 
@@ -33,7 +33,9 @@ class Output:
             if self.name.startswith(path):
                 self.name = os.path.relpath(self.name, path)
             else:
-                raise ValueError("Absolute path used, when relative expected (%s)" % self.name)
+                raise ValueError(
+                    f"Absolute path used, when relative expected ({self.name})"
+                )
 
         if self.name:
             path = os.path.join(path, self.name)
@@ -49,7 +51,13 @@ class Output:
         for file_path in glob.glob(get_glob_pattern(self.path(filename))):
             set_file_read_only(file_path)
 
-    def compress(self, source: Union[str, list], filename: str, live_upload: bool = False, remove_originals: bool = True) -> str:
+    def compress(
+        self,
+        source: Union[str, list],
+        filename: str,
+        live_upload: bool = False,
+        remove_originals: bool = True,
+    ) -> str:
         """Compress output files as single package.
 
         Compress files into a temporary file, which is then copied to the target path.
@@ -72,7 +80,9 @@ class Output:
         # exception trying to unlink the name that has been already `replace`d out...
 
         suffix = get_canonical_extension(filename)
-        tmp_file = tempfile.NamedTemporaryFile(dir=os.path.dirname(target_path), suffix=suffix, delete=False)
+        tmp_file = tempfile.NamedTemporaryFile(
+            dir=os.path.dirname(target_path), suffix=suffix, delete=False
+        )
         with tmp_file, open_archive(tmp_file.name) as archive:
             compressed_paths = []
             for file_path in files_to_compress:

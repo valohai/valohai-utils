@@ -1,8 +1,8 @@
 prettify:
 	black .
-	isort -rc .
+	isort .
 
 lint:
 	flake8 .
 	black --check .
-	isort -rc -c .
+	isort -c .

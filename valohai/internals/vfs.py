@@ -19,7 +19,7 @@ class File:
             return f.read()
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.name}>'
+        return f"<{self.__class__.__name__}: {self.name}>"
 
     @property
     def name(self) -> str:
