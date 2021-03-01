@@ -34,7 +34,7 @@ class Output:
                 self.name = os.path.relpath(self.name, path)
             else:
                 raise ValueError(
-                    "Absolute path used, when relative expected (%s)" % self.name
+                    f"Absolute path used, when relative expected ({self.name})"
                 )
 
         if self.name:

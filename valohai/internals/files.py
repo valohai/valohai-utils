@@ -12,7 +12,7 @@ def set_file_read_only(path: str):
 def get_glob_pattern(source: str) -> str:
     # Path is transformed into glob supported pattern. "example" -> "example/*"
     if os.path.isdir(source):
-        source = "%s/*" % source.rstrip("/")
+        source = f"{source.rstrip('/')}/*"
     return source
 
 
@@ -27,7 +27,7 @@ def expand_globs(sources: Union[str, list], preprocessor: lambda s: s) -> Set[st
             if os.path.isfile(file_path):
                 files_to_compress.add(file_path)
     if not files_to_compress:
-        raise ValueError("No files to compress at %s" % sources)
+        raise ValueError(f"No files to compress at {sources}")
     return files_to_compress
 
 

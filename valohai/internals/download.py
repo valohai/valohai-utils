@@ -29,6 +29,6 @@ def download_url(url, path, force_download=False):
                     f.write(data)
         os.replace(tmp_path, path)
     else:
-        print("Using cached %s" % path)
+        print(f"Using cached {path}")
 
     return path

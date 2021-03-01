@@ -128,4 +128,4 @@ def open_archive(path: str):
     elif path.endswith(".tgz") or path.endswith(".tar.gz"):
         return TarArchive.open(path, "w:gz")
 
-    raise ValueError("Unrecognized compression format for %s" % path)
+    raise ValueError(f"Unrecognized compression format for {path}")

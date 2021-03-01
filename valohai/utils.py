@@ -26,10 +26,10 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
 
     parser = argparse.ArgumentParser()
     for name, default_value in dict(default_inputs).items():
-        parser.add_argument("--%s" % name, type=str, nargs="+", default=default_value)
+        parser.add_argument(f"--{name}", type=str, nargs="+", default=default_value)
     for name, default_value in dict(default_parameters).items():
         parser.add_argument(
-            "--%s" % name, type=type(default_value), default=default_value
+            f"--{name}", type=type(default_value), default=default_value
         )
     known_args, unknown_args = parser.parse_known_args()
 
