@@ -1,7 +1,6 @@
-import glob
-import json
-import os
 import pytest
+
+from .utils import get_parsing_tests
 from valohai.internals.parsing import parse
 
 
@@ -13,25 +12,16 @@ def read_test_data():
         mytest.parameters.json -- Expected parsed parameters
         mytest.step.json -- Expected parsed step
     """
-    test_data = []
-    for source_path in glob.glob("tests/test_parsing/*.py"):
-        dirname = os.path.dirname(source_path)
-        name, extension = os.path.splitext(os.path.basename(source_path))
-        prefix = os.path.join(dirname, name)
-        with open("%s.py" % prefix, "r") as source_python, \
-            open("%s.parameters.json" % prefix, "r") as parameters_json, \
-            open("%s.inputs.json" % prefix, "r") as inputs_json, \
-            open("%s.step.json" % prefix, "r") as step_json:
-            test_data.append((
-                source_python.read(),
-                json.loads(inputs_json.read()),
-                json.loads(parameters_json.read()),
-                json.loads(step_json.read())['name']
-            ))
-    return test_data
+    for info in get_parsing_tests():
+        yield (
+            info["source"],
+            info["parameters"],
+            info["inputs"],
+            info["step"]["name"],
+        )
 
 
-@pytest.mark.parametrize("source, inputs, parameters, step", read_test_data())
+@pytest.mark.parametrize("source, parameters, inputs, step", read_test_data())
 def test_parse(source, inputs, parameters, step):
     result = parse(source)
 
