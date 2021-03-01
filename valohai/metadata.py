@@ -3,7 +3,7 @@ import json
 _supported_types = [int, float]
 
 
-class Logger(object):
+class Logger:
     def __init__(self):
         self.partial_logs = {}
 

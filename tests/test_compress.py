@@ -10,7 +10,7 @@ import valohai
 @pytest.mark.parametrize("format", ("zip", "tar", "tar.gz"))
 @pytest.mark.parametrize("remove_originals", (False, True))
 def test_compress(outputs_path, output_files, format, remove_originals):
-    filename = "hello.{}".format(format)
+    filename = f"hello.{format}"
     package_path = valohai.outputs("morjes").compress(
         output_files, filename, remove_originals=remove_originals
     )

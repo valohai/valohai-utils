@@ -15,7 +15,7 @@ inputs = {"input1": "asdf", "input2": ["yolol", "yalala"]}
 
 
 def prepare(a, b):
-    print("this is fake method %s %s" % (a, b))
+    print(f"this is fake method {a} {b}")
 
 
 # Assignment that can't be evaluated (and should be ignored) by AST parser

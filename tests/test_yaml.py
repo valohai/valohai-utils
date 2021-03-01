@@ -23,9 +23,9 @@ def read_test_data():
         name, extension = os.path.splitext(os.path.basename(source_path))
         test_data.append(
             (
-                "%s/%s.original.valohai.yaml" % (dirname, name),
+                f"{dirname}/{name}.original.valohai.yaml",
                 source_path,
-                "%s/%s.expected.valohai.yaml" % (dirname, name),
+                f"{dirname}/{name}.expected.valohai.yaml",
             )
         )
     return test_data
@@ -46,7 +46,7 @@ def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_
     # Load original valohai.yaml
     old_config = None
     if os.path.isfile(yaml_path):
-        with open(yaml_path, "r") as yaml_file:
+        with open(yaml_path) as yaml_file:
             old_config = parse(yaml_file)
 
     # Parse new config from .py
@@ -57,6 +57,6 @@ def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_
         new_config = old_config.merge_with(new_config, python_to_yaml_merge_strategy)
 
     # Check against expected result
-    with open(expected_yaml, "r") as expected_yaml:
+    with open(expected_yaml) as expected_yaml:
         new_yaml = config_to_yaml(new_config)
         assert new_yaml == expected_yaml.read()

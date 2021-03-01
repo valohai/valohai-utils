@@ -84,7 +84,7 @@ def get_source_relative_path(source_path: str, config_path: str) -> str:
 
 
 def parse_config_from_source(source_path: str, config_path: str):
-    with open(source_path, "r") as source_file:
+    with open(source_path) as source_file:
         parsed = parse(source_file.read())
         if not parsed.step:
             raise ValueError("Source is missing a call to valohai.prepare()")

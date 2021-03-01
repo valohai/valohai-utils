@@ -15,7 +15,7 @@ def download_url(url, path, force_download=False):
             ) from ie
 
         tmp_path = tempfile.NamedTemporaryFile().name
-        print("Downloading %s -> %s" % (url, path))
+        print(f"Downloading {url} -> {path}")
         r = requests.get(url, stream=True)
         r.raise_for_status()
         total = (
