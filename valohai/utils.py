@@ -6,7 +6,7 @@ from typing import List
 
 from valohai.config import is_running_in_valohai
 from valohai.internals import global_state
-from valohai.internals.input_info import FileInfo, InputInfo, uri_to_filename
+from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import Parameter
 
 
@@ -84,3 +84,6 @@ def _load_parameters(args: argparse.Namespace, names: List[str]):
             continue
         Parameter(name).value = value
 
+
+def uri_to_filename(uri: str) -> str:
+    return uri.rpartition("/")[-1]

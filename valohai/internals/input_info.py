@@ -74,7 +74,3 @@ def load_input_info(name: str, download: DownloadType = DownloadType.OPTIONAL) -
                 input_info = InputInfo.from_json_data(input_info_data)
                 global_state.input_infos[name] = input_info
                 return global_state.input_infos[name]
-
-
-def uri_to_filename(uri: str) -> str:
-    return uri.rpartition("/")[-1]
