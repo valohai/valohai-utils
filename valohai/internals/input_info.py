@@ -1,11 +1,11 @@
 import json
 import os
-from typing import Optional, Iterable
+from typing import Iterable, Optional
 
 from valohai import paths
+from valohai.internals import global_state
 from valohai.internals.download import download_url
 from valohai.internals.download_type import DownloadType
-from valohai.internals import global_state
 from valohai.paths import get_inputs_path
 
 
@@ -21,7 +21,9 @@ class FileInfo:
         return self.path and os.path.isfile(self.path)
 
     def download(self, path, force_download: bool = False):
-        self.path = download_url(self.uri, os.path.join(path, self.name), force_download)
+        self.path = download_url(
+            self.uri, os.path.join(path, self.name), force_download
+        )
         # TODO: Store size & checksums if they become useful
 
 
@@ -44,7 +46,9 @@ class InputInfo:
         return cls(files=[FileInfo(**d) for d in json_data.get("files", ())])
 
 
-def load_input_info(name: str, download: DownloadType = DownloadType.OPTIONAL) -> Optional[InputInfo]:
+def load_input_info(
+    name: str, download: DownloadType = DownloadType.OPTIONAL
+) -> Optional[InputInfo]:
     """Get InputInfo for a given input name.
 
     Looks for the InputInfo from the in-memory cache and if found, downloads the input according
@@ -59,10 +63,16 @@ def load_input_info(name: str, download: DownloadType = DownloadType.OPTIONAL) -
     """
     if name in global_state.input_infos:
         info = global_state.input_infos[name]
-        if download == DownloadType.ALWAYS or not info.is_downloaded() and download == DownloadType.OPTIONAL:
+        if (
+            download == DownloadType.ALWAYS
+            or not info.is_downloaded()
+            and download == DownloadType.OPTIONAL
+        ):
             path = get_inputs_path(name)
             os.makedirs(path, exist_ok=True)
-            info.download(get_inputs_path(name), force_download=(download == DownloadType.ALWAYS))
+            info.download(
+                get_inputs_path(name), force_download=(download == DownloadType.ALWAYS)
+            )
         return info
 
     inputs_config_path = paths.get_inputs_config_path()

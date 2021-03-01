@@ -10,7 +10,6 @@ def vte(tmpdir):
     return ValohaiTestEnvironment(root_dir=str(tmpdir.mkdir("valohai")))
 
 
-
 @pytest.fixture
 def use_test_config_dir(vte, monkeypatch):
     vte.build()
@@ -41,7 +40,7 @@ def output_files(outputs_path):
     ]
 
     for output in outputs:
-        with open(output, 'wb') as f:
+        with open(output, "wb") as f:
             f.write(os.urandom(1000))
 
     return outputs

@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+
 import valohai
 
 params = {
@@ -17,7 +18,8 @@ def prepare(a, b):
     print("this is fake method %s %s" % (a, b))
 
 
-foobar = pd.read_csv("yeah.csv")  # Assignment that can't be evaluated (and should be ignored) by AST parser
+# Assignment that can't be evaluated (and should be ignored) by AST parser
+foobar = pd.read_csv("yeah.csv")
 prepare("this should not be parsed", "ever")
 valohai.utils.prepare(step="this should not be parsed either")
 valohai.prepare(step="foobar1", default_parameters=params, default_inputs=inputs)

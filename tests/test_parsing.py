@@ -1,7 +1,8 @@
 import pytest
 
-from .utils import get_parsing_tests
 from valohai.internals.parsing import parse
+
+from .utils import get_parsing_tests
 
 
 def read_test_data():

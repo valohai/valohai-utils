@@ -26,9 +26,11 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
 
     parser = argparse.ArgumentParser()
     for name, default_value in dict(default_inputs).items():
-        parser.add_argument('--%s' % name, type=str, nargs='+', default=default_value)
+        parser.add_argument("--%s" % name, type=str, nargs="+", default=default_value)
     for name, default_value in dict(default_parameters).items():
-        parser.add_argument('--%s' % name, type=type(default_value), default=default_value)
+        parser.add_argument(
+            "--%s" % name, type=type(default_value), default=default_value
+        )
     known_args, unknown_args = parser.parse_known_args()
 
     if not is_running_in_valohai():
@@ -36,7 +38,10 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
     _load_parameters(known_args, list(default_parameters.keys()))
 
     for unknown in unknown_args:
-        print(f'Warning: Unexpected command-line argument {unknown} found.', file=sys.stderr)
+        print(
+            f"Warning: Unexpected command-line argument {unknown} found.",
+            file=sys.stderr,
+        )
 
 
 def _load_inputs(args: argparse.Namespace, names: List[str]):
@@ -61,9 +66,25 @@ def _load_inputs(args: argparse.Namespace, names: List[str]):
         for value in values:
             if "://" not in value:  # The string is a local path
                 for path in glob.glob(value):
-                    files.append(FileInfo(name=os.path.basename(path), uri=None, path=value, size=None, checksums=None))
+                    files.append(
+                        FileInfo(
+                            name=os.path.basename(path),
+                            uri=None,
+                            path=value,
+                            size=None,
+                            checksums=None,
+                        )
+                    )
             else:  # The string is an URI
-                files.append(FileInfo(name=uri_to_filename(value), uri=value, path=None, size=None, checksums=None))
+                files.append(
+                    FileInfo(
+                        name=uri_to_filename(value),
+                        uri=value,
+                        path=None,
+                        size=None,
+                        checksums=None,
+                    )
+                )
 
         input_info = InputInfo(files)
         global_state.input_infos[name] = input_info

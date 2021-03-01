@@ -13,16 +13,16 @@ def read_source_files(path_without_ext):
     with open(f"{path_without_ext}.step.json", "r") as step_json:
         step = json.load(step_json)
     return {
-        'source': source,
-        'parameters': parameters,
-        'inputs': inputs,
-        'step': step,
+        "source": source,
+        "parameters": parameters,
+        "inputs": inputs,
+        "step": step,
     }
 
 
 def get_parsing_tests():
     basepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_parsing")
 
-    for python_file in glob.glob(os.path.join(basepath, '*.py')):
+    for python_file in glob.glob(os.path.join(basepath, "*.py")):
         path_without_ext = os.path.splitext(python_file)[0]
         yield read_source_files(path_without_ext)

@@ -2,7 +2,7 @@ import glob
 import os
 import pathlib
 from stat import S_IREAD, S_IRGRP, S_IROTH
-from typing import Union, Set
+from typing import Set, Union
 
 
 def set_file_read_only(path: str):
@@ -12,7 +12,7 @@ def set_file_read_only(path: str):
 def get_glob_pattern(source: str) -> str:
     # Path is transformed into glob supported pattern. "example" -> "example/*"
     if os.path.isdir(source):
-        source = "%s/*" % source.rstrip('/')
+        source = "%s/*" % source.rstrip("/")
     return source
 
 

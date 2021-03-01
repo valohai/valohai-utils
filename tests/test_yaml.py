@@ -1,8 +1,8 @@
 import glob
 import os
 import shutil
-import pytest
 
+import pytest
 from valohai_yaml import parse
 
 from valohai.internals.merge import python_to_yaml_merge_strategy
@@ -21,15 +21,19 @@ def read_test_data():
     for source_path in glob.glob("tests/test_yaml/*.py"):
         dirname = os.path.dirname(source_path)
         name, extension = os.path.splitext(os.path.basename(source_path))
-        test_data.append((
-            "%s/%s.original.valohai.yaml" % (dirname, name),
-            source_path,
-            "%s/%s.expected.valohai.yaml" % (dirname, name)
-        ))
+        test_data.append(
+            (
+                "%s/%s.original.valohai.yaml" % (dirname, name),
+                source_path,
+                "%s/%s.expected.valohai.yaml" % (dirname, name),
+            )
+        )
     return test_data
 
 
-@pytest.mark.parametrize("original_yaml, source_python, expected_yaml", read_test_data())
+@pytest.mark.parametrize(
+    "original_yaml, source_python, expected_yaml", read_test_data()
+)
 def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_yaml):
     yaml_path = os.path.join(tmpdir, "valohai.yaml")
     source_path = os.path.join(tmpdir, "test.py")

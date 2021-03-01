@@ -29,7 +29,9 @@ def _merge_config(original: Config, parsed: Config) -> Config:
     result = copy.deepcopy(original)
     for key, step in parsed.steps.items():
         if key in result.steps:
-            result.steps[key] = original.steps[key].merge_with(step, python_to_yaml_merge_strategy)
+            result.steps[key] = original.steps[key].merge_with(
+                step, python_to_yaml_merge_strategy
+            )
         else:
             result.steps[key] = step
     return result
@@ -62,15 +64,14 @@ def _merge_step(original: Step, parsed: Step) -> Step:
         b=parsed.parameters,
         merger=merge_simple,
         copier=copy.deepcopy,
-        skip_missing_b=True
+        skip_missing_b=True,
     )
     result.inputs = merge_dicts(
         a=original.inputs,
         b=parsed.inputs,
         merger=merge_simple,
         copier=copy.deepcopy,
-        skip_missing_b=True
+        skip_missing_b=True,
     )
 
     return result
-

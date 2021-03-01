@@ -69,7 +69,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
         # Like `writestr`, but also supports a stream (and doesn't support directories).
         zinfo = zipfile.ZipInfo(filename=arcname)
         zinfo.compress_type = compress_type
-        if hasattr(zinfo, '_compresslevel'):  # only has an effect on Py3.7+
+        if hasattr(zinfo, "_compresslevel"):  # only has an effect on Py3.7+
             zinfo._compresslevel = compresslevel
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.

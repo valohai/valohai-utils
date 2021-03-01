@@ -1,7 +1,7 @@
 import json
+import os
 import pathlib
 import zipfile
-import os
 
 
 class ValohaiTestEnvironment:
@@ -74,7 +74,7 @@ class ValohaiTestEnvironment:
                         "path": "%s/input_with_archive/archive.zip" % self.inputs_path,
                         "checksums": {},
                         "uri": "",
-                        "size": 0
+                        "size": 0,
                     }
                 ]
             },
