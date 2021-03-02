@@ -1,12 +1,12 @@
 # valohai-utils
 Python helper library for the Valohai machine learning platform.
 
-# install
+# Install
 ```python
 pip install valohai-utils
 ```
 
-# execution
+# Execution
 Run locally
 ```python
 python mycode.py
