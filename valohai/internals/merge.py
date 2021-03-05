@@ -75,7 +75,7 @@ def _merge_step(original: Step, parsed: Step) -> Step:
         skip_missing_b=True,
     )
 
-    if(parsed.image is not None and parsed.image != DEFAULT_DOCKER_IMAGE) :
+    if parsed.image is not None and parsed.image != DEFAULT_DOCKER_IMAGE :
         result.image = parsed.image
 
     return result
