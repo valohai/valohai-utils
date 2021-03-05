@@ -20,7 +20,7 @@ def read_test_data():
             info["parameters"],
             info["inputs"],
             info["step"]["name"],
-            info["step"]["image"] if 'image' in info["step"] else DEFAULT_DOCKER_IMAGE,
+            info["step"]["image"] if 'image' in info["step"] else None,
         )
 
 

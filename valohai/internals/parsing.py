@@ -45,7 +45,7 @@ class PrepareParser(ast.NodeVisitor):
         self.parameters = {}
         self.inputs = {}
         self.step = None
-        self.image = DEFAULT_DOCKER_IMAGE
+        self.image = None
 
     def visit_Assign(self, node):
         try:
@@ -100,4 +100,5 @@ def parse(source):
     parser = PrepareParser()
     parser.visit(tree)
     result = namedtuple("result", ["step", "parameters", "inputs", "image"])
+    print(result)
     return result(step=parser.step, parameters=parser.parameters, inputs=parser.inputs, image=parser.image)
