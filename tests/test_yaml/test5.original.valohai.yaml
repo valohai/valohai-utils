@@ -1,0 +1,15 @@
+- step:
+    name: mystep
+    image: python:3.7
+    command: python ./test.py {parameters}
+    parameters:
+    - name: seq_length
+      default: 14
+      multiple-separator: ','
+      optional: false
+      type: integer
+    - name: num_epochs
+      default: 200
+      multiple-separator: ','
+      optional: false
+      type: integer

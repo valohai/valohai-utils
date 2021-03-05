@@ -4,8 +4,9 @@ from typing import Any, Dict
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
 
-from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.parsing import parse
+
+from valohai.consts import DEFAULT_DOCKER_IMAGE
 
 ParameterDict = Dict[str, Any]
 InputDict = Dict[str, str]
@@ -38,7 +39,6 @@ def generate_step(
         config_step.inputs[key] = Input(
             name=key, default=value, keep_directories=keep_directories
         )
-
     return config_step
 
 
@@ -92,7 +92,7 @@ def parse_config_from_source(source_path: str, config_path: str):
         return generate_config(
             relative_source_path=relative_source_path,
             step=parsed.step,
-            image=DEFAULT_DOCKER_IMAGE,
+            image=DEFAULT_DOCKER_IMAGE if parsed.image is None else parsed.image,
             parameters=parsed.parameters,
             inputs=parsed.inputs,
         )

@@ -1,0 +1,15 @@
+- step:
+    name: mystep
+    image: valohai/keras
+    command: python ./test.py {parameters}
+    parameters:
+    - name: seq_length
+      default: 14
+      multiple-separator: ','
+      optional: false
+      type: integer
+    - name: num_epochs
+      default: 200
+      multiple-separator: ','
+      optional: false
+      type: integer

@@ -74,4 +74,8 @@ def _merge_step(original: Step, parsed: Step) -> Step:
         skip_missing_b=True,
     )
 
+    if(parsed.image is not None) :
+        result.image = parsed.image
+
+
     return result

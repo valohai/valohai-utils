@@ -10,11 +10,11 @@ from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import Parameter
 
 
-def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}):
-    """Define the name of the step and it's required inputs and parameters
+def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}, image: str = None):
+    """Define the name of the step and it's required inputs, parameters and Docker image
 
     Has dual purpose:
-    - Provide default values for inputs & parameters so the user code can be executed
+    - Provide default values for inputs, parameters and Docker image so the user code can be executed
     - Provide entry-point for the parser that generates/updates valohai.yaml integration file
 
     :param step: Step name for valohai.yaml
@@ -23,6 +23,7 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
 
     """
     global_state.step_name = step
+    global_state.image_name = image
 
     parser = argparse.ArgumentParser()
     for name, default_value in dict(default_inputs).items():
