@@ -4,7 +4,12 @@ import tempfile
 from typing import Union
 
 from valohai.internals.compression import open_archive
-from valohai.internals.files import expand_globs, get_canonical_extension, get_glob_pattern, set_file_read_only
+from valohai.internals.files import (
+    expand_globs,
+    get_canonical_extension,
+    get_glob_pattern,
+    set_file_read_only,
+)
 from valohai.paths import get_outputs_path
 
 

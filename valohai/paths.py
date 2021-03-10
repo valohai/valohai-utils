@@ -2,7 +2,12 @@ import os
 from typing import Optional
 
 from valohai.config import is_running_in_valohai
-from valohai.consts import VH_LOCAL_CONFIG_DIR, VH_LOCAL_INPUTS_DIR, VH_LOCAL_OUTPUTS_DIR, VH_LOCAL_REPOSITORY_DIR
+from valohai.consts import (
+    VH_LOCAL_CONFIG_DIR,
+    VH_LOCAL_INPUTS_DIR,
+    VH_LOCAL_OUTPUTS_DIR,
+    VH_LOCAL_REPOSITORY_DIR,
+)
 from valohai.internals import global_state
 from valohai.internals.guid import get_execution_guid
 
