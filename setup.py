@@ -1,14 +1,19 @@
-from setuptools import find_packages, setup
+import ast
+import os
+import re
 
-from valohai import __version__
+import setuptools
 
-setup(
+with open(os.path.join(os.path.dirname(__file__), 'valohai', '__init__.py')) as infp:
+    version = ast.literal_eval(re.search('__version__ = (.+?)$', infp.read(), re.M).group(1))
+
+setuptools.setup(
     name="valohai-utils",
-    version=__version__,
+    version=version,
     author="Valohai",
     author_email="hait@valohai.com",
     license="MIT",
-    packages=find_packages(include=("valohai*",)),
+    packages=setuptools.find_packages(include=("valohai*",)),
     install_requires=[
         "tqdm",
         "requests",
