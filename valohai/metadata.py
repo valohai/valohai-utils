@@ -22,7 +22,7 @@ class Logger:
 
         Example:
             for epoch in range(10):
-                with logger as valohai.logger():
+                with valohai.logger() as logger:
                     logger.log("epoch", epoch)
                     logger.log("accuracy", 0.54)
                     logger.log("loss", 0.123)
@@ -37,7 +37,7 @@ class Logger:
 
         Example 3:
             for epoch in range(10):
-                with logger as valohai.logger():
+                with valohai.logger() as logger:
                     logger.log("epoch", epoch)
                     logger.log(acc=0.54, loss=0.123)
 
