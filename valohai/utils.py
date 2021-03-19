@@ -20,6 +20,7 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
     :param step: Step name for valohai.yaml
     :param default_parameters: Dict of parameters and default values
     :param default_inputs: Dict of inputs with (list of) default URIs
+    :param image: Default docker image
 
     """
     global_state.step_name = step
