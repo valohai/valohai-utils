@@ -100,5 +100,4 @@ def parse(source):
     parser = PrepareParser()
     parser.visit(tree)
     result = namedtuple("result", ["step", "parameters", "inputs", "image"])
-    print(result)
     return result(step=parser.step, parameters=parser.parameters, inputs=parser.inputs, image=parser.image)
