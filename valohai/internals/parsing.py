@@ -2,6 +2,7 @@ import ast
 from collections import namedtuple
 from typing import List
 
+from valohai.consts import DEFAULT_DOCKER_IMAGE
 
 def is_module_function_call(node, module, function):
     try:
@@ -44,6 +45,7 @@ class PrepareParser(ast.NodeVisitor):
         self.parameters = {}
         self.inputs = {}
         self.step = None
+        self.image = None
 
     def visit_Assign(self, node):
         try:
@@ -88,11 +90,14 @@ class PrepareParser(ast.NodeVisitor):
                         raise NotImplementedError()
                 elif key.arg == "step":
                     self.step = ast.literal_eval(key.value)
+                elif key.arg == "image":
+                    self.image = ast.literal_eval(key.value)
+
 
 
 def parse(source):
     tree = ast.parse(source)
     parser = PrepareParser()
     parser.visit(tree)
-    result = namedtuple("result", ["step", "parameters", "inputs"])
-    return result(step=parser.step, parameters=parser.parameters, inputs=parser.inputs)
+    result = namedtuple("result", ["step", "parameters", "inputs", "image"])
+    return result(step=parser.step, parameters=parser.parameters, inputs=parser.inputs, image=parser.image)

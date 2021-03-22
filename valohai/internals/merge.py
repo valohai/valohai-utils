@@ -4,6 +4,7 @@ from valohai_yaml.objs import Config, Step
 from valohai_yaml.objs.base import Item
 from valohai_yaml.utils.merge import merge_dicts, merge_simple
 
+from valohai.consts import DEFAULT_DOCKER_IMAGE
 
 def python_to_yaml_merge_strategy(original: Item, parsed: Item) -> Item:
     """Merging strategy in the valohai-utils AST parser use-case
@@ -73,5 +74,8 @@ def _merge_step(original: Step, parsed: Step) -> Step:
         copier=copy.deepcopy,
         skip_missing_b=True,
     )
+
+    if parsed.image is not None and parsed.image != DEFAULT_DOCKER_IMAGE :
+        result.image = parsed.image
 
     return result
