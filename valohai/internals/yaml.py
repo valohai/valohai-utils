@@ -26,6 +26,11 @@ def generate_step(
         command="python %s {parameters}" % relative_source_path,
     )
 
+    config_step.command = [
+        "pip install -r requirements.txt", 
+        "python %s {parameters}" % relative_source_path
+    ]
+
     for key, value in parameters.items():
         config_step.parameters[key] = Parameter(
             name=key,
