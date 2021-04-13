@@ -5,14 +5,13 @@ import pytest
 from valohai_yaml import parse
 
 from tests.utils import read_yaml_test_data
-from valohai.internals.merge import python_to_yaml_merge_strategy
-from valohai.internals.yaml import parse_config_from_source
+from valohai.internals.pipeline import get_pipeline_from_source
 from valohai.yaml import config_to_yaml
 
 
 @pytest.mark.parametrize(
     "original_yaml, source_python, expected_yaml",
-    read_yaml_test_data("tests/test_yaml"),
+    read_yaml_test_data("tests/test_pipeline_yaml"),
 )
 def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_yaml):
     yaml_path = os.path.join(tmpdir, "valohai.yaml")
@@ -24,17 +23,14 @@ def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_
     shutil.copy(source_python, source_path)
 
     # Load original valohai.yaml
-    old_config = None
-    if os.path.isfile(yaml_path):
-        with open(yaml_path) as yaml_file:
-            old_config = parse(yaml_file)
+    with open(yaml_path) as yaml_file:
+        old_config = parse(yaml_file)
 
     # Parse new config from .py
-    new_config = parse_config_from_source(source_path, yaml_path)
+    new_config = get_pipeline_from_source(source_path, old_config)
 
     # Merge original and new
-    if old_config:
-        new_config = old_config.merge_with(new_config, python_to_yaml_merge_strategy)
+    new_config = old_config.merge_with(new_config)
 
     # Check against expected result
     with open(expected_yaml) as expected_yaml:

@@ -1,0 +1,57 @@
+- step:
+    name: Batch feature extraction
+    image: ubuntu:18.04
+    command:
+    - date > /valohai/outputs/aaa.md5
+    - date > /valohai/outputs/bbb.sha256
+- step:
+    name: Evaluate
+    image: ubuntu:18.04
+    command:
+    - ls -lar
+    inputs:
+    - name: models
+      optional: false
+- step:
+    name: Train model
+    image: ubuntu:18.04
+    command:
+    - find /valohai/inputs -type f -exec sha1sum '{}' ';' > /valohai/outputs/model.txt
+    parameters:
+    - name: learning_rate
+      default: 0.001
+      description: Initial learning rate
+      multiple-separator: ','
+      optional: false
+      pass-as: --learning_rate={v}
+      type: float
+    inputs:
+    - name: aaa
+      optional: false
+    - name: bbb
+      optional: false
+- pipeline:
+    name: mypipeline
+    edges:
+    - configuration: {}
+      source: batch_feature_extraction_1.output.a*
+      target: train_model_1.input.aaa
+    - configuration: {}
+      source: batch_feature_extraction_1.output.a*
+      target: train_model_1.input.bbb
+    - configuration: {}
+      source: train_model_1.output.*
+      target: evaluate_1.input.models
+    nodes:
+    - name: batch_feature_extraction_1
+      override: {}
+      step: Batch feature extraction
+      type: execution
+    - name: train_model_1
+      override: {}
+      step: Train model
+      type: task
+    - name: evaluate_1
+      override: {}
+      step: Evaluate
+      type: execution
