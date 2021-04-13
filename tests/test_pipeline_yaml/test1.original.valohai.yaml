@@ -1,0 +1,27 @@
+- step:
+    name: Batch feature extraction
+    image: ubuntu:18.04
+    command:
+      - date > /valohai/outputs/aaa.md5
+      - date > /valohai/outputs/bbb.sha256
+- step:
+    name: Train model
+    image: ubuntu:18.04
+    command:
+      - find /valohai/inputs -type f -exec sha1sum '{}' ';' > /valohai/outputs/model.txt
+    parameters:
+      - name: learning_rate
+        pass-as: --learning_rate={v}
+        description: Initial learning rate
+        type: float
+        default: 0.001
+    inputs:
+      - name: aaa
+      - name: bbb
+- step:
+    name: Evaluate
+    image: ubuntu:18.04
+    inputs:
+      - name: models
+    command:
+      - ls -lar
