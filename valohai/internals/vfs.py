@@ -41,7 +41,7 @@ class FileOnDisk(File):
         self.dir_entry = dir_entry
 
     def open(self):
-        return open(self.path, "rb")
+        return open(self.path, "rb")  # noqa: SIM115
 
     @property
     def name(self) -> str:
@@ -53,7 +53,7 @@ class FileInContainer(File):
 
     def open_concrete(self, delete=True):
         if self._concrete_path and os.path.isfile(self._concrete_path):
-            return open(self._concrete_path)
+            return open(self._concrete_path)  # noqa: SIM115
         tf = tempfile.NamedTemporaryFile(suffix=self.extension, delete=delete)
         self.extract(tf)
         tf.seek(0)
@@ -62,7 +62,7 @@ class FileInContainer(File):
 
     def extract(self, destination: Union[str, IO]):
         if isinstance(destination, str):
-            destination = open(destination, "wb")
+            destination = open(destination, "wb")  # noqa: SIM115
             should_close = True
         else:
             should_close = False

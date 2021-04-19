@@ -50,7 +50,7 @@ def prepare(
     _load_parameters(known_args, list(default_parameters.keys()))
 
     for unknown in unknown_args:
-        print(
+        print(  # noqa
             f"Warning: Unexpected command-line argument {unknown} found.",
             file=sys.stderr,
         )

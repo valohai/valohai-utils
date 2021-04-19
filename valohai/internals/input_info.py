@@ -84,3 +84,4 @@ def load_input_info(
                 input_info = InputInfo.from_json_data(input_info_data)
                 global_state.input_infos[name] = input_info
                 return global_state.input_infos[name]
+    return None

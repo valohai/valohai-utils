@@ -71,7 +71,7 @@ class Logger:
         """
         if self.partial_logs:
             # Start with \n, ensuring JSON prints on it's own line
-            print(f"\n{json.dumps(self.partial_logs, default=str)}")
+            print(f"\n{json.dumps(self.partial_logs, default=str)}")  # noqa
             self.partial_logs.clear()
 
     def _serialize(self, name, value):

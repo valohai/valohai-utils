@@ -28,7 +28,7 @@ def get_inputs_path(input_name: Optional[str] = None) -> str:
         )
 
     if input_name:
-        path = os.path.join(path, input_name)
+        return os.path.join(path, input_name)
     return path
 
 

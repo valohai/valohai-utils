@@ -73,14 +73,13 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             zinfo._compresslevel = compresslevel
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.
-        with self._lock:
-            with self.open(zinfo, mode="w") as dest:
-                if isinstance(data, str):
-                    dest.write(data.encode("utf-8"))
-                if isinstance(data, bytes):
-                    dest.write(data)
-                else:
-                    shutil.copyfileobj(data, dest, 524288)
+        with self._lock, self.open(zinfo, mode="w") as dest:
+            if isinstance(data, str):
+                dest.write(data.encode("utf-8"))
+            if isinstance(data, bytes):
+                dest.write(data)
+            else:
+                shutil.copyfileobj(data, dest, 524288)
         assert zinfo.file_size
 
     def put(self, archive_name, source: Union[str, IO]):
@@ -93,7 +92,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             # Python 3.6's `zipfile` does not have `.compresslevel`,
             # so let's just always use our `writestream` instead...
             if isinstance(source, str):
-                source = open(source, "rb")
+                source = open(source, "rb")  # noqa: SIM115
                 es.enter_context(source)
             self.writestream(
                 arcname=archive_name,
@@ -108,7 +107,7 @@ class TarArchive(BaseArchive, tarfile.TarFile):
         with contextlib.ExitStack() as es:
             if isinstance(source, str):
                 size = os.stat(source).st_size
-                stream = open(source, "rb")
+                stream = open(source, "rb")  # noqa: SIM115
                 es.callback(stream.close)
             else:
                 # for TAR files we need to know the size of the data beforehand :(
