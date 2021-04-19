@@ -14,7 +14,7 @@ from valohai.paths import get_outputs_path
 
 
 class Output:
-    def __init__(self, name: str = ""):
+    def __init__(self, name: str = "") -> None:
         self.name = str(name)
 
     def path(self, filename: str, makedirs: bool = True) -> str:
@@ -52,7 +52,7 @@ class Output:
 
         return path
 
-    def live_upload(self, filename: str):
+    def live_upload(self, filename: str) -> None:
         for file_path in glob.glob(get_glob_pattern(self.path(filename))):
             set_file_read_only(file_path)
 

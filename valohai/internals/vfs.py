@@ -3,9 +3,9 @@ import os
 import shutil
 import tempfile
 from contextlib import ExitStack
-from tarfile import TarFile, TarInfo
+from tarfile import ExFileObject, TarFile, TarInfo
 from typing import IO, Optional, Union
-from zipfile import ZipFile, ZipInfo
+from zipfile import ZipExtFile, ZipFile, ZipInfo
 
 
 class File:
@@ -14,7 +14,7 @@ class File:
     def open(self) -> io.BufferedReader:
         raise NotImplementedError("...")
 
-    def read(self):
+    def read(self) -> bytes:
         with self.open() as f:
             return f.read()
 
@@ -35,12 +35,14 @@ class FileOnDisk(File):
     path: str
     dir_entry: Optional[os.DirEntry]
 
-    def __init__(self, name, path, dir_entry=None):
+    def __init__(
+        self, name: str, path: str, dir_entry: Optional[os.DirEntry] = None
+    ) -> None:
         self._name = name
         self.path = path
         self.dir_entry = dir_entry
 
-    def open(self):
+    def open(self) -> io.BufferedReader:
         return open(self.path, "rb")  # noqa: SIM115
 
     @property
@@ -51,7 +53,7 @@ class FileOnDisk(File):
 class FileInContainer(File):
     _concrete_path: Optional[str] = None
 
-    def open_concrete(self, delete=True):
+    def open_concrete(self, delete: bool = True) -> IO[bytes]:
         if self._concrete_path and os.path.isfile(self._concrete_path):
             return open(self._concrete_path)  # noqa: SIM115
         tf = tempfile.NamedTemporaryFile(suffix=self.extension, delete=delete)
@@ -60,7 +62,7 @@ class FileInContainer(File):
         self._concrete_path = tf.name
         return tf
 
-    def extract(self, destination: Union[str, IO]):
+    def extract(self, destination: Union[str, IO]) -> None:
         if isinstance(destination, str):
             destination = open(destination, "wb")  # noqa: SIM115
             should_close = True
@@ -72,7 +74,7 @@ class FileInContainer(File):
             if should_close:
                 destination.close()
 
-    def _do_extract(self, destination: IO):
+    def _do_extract(self, destination: IO) -> None:
         # if a file has a better idea how to write itself into an IO, this is the place
         with self.open() as f:
             shutil.copyfileobj(f, destination)
@@ -82,12 +84,14 @@ class FileInZip(FileInContainer):
     zipfile: ZipFile
     zipinfo: ZipInfo
 
-    def __init__(self, parent_file, zipfile, zipinfo):
+    def __init__(
+        self, parent_file: FileOnDisk, zipfile: ZipFile, zipinfo: ZipInfo
+    ) -> None:
         self.parent_file = parent_file
         self.zipfile = zipfile
         self.zipinfo = zipinfo
 
-    def open(self):
+    def open(self) -> ZipExtFile:
         return self.zipfile.open(self.zipinfo, "r")
 
     @property
@@ -107,12 +111,14 @@ class FileInTar(FileInContainer):
     tarfile: TarFile
     tarinfo: TarInfo
 
-    def __init__(self, parent_file, tarfile, tarinfo):
+    def __init__(
+        self, parent_file: FileOnDisk, tarfile: TarFile, tarinfo: TarInfo
+    ) -> None:
         self.parent_file = parent_file
         self.tarfile = tarfile
         self.tarinfo = tarinfo
 
-    def open(self):
+    def open(self) -> ExFileObject:
         return self.tarfile.extractfile(self.tarinfo)
 
     @property
@@ -144,14 +150,14 @@ def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
 
 
 class VFS:
-    def __init__(self):
+    def __init__(self) -> None:
         self.files = []
         self.exit_stack = ExitStack()
 
-    def __enter__(self):
+    def __enter__(self) -> "VFS":
         return self
 
-    def __exit__(self, *exc_details):
+    def __exit__(self, *exc_details) -> None:
         self.exit_stack.__exit__(*exc_details)
 
 
@@ -160,8 +166,8 @@ def add_disk_file(
     name: str,
     path: str,
     dir_entry: Optional[os.DirEntry] = None,
-    process_archives=False,
-):
+    process_archives: bool = False,
+) -> None:
     disk_file = FileOnDisk(name=name, path=path, dir_entry=dir_entry)
     if process_archives:
         extension = disk_file.extension.lower()
@@ -174,7 +180,7 @@ def add_disk_file(
     vfs.files.append(disk_file)
 
 
-def find_files(vfs: VFS, root: str, *, process_archives: bool):
+def find_files(vfs: VFS, root: str, *, process_archives: bool) -> None:
     dent: os.DirEntry
 
     def _walk(path):

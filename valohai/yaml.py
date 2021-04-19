@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 import yaml
-from valohai_yaml.objs import Config
+from valohai_yaml.objs.config import Config
 
 # https://stackoverflow.com/questions/42518067/how-to-use-ordereddict-as-an-input-in-yaml-dump-or-yaml-safe-dump
 yaml.add_representer(
@@ -12,7 +12,7 @@ yaml.add_representer(
 )
 
 
-def config_to_yaml(config: Config):
+def config_to_yaml(config: Config) -> str:
     """Serialize Valohai Config to YAML
 
     :param config: valohai_yaml.objs.Config object

@@ -60,12 +60,18 @@ class BaseArchive:
 
 
 class ZipArchive(BaseArchive, zipfile.ZipFile):
-    def __init__(self, file, mode="r", *, compresslevel=1):
+    def __init__(self, file: str, mode: str = "r", *, compresslevel: int = 1) -> None:
         # Only Python 3.7+ has the compresslevel kwarg here
         super().__init__(file, mode, compression=zipfile.ZIP_STORED)
         self.compresslevel = compresslevel
 
-    def writestream(self, arcname, data, compress_type, compresslevel):
+    def writestream(
+        self,
+        arcname: str,
+        data: Union[str, bytes, IO[bytes]],
+        compress_type: int,
+        compresslevel: int,
+    ) -> None:
         # Like `writestr`, but also supports a stream (and doesn't support directories).
         zinfo = zipfile.ZipInfo(filename=arcname)
         zinfo.compress_type = compress_type
@@ -82,7 +88,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
                 shutil.copyfileobj(data, dest, 524288)
         assert zinfo.file_size
 
-    def put(self, archive_name, source: Union[str, IO]):
+    def put(self, archive_name: str, source: Union[str, IO]) -> None:
         compress_type = (
             zipfile.ZIP_DEFLATED
             if guess_compressible(archive_name)
@@ -103,7 +109,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
 
 
 class TarArchive(BaseArchive, tarfile.TarFile):
-    def put(self, archive_name, source: Union[str, IO]):
+    def put(self, archive_name: str, source: Union[str, IO]) -> None:
         with contextlib.ExitStack() as es:
             if isinstance(source, str):
                 size = os.stat(source).st_size
@@ -119,7 +125,7 @@ class TarArchive(BaseArchive, tarfile.TarFile):
             self.addfile(tarinfo, stream)
 
 
-def open_archive(path: str):
+def open_archive(path: str) -> BaseArchive:
     if path.endswith(".zip"):
         return ZipArchive(path, "w")
     elif path.endswith(".tar"):

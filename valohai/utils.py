@@ -16,7 +16,7 @@ def prepare(
     default_parameters: Optional[dict] = None,
     default_inputs: Optional[dict] = None,
     image: str = None,
-):
+) -> None:
     """Define the name of the step and it's required inputs, parameters and Docker image
 
     Has dual purpose:

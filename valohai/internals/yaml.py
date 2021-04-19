@@ -1,8 +1,10 @@
 import os
 from typing import Any, Dict
 
-from valohai_yaml.objs import Config, Parameter, Step
+from valohai_yaml.objs.config import Config
 from valohai_yaml.objs.input import Input, KeepDirectories
+from valohai_yaml.objs.parameter import Parameter
+from valohai_yaml.objs.step import Step
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.parsing import parse
@@ -17,7 +19,7 @@ def generate_step(
     step: str,
     image: str,
     parameters: ParameterDict,
-    inputs: InputDict
+    inputs: InputDict,
 ) -> Step:
     config_step = Step(
         name=step,
@@ -50,7 +52,7 @@ def generate_config(
     step: str,
     image: str,
     parameters: ParameterDict,
-    inputs: InputDict
+    inputs: InputDict,
 ) -> Config:
     step = generate_step(
         relative_source_path=relative_source_path,
@@ -85,7 +87,7 @@ def get_source_relative_path(source_path: str, config_path: str) -> str:
     return os.path.join(relative_source_dir, os.path.basename(source_path))
 
 
-def parse_config_from_source(source_path: str, config_path: str):
+def parse_config_from_source(source_path: str, config_path: str) -> Config:
     with open(source_path) as source_file:
         parsed = parse(source_file.read())
         if not parsed.step:

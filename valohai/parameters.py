@@ -1,10 +1,9 @@
 from valohai.internals import global_state
-
-from .internals.parameters import load_parameter, supported_types
+from valohai.internals.parameters import load_parameter, supported_types
 
 
 class Parameter:
-    def __init__(self, name: str, default: supported_types = None):
+    def __init__(self, name: str, default: supported_types = None) -> None:
         self.name = str(name)
         self.default = default
 

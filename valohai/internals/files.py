@@ -5,7 +5,7 @@ from stat import S_IREAD, S_IRGRP, S_IROTH
 from typing import Set, Union
 
 
-def set_file_read_only(path: str):
+def set_file_read_only(path: str) -> None:
     os.chmod(path, S_IREAD | S_IRGRP | S_IROTH)
 
 

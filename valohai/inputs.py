@@ -7,7 +7,7 @@ from .internals.input_info import load_input_info
 
 
 class Input:
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         self.name = str(name)
 
     def paths(

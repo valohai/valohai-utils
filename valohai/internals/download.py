@@ -3,7 +3,7 @@ import tempfile
 
 
 # TODO: This is close to valohai-local-run. Possibility to merge.
-def download_url(url, path, force_download=False):
+def download_url(url: str, path: str, force_download: bool = False) -> str:
     if not os.path.isfile(path) or force_download:
         try:
             import requests

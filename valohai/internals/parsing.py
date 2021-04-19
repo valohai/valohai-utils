@@ -3,7 +3,7 @@ from collections import namedtuple
 from typing import List
 
 
-def is_module_function_call(node, module, function):
+def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
     try:
         return node.func.attr == function and node.func.value.id == module
     except AttributeError:
@@ -39,25 +39,25 @@ class PrepareParser(ast.NodeVisitor):
         valohai.prepare(parameters=get_parameters())
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.assignments = {}
         self.parameters = {}
         self.inputs = {}
         self.step = None
         self.image = None
 
-    def visit_Assign(self, node):
+    def visit_Assign(self, node: ast.Assign) -> None:
         try:
             self.assignments[node.targets[0].id] = ast.literal_eval(node.value)
         except ValueError:
             # We don't care about assignments that can't be literal_eval():ed
             pass
 
-    def visit_Call(self, node):
+    def visit_Call(self, node: ast.Call) -> None:
         if is_module_function_call(node, "valohai", "prepare"):
             self.process_valohai_prepare_call(node)
 
-    def process_valohai_prepare_call(self, node):
+    def process_valohai_prepare_call(self, node: ast.Call) -> None:
         self.step = "default"
         if hasattr(node, "keywords"):
             for key in node.keywords:
@@ -70,7 +70,7 @@ class PrepareParser(ast.NodeVisitor):
                 elif key.arg == "image":
                     self.image = ast.literal_eval(key.value)
 
-    def process_default_inputs_arg(self, key):
+    def process_default_inputs_arg(self, key: ast.keyword) -> None:
         if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
             self.inputs = {
                 key: value if isinstance(value, List) else [value]
@@ -84,7 +84,7 @@ class PrepareParser(ast.NodeVisitor):
         else:
             raise NotImplementedError()
 
-    def process_default_parameters_arg(self, key):
+    def process_default_parameters_arg(self, key: ast.keyword) -> None:
         if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
             self.parameters = self.assignments[key.value.id]
         elif isinstance(key.value, ast.Dict):
