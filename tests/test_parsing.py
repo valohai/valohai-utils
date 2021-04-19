@@ -3,7 +3,6 @@ import pytest
 from valohai.internals.parsing import parse
 
 from .utils import get_parsing_tests
-from valohai.consts import DEFAULT_DOCKER_IMAGE
 
 
 def read_test_data():
@@ -20,7 +19,7 @@ def read_test_data():
             info["parameters"],
             info["inputs"],
             info["step"]["name"],
-            info["step"]["image"] if 'image' in info["step"] else None,
+            info["step"]["image"] if "image" in info["step"] else None,
         )
 
 

@@ -20,6 +20,6 @@ def test_live_upload(outputs_path):
         fp.write("hello")
     valohai.outputs().live_upload(path)
 
-    with pytest.raises(IOError):
-        # Test the file is set read-only
-        open(path, "w")
+    # Test the file is set read-only
+    with pytest.raises(IOError), open(path, "w"):
+        pass

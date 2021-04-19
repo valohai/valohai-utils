@@ -3,7 +3,7 @@ import sys
 
 import valohai
 from valohai.internals.download_type import DownloadType
-from valohai.internals.input_info import InputInfo, load_input_info
+from valohai.internals.input_info import load_input_info
 
 
 def test_prepare(tmpdir, monkeypatch):
@@ -50,11 +50,11 @@ def test_prepare(tmpdir, monkeypatch):
             step="test", default_parameters=parameters, default_inputs=inputs
         )
 
-    assert valohai.parameters("iambool").value == True
+    assert valohai.parameters("iambool").value is True
     assert valohai.parameters("mestringy").value == "asdf"
     assert valohai.parameters("integerboi").value == 123
     assert valohai.parameters("floaty").value == 0.0001
-    assert valohai.parameters("makemetrue").value == True
+    assert valohai.parameters("makemetrue").value is True
     assert valohai.parameters("makemeqwer").value == "qwer"
     assert valohai.parameters("makeme321").value == 321
     assert valohai.parameters("makemenegative").value < 0.0

@@ -1,20 +1,23 @@
 import json
+from typing import Any, Dict
 
 _supported_types = [int, float]
 
 
 class Logger:
-    def __init__(self):
+    partial_logs: Dict[str, Any]
+
+    def __init__(self) -> None:
         self.partial_logs = {}
 
-    def __enter__(self):
+    def __enter__(self) -> "Logger":
         self.partial_logs = {}
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type, value, traceback) -> None:
         self.flush()
 
-    def log(self, *args, **kwargs):
+    def log(self, *args, **kwargs) -> None:
         """Log a single name/value pair to be flushed into standard output later as batch.
 
         For a repeating iteration like a machine learning training loop, Valohai expects
@@ -54,7 +57,7 @@ class Logger:
         for key, value in kwargs.items():
             self._serialize(key, value)
 
-    def flush(self):
+    def flush(self) -> None:
         """Flush all the partial logs into standard as a batch.
 
         For a repeating iteration like a machine learning training loop, Valohai expects
@@ -71,10 +74,10 @@ class Logger:
         """
         if self.partial_logs:
             # Start with \n, ensuring JSON prints on it's own line
-            print(f'\n{json.dumps(self.partial_logs, default=str)}')
+            print(f"\n{json.dumps(self.partial_logs, default=str)}")  # noqa
             self.partial_logs.clear()
 
-    def _serialize(self, name, value):
+    def _serialize(self, name: str, value: Any) -> None:
         self.partial_logs.update({str(name): value})
 
 

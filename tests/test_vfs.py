@@ -3,7 +3,7 @@ import os
 import tarfile
 import zipfile
 
-from valohai.internals.vfs import find_files, VFS
+from valohai.internals.vfs import VFS, find_files
 
 
 def _add_binary_to_tar(tf: tarfile.TarFile, name: str, content: bytes):

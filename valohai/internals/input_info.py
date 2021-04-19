@@ -10,17 +10,27 @@ from valohai.paths import get_inputs_path
 
 
 class FileInfo:
-    def __init__(self, *, name, uri, path, size, checksums):
+    def __init__(
+        self,
+        *,
+        name: str,
+        uri: Optional[str],
+        path: Optional[str],
+        size: Optional[int],
+        checksums: Optional[dict],
+    ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
         self.checksums = checksums
         self.path = str(path) if path else None
         self.size = int(size) if size else None
 
-    def is_downloaded(self):
-        return self.path and os.path.isfile(self.path)
+    def is_downloaded(self) -> Optional[bool]:
+        return bool(self.path and os.path.isfile(self.path))
 
-    def download(self, path, force_download: bool = False):
+    def download(self, path: str, force_download: bool = False) -> None:
+        if not self.uri:
+            raise ValueError("Can not download file with no URI")
         self.path = download_url(
             self.uri, os.path.join(path, self.name), force_download
         )
@@ -31,13 +41,13 @@ class InputInfo:
     def __init__(self, files: Iterable[FileInfo]):
         self.files = list(files)
 
-    def is_downloaded(self):
+    def is_downloaded(self) -> bool:
         if not self.files:
             return False
 
         return all(f.is_downloaded() for f in self.files)
 
-    def download(self, path, force_download: bool = False):
+    def download(self, path: str, force_download: bool = False) -> None:
         for f in self.files:
             f.download(path, force_download)
 
@@ -84,3 +94,4 @@ def load_input_info(
                 input_info = InputInfo.from_json_data(input_info_data)
                 global_state.input_infos[name] = input_info
                 return global_state.input_infos[name]
+    return None

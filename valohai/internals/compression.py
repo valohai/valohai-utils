@@ -3,6 +3,7 @@ import io
 import os
 import shutil
 import tarfile
+import threading
 import zipfile
 from mimetypes import guess_type
 from typing import IO, Union
@@ -60,30 +61,37 @@ class BaseArchive:
 
 
 class ZipArchive(BaseArchive, zipfile.ZipFile):
-    def __init__(self, file, mode="r", *, compresslevel=1):
+    _lock: threading.RLock  # This is actually defined in ZipFile...
+
+    def __init__(self, file: str, mode: str = "r", *, compresslevel: int = 1) -> None:
         # Only Python 3.7+ has the compresslevel kwarg here
         super().__init__(file, mode, compression=zipfile.ZIP_STORED)
         self.compresslevel = compresslevel
 
-    def writestream(self, arcname, data, compress_type, compresslevel):
+    def writestream(
+        self,
+        arcname: str,
+        data: Union[str, bytes, IO[bytes]],
+        compress_type: int,
+        compresslevel: int,
+    ) -> None:
         # Like `writestr`, but also supports a stream (and doesn't support directories).
         zinfo = zipfile.ZipInfo(filename=arcname)
         zinfo.compress_type = compress_type
         if hasattr(zinfo, "_compresslevel"):  # only has an effect on Py3.7+
-            zinfo._compresslevel = compresslevel
+            zinfo._compresslevel = compresslevel  # type: ignore
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.
-        with self._lock:
-            with self.open(zinfo, mode="w") as dest:
-                if isinstance(data, str):
-                    dest.write(data.encode("utf-8"))
-                if isinstance(data, bytes):
-                    dest.write(data)
-                else:
-                    shutil.copyfileobj(data, dest, 524288)
+        with self._lock, self.open(zinfo, mode="w") as dest:
+            if isinstance(data, str):
+                dest.write(data.encode("utf-8"))
+            elif isinstance(data, bytes):
+                dest.write(data)
+            else:
+                shutil.copyfileobj(data, dest, 524288)
         assert zinfo.file_size
 
-    def put(self, archive_name, source: Union[str, IO]):
+    def put(self, archive_name: str, source: Union[str, IO]) -> None:
         compress_type = (
             zipfile.ZIP_DEFLATED
             if guess_compressible(archive_name)
@@ -93,7 +101,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             # Python 3.6's `zipfile` does not have `.compresslevel`,
             # so let's just always use our `writestream` instead...
             if isinstance(source, str):
-                source = open(source, "rb")
+                source = open(source, "rb")  # noqa: SIM115
                 es.enter_context(source)
             self.writestream(
                 arcname=archive_name,
@@ -104,11 +112,11 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
 
 
 class TarArchive(BaseArchive, tarfile.TarFile):
-    def put(self, archive_name, source: Union[str, IO]):
+    def put(self, archive_name: str, source: Union[str, IO]) -> None:
         with contextlib.ExitStack() as es:
             if isinstance(source, str):
                 size = os.stat(source).st_size
-                stream = open(source, "rb")
+                stream = open(source, "rb")  # noqa: SIM115
                 es.callback(stream.close)
             else:
                 # for TAR files we need to know the size of the data beforehand :(
@@ -120,12 +128,12 @@ class TarArchive(BaseArchive, tarfile.TarFile):
             self.addfile(tarinfo, stream)
 
 
-def open_archive(path: str):
+def open_archive(path: str) -> BaseArchive:
     if path.endswith(".zip"):
         return ZipArchive(path, "w")
     elif path.endswith(".tar"):
-        return TarArchive.open(path, "w")
+        return TarArchive.open(path, "w")  # type: ignore
     elif path.endswith(".tgz") or path.endswith(".tar.gz"):
-        return TarArchive.open(path, "w:gz")
+        return TarArchive.open(path, "w:gz")  # type: ignore
 
     raise ValueError(f"Unrecognized compression format for {path}")

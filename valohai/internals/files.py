@@ -5,18 +5,18 @@ from stat import S_IREAD, S_IRGRP, S_IROTH
 from typing import Set, Union
 
 
-def set_file_read_only(path: str):
+def set_file_read_only(path: str) -> None:
     os.chmod(path, S_IREAD | S_IRGRP | S_IROTH)
 
 
 def get_glob_pattern(source: str) -> str:
     # Path is transformed into glob supported pattern. "example" -> "example/*"
     if os.path.isdir(source):
-        source = f"{source.rstrip('/')}/*"
+        return f"{source.rstrip('/')}/*"
     return source
 
 
-def expand_globs(sources: Union[str, list], preprocessor: lambda s: s) -> Set[str]:
+def expand_globs(sources: Union[str, list], preprocessor=lambda s: s) -> Set[str]:
     if isinstance(sources, str):
         sources = [sources]
     files_to_compress = set()

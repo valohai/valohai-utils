@@ -2,7 +2,7 @@ import os
 import sys
 
 import valohai
-from valohai.internals.input_info import InputInfo, load_input_info
+from valohai.internals.input_info import load_input_info
 
 
 def test_download(tmpdir, monkeypatch, requests_mock):

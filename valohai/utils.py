@@ -2,7 +2,7 @@ import argparse
 import glob
 import os
 import sys
-from typing import List
+from typing import List, Optional
 
 from valohai.config import is_running_in_valohai
 from valohai.internals import global_state
@@ -10,7 +10,13 @@ from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import Parameter
 
 
-def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}, image: str = None):
+def prepare(
+    *,
+    step: str,
+    default_parameters: Optional[dict] = None,
+    default_inputs: Optional[dict] = None,
+    image: str = None,
+) -> None:
     """Define the name of the step and it's required inputs, parameters and Docker image
 
     Has dual purpose:
@@ -23,6 +29,10 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
     :param image: Default docker image
 
     """
+    if default_inputs is None:
+        default_inputs = {}
+    if default_parameters is None:
+        default_parameters = {}
     global_state.step_name = step
     global_state.image_name = image
 
@@ -40,7 +50,7 @@ def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = 
     _load_parameters(known_args, list(default_parameters.keys()))
 
     for unknown in unknown_args:
-        print(
+        print(  # noqa
             f"Warning: Unexpected command-line argument {unknown} found.",
             file=sys.stderr,
         )

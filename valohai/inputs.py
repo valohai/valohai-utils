@@ -7,7 +7,7 @@ from .internals.input_info import load_input_info
 
 
 class Input:
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         self.name = str(name)
 
     def paths(
@@ -15,7 +15,7 @@ class Input:
         default: Optional[Iterable[str]] = None,
         process_archives: bool = True,
         force_download: bool = False,
-    ) -> Optional[Iterable[str]]:
+    ) -> Iterator[str]:
         """Get paths to all files for a given input name.
 
         Returns a list of file system paths for an input.
@@ -28,18 +28,22 @@ class Input:
         :param force_download: Force re-download of file(s) even when they are cached already.
         :return: List of file system paths for all the files for this input.
         """
-        if default is None:
-            default = []
 
+        found_file = False
         for file in self._get_input_vfs(
             process_archives=process_archives, force_download=force_download
         ).files:
             if isinstance(file, vfs.FileInContainer):
                 yield file.open_concrete(delete=False).name
+                found_file = True
             elif isinstance(file, vfs.FileOnDisk):
                 yield file.path
+                found_file = True
 
-        return default
+        if not found_file:
+            if default is None:
+                default = []
+            yield from default
 
     def path(
         self,
@@ -116,6 +120,7 @@ class Input:
         )
         if ii:
             for file_info in ii.files:
+                assert file_info.path
                 vfs.add_disk_file(
                     v,
                     name=file_info.name,
