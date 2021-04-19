@@ -28,18 +28,22 @@ class Input:
         :param force_download: Force re-download of file(s) even when they are cached already.
         :return: List of file system paths for all the files for this input.
         """
-        if default is None:
-            default = []
 
+        found_file = False
         for file in self._get_input_vfs(
             process_archives=process_archives, force_download=force_download
         ).files:
             if isinstance(file, vfs.FileInContainer):
                 yield file.open_concrete(delete=False).name
+                found_file = True
             elif isinstance(file, vfs.FileOnDisk):
                 yield file.path
+                found_file = True
 
-        return default
+        if not found_file:
+            if default is None:
+                default = []
+            yield from default
 
     def path(
         self,
