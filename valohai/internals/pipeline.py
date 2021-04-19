@@ -1,3 +1,7 @@
+from importlib.abc import Loader
+from typing import Callable, Optional
+
+from papi import Papi
 from valohai_yaml.objs import Config
 
 
@@ -21,8 +25,12 @@ def get_pipeline_from_source(source_path: str, old_config: Config) -> Config:
         name="pipeline_source", location=source_path
     )
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    if not hasattr(module, "main"):
+    loader: Optional[Loader] = spec.loader  # type: ignore
+    if not loader:
+        raise ValueError("Spec has no loader")
+    loader.exec_module(module)
+    main: Optional[Callable[[Config], Papi]] = getattr(module, "main", None)
+    if not main:
         raise AttributeError(f"{source_path} is missing main() method!")
-    pipe = module.main(old_config)
+    pipe = main(old_config)
     return Config(pipelines=[pipe.to_yaml()])
