@@ -54,7 +54,7 @@ def generate_config(
     parameters: ParameterDict,
     inputs: InputDict,
 ) -> Config:
-    step = generate_step(
+    step_obj = generate_step(
         relative_source_path=relative_source_path,
         step=step,
         image=image,
@@ -62,7 +62,7 @@ def generate_config(
         inputs=inputs,
     )
     config = Config()
-    config.steps[step.name] = step
+    config.steps[step_obj.name] = step_obj
     return config
 
 

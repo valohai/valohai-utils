@@ -1,11 +1,11 @@
 import ast
 from collections import namedtuple
-from typing import List
+from typing import Any, Dict, List, Optional
 
 
 def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
     try:
-        return node.func.attr == function and node.func.value.id == module
+        return node.func.attr == function and node.func.value.id == module  # type: ignore
     except AttributeError:
         return False
 
@@ -39,6 +39,11 @@ class PrepareParser(ast.NodeVisitor):
         valohai.prepare(parameters=get_parameters())
     """
 
+    assignments: Dict[str, Any]  # TODO: embetter type
+    parameters: Dict[str, Any]  # TODO: embetter type
+    inputs: Dict[str, Any]  # TODO: embetter type
+    step: Optional[str]
+
     def __init__(self) -> None:
         self.assignments = {}
         self.parameters = {}
@@ -48,7 +53,7 @@ class PrepareParser(ast.NodeVisitor):
 
     def visit_Assign(self, node: ast.Assign) -> None:
         try:
-            self.assignments[node.targets[0].id] = ast.literal_eval(node.value)
+            self.assignments[node.targets[0].id] = ast.literal_eval(node.value)  # type: ignore
         except ValueError:
             # We don't care about assignments that can't be literal_eval():ed
             pass

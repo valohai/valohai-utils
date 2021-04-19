@@ -4,14 +4,20 @@ import re
 
 import setuptools
 
-with open(os.path.join(os.path.dirname(__file__), "valohai", "__init__.py")) as infp:
-    version = ast.literal_eval(
-        re.search("__version__ = (.+?)$", infp.read(), re.M).group(1)
-    )
+
+def get_version():
+    with open(
+        os.path.join(os.path.dirname(__file__), "valohai", "__init__.py")
+    ) as infp:
+        match = re.search("__version__ = (.+?)$", infp.read(), re.M)
+        if not match:
+            raise ValueError("No version could be found")
+        return ast.literal_eval(match.group(1))
+
 
 setuptools.setup(
     name="valohai-utils",
-    version=version,
+    version=get_version(),
     author="Valohai",
     author_email="hait@valohai.com",
     license="MIT",

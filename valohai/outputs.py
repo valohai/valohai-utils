@@ -88,7 +88,7 @@ class Output:
         tmp_file = tempfile.NamedTemporaryFile(
             dir=os.path.dirname(target_path), suffix=suffix, delete=False
         )
-        with tmp_file, open_archive(tmp_file.name) as archive:
+        with tmp_file, open_archive(tmp_file.name) as archive:  # type: ignore
             compressed_paths = []
             for file_path in files_to_compress:
                 arc_path = os.path.relpath(file_path, common_prefix)

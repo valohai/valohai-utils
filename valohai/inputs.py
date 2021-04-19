@@ -15,7 +15,7 @@ class Input:
         default: Optional[Iterable[str]] = None,
         process_archives: bool = True,
         force_download: bool = False,
-    ) -> Optional[Iterable[str]]:
+    ) -> Iterator[str]:
         """Get paths to all files for a given input name.
 
         Returns a list of file system paths for an input.
@@ -120,6 +120,7 @@ class Input:
         )
         if ii:
             for file_info in ii.files:
+                assert file_info.path
                 vfs.add_disk_file(
                     v,
                     name=file_info.name,

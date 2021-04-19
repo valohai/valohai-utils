@@ -1,10 +1,12 @@
 import json
-from typing import Any
+from typing import Any, Dict
 
 _supported_types = [int, float]
 
 
 class Logger:
+    partial_logs: Dict[str, Any]
+
     def __init__(self) -> None:
         self.partial_logs = {}
 

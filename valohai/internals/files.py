@@ -16,7 +16,7 @@ def get_glob_pattern(source: str) -> str:
     return source
 
 
-def expand_globs(sources: Union[str, list], preprocessor: lambda s: s) -> Set[str]:
+def expand_globs(sources: Union[str, list], preprocessor=lambda s: s) -> Set[str]:
     if isinstance(sources, str):
         sources = [sources]
     files_to_compress = set()

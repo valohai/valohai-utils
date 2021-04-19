@@ -26,9 +26,11 @@ class FileInfo:
         self.size = int(size) if size else None
 
     def is_downloaded(self) -> Optional[bool]:
-        return self.path and os.path.isfile(self.path)
+        return bool(self.path and os.path.isfile(self.path))
 
     def download(self, path: str, force_download: bool = False) -> None:
+        if not self.uri:
+            raise ValueError("Can not download file with no URI")
         self.path = download_url(
             self.uri, os.path.join(path, self.name), force_download
         )

@@ -1,17 +1,16 @@
-import io
 import os
 import shutil
 import tempfile
 from contextlib import ExitStack
-from tarfile import ExFileObject, TarFile, TarInfo
-from typing import IO, Optional, Union
-from zipfile import ZipExtFile, ZipFile, ZipInfo
+from tarfile import TarFile, TarInfo
+from typing import IO, List, Optional, Union
+from zipfile import ZipFile, ZipInfo
 
 
 class File:
     parent_file: Optional["File"] = None
 
-    def open(self) -> io.BufferedReader:
+    def open(self) -> IO[bytes]:
         raise NotImplementedError("...")
 
     def read(self) -> bytes:
@@ -42,7 +41,7 @@ class FileOnDisk(File):
         self.path = path
         self.dir_entry = dir_entry
 
-    def open(self) -> io.BufferedReader:
+    def open(self) -> IO[bytes]:
         return open(self.path, "rb")  # noqa: SIM115
 
     @property
@@ -55,7 +54,7 @@ class FileInContainer(File):
 
     def open_concrete(self, delete: bool = True) -> IO[bytes]:
         if self._concrete_path and os.path.isfile(self._concrete_path):
-            return open(self._concrete_path)  # noqa: SIM115
+            return open(self._concrete_path, "rb")  # noqa: SIM115
         tf = tempfile.NamedTemporaryFile(suffix=self.extension, delete=delete)
         self.extract(tf)
         tf.seek(0)
@@ -81,6 +80,7 @@ class FileInContainer(File):
 
 
 class FileInZip(FileInContainer):
+    parent_file: FileOnDisk
     zipfile: ZipFile
     zipinfo: ZipInfo
 
@@ -91,7 +91,7 @@ class FileInZip(FileInContainer):
         self.zipfile = zipfile
         self.zipinfo = zipinfo
 
-    def open(self) -> ZipExtFile:
+    def open(self) -> IO[bytes]:
         return self.zipfile.open(self.zipinfo, "r")
 
     @property
@@ -108,6 +108,7 @@ class FileInZip(FileInContainer):
 
 
 class FileInTar(FileInContainer):
+    parent_file: FileOnDisk
     tarfile: TarFile
     tarinfo: TarInfo
 
@@ -118,8 +119,11 @@ class FileInTar(FileInContainer):
         self.tarfile = tarfile
         self.tarinfo = tarinfo
 
-    def open(self) -> ExFileObject:
-        return self.tarfile.extractfile(self.tarinfo)
+    def open(self) -> IO[bytes]:
+        fp = self.tarfile.extractfile(self.tarinfo)
+        if not fp:
+            raise ValueError(f"extractfile() returned None for {self.tarinfo}")
+        return fp
 
     @property
     def name(self) -> str:
@@ -127,7 +131,8 @@ class FileInTar(FileInContainer):
 
 
 def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
-    df.zipfile = zf = ZipFile(df.path)
+    zf = ZipFile(df.path)
+    df.zipfile = zf  # type: ignore
     vr.exit_stack.callback(zf.close)
     vr.files.extend(
         [
@@ -138,7 +143,8 @@ def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
 
 
 def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
-    df.tarfile = tf = TarFile.open(df.path)
+    tf = TarFile.open(df.path)
+    df.tarfile = tf  # type: ignore
     vr.exit_stack.callback(tf.close)
     vr.files.extend(
         [
@@ -150,6 +156,8 @@ def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
 
 
 class VFS:
+    files: List[File]
+
     def __init__(self) -> None:
         self.files = []
         self.exit_stack = ExitStack()

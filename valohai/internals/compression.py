@@ -3,6 +3,7 @@ import io
 import os
 import shutil
 import tarfile
+import threading
 import zipfile
 from mimetypes import guess_type
 from typing import IO, Union
@@ -60,6 +61,8 @@ class BaseArchive:
 
 
 class ZipArchive(BaseArchive, zipfile.ZipFile):
+    _lock: threading.RLock  # This is actually defined in ZipFile...
+
     def __init__(self, file: str, mode: str = "r", *, compresslevel: int = 1) -> None:
         # Only Python 3.7+ has the compresslevel kwarg here
         super().__init__(file, mode, compression=zipfile.ZIP_STORED)
@@ -76,13 +79,13 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
         zinfo = zipfile.ZipInfo(filename=arcname)
         zinfo.compress_type = compress_type
         if hasattr(zinfo, "_compresslevel"):  # only has an effect on Py3.7+
-            zinfo._compresslevel = compresslevel
+            zinfo._compresslevel = compresslevel  # type: ignore
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.
         with self._lock, self.open(zinfo, mode="w") as dest:
             if isinstance(data, str):
                 dest.write(data.encode("utf-8"))
-            if isinstance(data, bytes):
+            elif isinstance(data, bytes):
                 dest.write(data)
             else:
                 shutil.copyfileobj(data, dest, 524288)
@@ -129,8 +132,8 @@ def open_archive(path: str) -> BaseArchive:
     if path.endswith(".zip"):
         return ZipArchive(path, "w")
     elif path.endswith(".tar"):
-        return TarArchive.open(path, "w")
+        return TarArchive.open(path, "w")  # type: ignore
     elif path.endswith(".tgz") or path.endswith(".tar.gz"):
-        return TarArchive.open(path, "w:gz")
+        return TarArchive.open(path, "w:gz")  # type: ignore
 
     raise ValueError(f"Unrecognized compression format for {path}")
