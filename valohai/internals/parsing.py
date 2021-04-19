@@ -2,7 +2,6 @@ import ast
 from collections import namedtuple
 from typing import List
 
-from valohai.consts import DEFAULT_DOCKER_IMAGE
 
 def is_module_function_call(node, module, function):
     try:
@@ -63,36 +62,35 @@ class PrepareParser(ast.NodeVisitor):
         if hasattr(node, "keywords"):
             for key in node.keywords:
                 if key.arg == "default_parameters":
-                    if (
-                        isinstance(key.value, ast.Name)
-                        and key.value.id in self.assignments
-                    ):
-                        self.parameters = self.assignments[key.value.id]
-                    elif isinstance(key.value, ast.Dict):
-                        self.parameters = ast.literal_eval(key.value)
-                    else:
-                        raise NotImplementedError()
+                    self.process_default_parameters_arg(key)
                 elif key.arg == "default_inputs":
-                    if (
-                        isinstance(key.value, ast.Name)
-                        and key.value.id in self.assignments
-                    ):
-                        self.inputs = {
-                            key: value if isinstance(value, List) else [value]
-                            for key, value in self.assignments[key.value.id].items()
-                        }
-                    elif isinstance(key.value, ast.Dict):
-                        self.inputs = {
-                            key: value if isinstance(value, List) else [value]
-                            for key, value in ast.literal_eval(key.value).items()
-                        }
-                    else:
-                        raise NotImplementedError()
+                    self.process_default_inputs_arg(key)
                 elif key.arg == "step":
                     self.step = ast.literal_eval(key.value)
                 elif key.arg == "image":
                     self.image = ast.literal_eval(key.value)
 
+    def process_default_inputs_arg(self, key):
+        if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
+            self.inputs = {
+                key: value if isinstance(value, List) else [value]
+                for key, value in self.assignments[key.value.id].items()
+            }
+        elif isinstance(key.value, ast.Dict):
+            self.inputs = {
+                key: value if isinstance(value, List) else [value]
+                for key, value in ast.literal_eval(key.value).items()
+            }
+        else:
+            raise NotImplementedError()
+
+    def process_default_parameters_arg(self, key):
+        if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
+            self.parameters = self.assignments[key.value.id]
+        elif isinstance(key.value, ast.Dict):
+            self.parameters = ast.literal_eval(key.value)
+        else:
+            raise NotImplementedError()
 
 
 def parse(source):
@@ -100,4 +98,9 @@ def parse(source):
     parser = PrepareParser()
     parser.visit(tree)
     result = namedtuple("result", ["step", "parameters", "inputs", "image"])
-    return result(step=parser.step, parameters=parser.parameters, inputs=parser.inputs, image=parser.image)
+    return result(
+        step=parser.step,
+        parameters=parser.parameters,
+        inputs=parser.inputs,
+        image=parser.image,
+    )

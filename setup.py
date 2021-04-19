@@ -4,9 +4,9 @@ import re
 
 import setuptools
 
-with open(os.path.join(os.path.dirname(__file__), 'valohai', '__init__.py')) as infp:
+with open(os.path.join(os.path.dirname(__file__), "valohai", "__init__.py")) as infp:
     version = ast.literal_eval(
-        re.search('__version__ = (.+?)$', infp.read(), re.M).group(1)
+        re.search("__version__ = (.+?)$", infp.read(), re.M).group(1)
     )
 
 setuptools.setup(
@@ -21,5 +21,5 @@ setuptools.setup(
         "requests",
         "valohai-yaml>=0.13.0",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
 )

@@ -4,9 +4,8 @@ from typing import Any, Dict
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
 
-from valohai.internals.parsing import parse
-
 from valohai.consts import DEFAULT_DOCKER_IMAGE
+from valohai.internals.parsing import parse
 
 ParameterDict = Dict[str, Any]
 InputDict = Dict[str, str]
@@ -25,7 +24,7 @@ def generate_step(
         image=image,
         command=[
             "pip install -r requirements.txt",
-            "python %s {parameters}" % relative_source_path
+            "python %s {parameters}" % relative_source_path,
         ],
     )
 

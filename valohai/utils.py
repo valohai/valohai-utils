@@ -10,7 +10,13 @@ from valohai.internals.input_info import FileInfo, InputInfo
 from valohai.parameters import Parameter
 
 
-def prepare(*, step: str, default_parameters: dict = {}, default_inputs: dict = {}, image: str = None):
+def prepare(
+    *,
+    step: str,
+    default_parameters: dict = {},
+    default_inputs: dict = {},
+    image: str = None,
+):
     """Define the name of the step and it's required inputs, parameters and Docker image
 
     Has dual purpose:
