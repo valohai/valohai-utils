@@ -54,7 +54,7 @@ class PrepareParser(ast.NodeVisitor):
     def visit_Assign(self, node: ast.Assign) -> None:
         try:
             self.assignments[node.targets[0].id] = ast.literal_eval(node.value)  # type: ignore
-        except ValueError:
+        except (ValueError, AttributeError):
             # We don't care about assignments that can't be literal_eval():ed
             pass
 
