@@ -22,6 +22,11 @@ setuptools.setup(
     author_email="hait@valohai.com",
     license="MIT",
     packages=setuptools.find_packages(include=("valohai*",)),
-    install_requires=["tqdm", "requests", "valohai-yaml>=0.13.0", "valohai-papi>=0.1.1"],
+    install_requires=[
+        "tqdm",
+        "requests",
+        "valohai-yaml>=0.13.0",
+        "valohai-papi>=0.1.1",
+    ],
     python_requires=">=3.6",
 )
