@@ -121,7 +121,7 @@ typing-extensions==3.7.4.3
     # via
     #   black
     #   mypy
-urllib3==1.26.4
+urllib3==1.26.5
     # via requests
 valohai-yaml==0.14.1
     # via -r requirements-dev.in
