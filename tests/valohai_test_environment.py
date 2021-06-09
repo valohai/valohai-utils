@@ -31,6 +31,8 @@ class ValohaiTestEnvironment:
         with zipfile.ZipFile(zip_path, "w") as zf:
             zf.writestr("1hello.txt", b"Hernekeitto")
             zf.writestr("2world.txt", b"Viina")
+            zf.writestr("blerp/3katt.txt", b"Johannes")
+            zf.writestr("blerp/blonk/4blöf.txt", b"Teline")
 
     def get_inputs(self):
         return {

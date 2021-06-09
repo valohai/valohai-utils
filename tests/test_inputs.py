@@ -21,8 +21,14 @@ def test_get_input_paths(use_test_config_dir):
 
 def test_get_input_streams(use_test_config_dir):
     assert valohai.inputs("single_image").stream().read(10000)
-    assert len(list(valohai.inputs("input_with_archive").streams())) == 2
+    assert len(list(valohai.inputs("input_with_archive").streams())) == 4
     for stream in valohai.inputs("input_with_archive").streams():
         assert stream.read(10000)
     assert valohai.inputs("single_image").stream().read()
     assert not valohai.inputs("nonono").stream()
+
+
+def test_zip_no_mangling(use_test_config_dir):
+    paths = set(valohai.inputs("input_with_archive").paths())
+    for suffix in ("1hello.txt", "2world.txt", "blerp/3katt.txt", "blerp/blonk/4blöf.txt"):
+        assert any(p.endswith(suffix) for p in paths)

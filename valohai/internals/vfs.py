@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import tempfile
@@ -48,6 +49,11 @@ class FileOnDisk(File):
     def name(self) -> str:
         return self._name
 
+    @property
+    def container_temp_root(self) -> str:
+        path_hash = hashlib.sha1(self.path.encode("utf-8")).hexdigest()
+        return os.path.join(tempfile.gettempdir(), f"vh-vfs-{path_hash}")
+
 
 class FileInContainer(File):
     parent_file: FileOnDisk
@@ -56,11 +62,14 @@ class FileInContainer(File):
     def open_concrete(self, delete: bool = True) -> IO[bytes]:
         if self._concrete_path and os.path.isfile(self._concrete_path):
             return open(self._concrete_path, "rb")  # noqa: SIM115
-        tf = tempfile.NamedTemporaryFile(suffix=self.extension, delete=delete)
+
+        file_path = os.path.join(self.parent_file.container_temp_root, self.path_in_container)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        tf = open(file_path, "wb")
         self.extract(tf)
         tf.seek(0)
         self._concrete_path = tf.name
-        return tf
+        return tempfile._TemporaryFileWrapper(tf, tf.name, delete=delete)  # type: ignore
 
     def extract(self, destination: Union[str, IO]) -> None:
         if isinstance(destination, str):
