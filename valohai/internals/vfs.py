@@ -50,6 +50,7 @@ class FileOnDisk(File):
 
 
 class FileInContainer(File):
+    parent_file: FileOnDisk
     _concrete_path: Optional[str] = None
 
     def open_concrete(self, delete: bool = True) -> IO[bytes]:
@@ -84,7 +85,6 @@ class FileInContainer(File):
 
 
 class FileInZip(FileInContainer):
-    parent_file: FileOnDisk
     zipfile: ZipFile
     zipinfo: ZipInfo
 
@@ -116,7 +116,6 @@ class FileInZip(FileInContainer):
 
 
 class FileInTar(FileInContainer):
-    parent_file: FileOnDisk
     tarfile: TarFile
     tarinfo: TarInfo
 
