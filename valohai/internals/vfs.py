@@ -78,6 +78,10 @@ class FileInContainer(File):
         with self.open() as f:
             shutil.copyfileobj(f, destination)
 
+    @property
+    def path_in_container(self) -> str:
+        raise NotImplementedError('FileInContainer subclass must implement path_in_container')
+
 
 class FileInZip(FileInContainer):
     parent_file: FileOnDisk
@@ -97,14 +101,18 @@ class FileInZip(FileInContainer):
     @property
     def name(self) -> str:
         return os.path.join(
-            os.path.dirname(self.parent_file.name), self.zipinfo.filename
+            os.path.dirname(self.parent_file.name), self.path_in_container
         )
 
     @property
     def path(self) -> str:
         return os.path.join(
-            os.path.dirname(self.parent_file.path), self.zipinfo.filename
+            os.path.dirname(self.parent_file.path), self.path_in_container
         )
+
+    @property
+    def path_in_container(self) -> str:
+        return self.zipinfo.filename
 
 
 class FileInTar(FileInContainer):
@@ -127,7 +135,11 @@ class FileInTar(FileInContainer):
 
     @property
     def name(self) -> str:
-        return os.path.join(os.path.dirname(self.parent_file.name), self.tarinfo.path)
+        return os.path.join(os.path.dirname(self.parent_file.name), self.path_in_container)
+
+    @property
+    def path_in_container(self) -> str:
+        return self.tarinfo.path
 
 
 def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
