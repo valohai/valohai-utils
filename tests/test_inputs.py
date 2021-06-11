@@ -16,7 +16,7 @@ def test_get_input_paths(use_test_config_dir):
     assert os.path.exists(valohai.inputs("input_with_archive").path())
     for path in valohai.inputs("input_with_archive").paths():
         assert os.path.exists(path)
-    assert len(list(valohai.inputs("input_with_archive").paths())) == 2
+    assert len(list(valohai.inputs("input_with_archive").paths())) == 4
 
 
 def test_get_input_streams(use_test_config_dir):
@@ -30,5 +30,10 @@ def test_get_input_streams(use_test_config_dir):
 
 def test_zip_no_mangling(use_test_config_dir):
     paths = set(valohai.inputs("input_with_archive").paths())
-    for suffix in ("1hello.txt", "2world.txt", "blerp/3katt.txt", "blerp/blonk/4blöf.txt"):
+    for suffix in (
+        "1hello.txt",
+        "2world.txt",
+        "blerp/3katt.txt",
+        "blerp/blonk/4blöf.txt",
+    ):
         assert any(p.endswith(suffix) for p in paths)

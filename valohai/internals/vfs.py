@@ -63,9 +63,11 @@ class FileInContainer(File):
         if self._concrete_path and os.path.isfile(self._concrete_path):
             return open(self._concrete_path, "rb")  # noqa: SIM115
 
-        file_path = os.path.join(self.parent_file.container_temp_root, self.path_in_container)
+        file_path = os.path.join(
+            self.parent_file.container_temp_root, self.path_in_container
+        )
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        tf = open(file_path, "wb")
+        tf = open(file_path, "wb")  # noqa: SIM115
         self.extract(tf)
         tf.seek(0)
         self._concrete_path = tf.name
@@ -90,7 +92,9 @@ class FileInContainer(File):
 
     @property
     def path_in_container(self) -> str:
-        raise NotImplementedError('FileInContainer subclass must implement path_in_container')
+        raise NotImplementedError(
+            "FileInContainer subclass must implement path_in_container"
+        )
 
 
 class FileInZip(FileInContainer):
@@ -143,7 +147,9 @@ class FileInTar(FileInContainer):
 
     @property
     def name(self) -> str:
-        return os.path.join(os.path.dirname(self.parent_file.name), self.path_in_container)
+        return os.path.join(
+            os.path.dirname(self.parent_file.name), self.path_in_container
+        )
 
     @property
     def path_in_container(self) -> str:
