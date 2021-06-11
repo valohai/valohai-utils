@@ -164,6 +164,7 @@ def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
         [
             FileInZip(parent_file=df, zipfile=zf, zipinfo=zinfo)
             for zinfo in zf.infolist()
+            if not zinfo.is_dir()
         ]
     )
 
