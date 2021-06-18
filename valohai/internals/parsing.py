@@ -1,6 +1,6 @@
 import ast
 from collections import namedtuple
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 
 def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
@@ -77,15 +77,9 @@ class PrepareParser(ast.NodeVisitor):
 
     def process_default_inputs_arg(self, key: ast.keyword) -> None:
         if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
-            self.inputs = {
-                key: value if isinstance(value, List) else [value]
-                for key, value in self.assignments[key.value.id].items()
-            }
+            self.inputs = self.assignments[key.value.id]
         elif isinstance(key.value, ast.Dict):
-            self.inputs = {
-                key: value if isinstance(value, List) else [value]
-                for key, value in ast.literal_eval(key.value).items()
-            }
+            self.inputs = ast.literal_eval(key.value)
         else:
             raise NotImplementedError()
 

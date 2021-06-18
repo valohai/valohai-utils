@@ -2,7 +2,7 @@ import argparse
 import glob
 import os
 import sys
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from valohai.config import is_running_in_valohai
 from valohai.internals import global_state
@@ -37,12 +37,12 @@ def prepare(
     global_state.image_name = image
 
     parser = argparse.ArgumentParser()
-    for name, default_value in dict(default_inputs).items():
-        parser.add_argument(f"--{name}", type=str, nargs="+", default=default_value)
-    for name, default_value in dict(default_parameters).items():
-        parser.add_argument(
-            f"--{name}", type=type(default_value), default=default_value
-        )
+    for name, value in dict(default_inputs).items():
+        value = get_default_value(name, value)
+        parser.add_argument(f"--{name}", type=str, nargs="+", default=value)
+    for name, value in dict(default_parameters).items():
+        value = get_default_value(name, value)
+        parser.add_argument(f"--{name}", type=type(value), default=value)
     known_args, unknown_args = parser.parse_known_args()
 
     if not is_running_in_valohai():
@@ -54,6 +54,17 @@ def prepare(
             f"Warning: Unexpected command-line argument {unknown} found.",
             file=sys.stderr,
         )
+
+
+def get_default_value(
+    name: str, value: Union[float, int, str, bool, dict]
+) -> Union[float, int, str, bool]:
+    if isinstance(value, dict):
+        if "default" in value:
+            return value["default"]
+        else:
+            raise ValueError(f"No default value defined for {name}")
+    return value
 
 
 def _load_inputs(args: argparse.Namespace, names: List[str]):

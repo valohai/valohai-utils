@@ -1,10 +1,8 @@
 import os
 from typing import Any, Dict, List
 
-from valohai_yaml.objs.config import Config
+from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
-from valohai_yaml.objs.parameter import Parameter
-from valohai_yaml.objs.step import Step
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.notebooks import (
@@ -15,7 +13,7 @@ from valohai.internals.notebooks import (
 from valohai.internals.parsing import parse
 
 ParameterDict = Dict[str, Any]
-InputDict = Dict[str, List[str]]
+InputDict = Dict[str, Any]
 
 
 def generate_step(
@@ -33,24 +31,49 @@ def generate_step(
     )
 
     for key, value in parameters.items():
-        config_step.parameters[key] = Parameter(
-            name=key,
-            type=get_parameter_type_name(key, value),
-            default=value,
-        )
+        config_step.parameters[key] = parse_parameter(key, value)
 
     for key, value in inputs.items():
-        has_wildcards = any("*" in uri for uri in value)
-        keep_directories = KeepDirectories.SUFFIX.value if has_wildcards else False
-        empty_default = not value or len(value) == 0 or len(value) == 1 and not value[0]
+        config_step.inputs[key] = parse_input(key, value)
 
-        config_step.inputs[key] = Input(
-            name=key,
-            default=None if empty_default else value,
-            keep_directories=keep_directories,
-            optional=empty_default,
-        )
     return config_step
+
+
+def parse_parameter(key, value):
+    if isinstance(value, dict):
+        value["name"] = key
+        if "default" in value and "type" not in value:
+            value["type"] = get_parameter_type_name(key, value["default"])
+        return Parameter.parse(value)
+
+    return Parameter(
+        name=key,
+        type=get_parameter_type_name(key, value),
+        default=value,
+    )
+
+
+def parse_input(key, value):
+    if isinstance(value, dict):
+        value["name"] = key
+        return Input.parse(value)
+
+    has_wildcards = any(
+        "*" in uri for uri in ([value] if isinstance(value, str) else value)
+    )
+    keep_directories = KeepDirectories.SUFFIX.value if has_wildcards else False
+    empty_default = (
+        not value
+        or isinstance(value, List)
+        and (len(value) == 0 or len(value) == 1 and not value[0])
+    )
+
+    return Input(
+        name=key,
+        default=None if empty_default else value,
+        keep_directories=keep_directories,
+        optional=empty_default,
+    )
 
 
 def generate_config(
@@ -75,10 +98,8 @@ def generate_config(
 
 def get_source_relative_path(source_path: str, config_path: str) -> str:
     """Return path of a source file relative to config file path
-
     :param source_path: Path of the Python source code file
     :param config_path: Path of the valohai.yaml config file
-
     :return: Path of the source code file relative to the config file
     Example:
         config_file_path: /herpderp/valohai.yaml
