@@ -40,8 +40,13 @@ def generate_step(
     for key, value in inputs.items():
         has_wildcards = any("*" in uri for uri in value)
         keep_directories = KeepDirectories.SUFFIX.value if has_wildcards else False
+        empty_default = not value or len(value) == 0 or len(value) == 1 and not value[0]
+
         config_step.inputs[key] = Input(
-            name=key, default=value, keep_directories=keep_directories
+            name=key,
+            default=None if empty_default else value,
+            keep_directories=keep_directories,
+            optional=empty_default,
         )
     return config_step
 
