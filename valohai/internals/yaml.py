@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from valohai_yaml.objs.config import Config
 from valohai_yaml.objs.input import Input, KeepDirectories
@@ -10,7 +10,7 @@ from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.parsing import parse
 
 ParameterDict = Dict[str, Any]
-InputDict = Dict[str, str]
+InputDict = Dict[str, List[str]]
 
 
 def generate_step(
