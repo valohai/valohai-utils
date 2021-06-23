@@ -31,7 +31,9 @@ class Input:
         :return: List of file system paths for all the files for this input.
         """
 
-        fs = self._get_input_vfs(process_archives=process_archives, force_download=force_download)
+        fs = self._get_input_vfs(
+            process_archives=process_archives, force_download=force_download
+        )
         files = fs.filter(path_filter) if path_filter else fs.files
 
         found_file = False
@@ -72,7 +74,7 @@ class Input:
         input_paths = self.paths(
             path_filter=path_filter,
             process_archives=process_archives,
-            force_download=force_download
+            force_download=force_download,
         )
         return next(input_paths, default)
 
@@ -80,7 +82,7 @@ class Input:
         self,
         path_filter: Optional[str] = None,
         process_archives: bool = True,
-        force_download: bool = False
+        force_download: bool = False,
     ) -> Iterator[IO]:
         """Get file streams to all files for a given input name.
 
@@ -96,7 +98,9 @@ class Input:
         :return: Iterable for all the IO streams of files for this input.
         """
 
-        fs = self._get_input_vfs(process_archives=process_archives, force_download=force_download)
+        fs = self._get_input_vfs(
+            process_archives=process_archives, force_download=force_download
+        )
         files = fs.filter(path_filter) if path_filter else fs.files
 
         for file in files:
@@ -106,7 +110,7 @@ class Input:
         self,
         path_filter: Optional[str] = None,
         process_archives: bool = True,
-        force_download: bool = False
+        force_download: bool = False,
     ) -> Optional[IO]:
         """Get a stream for to a file for a given input name.
 
@@ -125,7 +129,7 @@ class Input:
         streams = self.streams(
             path_filter=path_filter,
             process_archives=process_archives,
-            force_download=force_download
+            force_download=force_download,
         )
         return next(streams, None)
 
