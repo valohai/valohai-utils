@@ -24,6 +24,14 @@ class ValohaiTestEnvironment:
         )
         (self.config_path / "inputs.json").write_text(json.dumps(self.get_inputs()))
 
+        sub_dir = os.path.join(self.inputs_path, "images_in_subdirs")
+        os.makedirs(os.path.join(sub_dir, "hello", "label1", "hello"))
+        os.makedirs(os.path.join(sub_dir, "hello", "label2", "hello"))
+        with open(os.path.join(sub_dir, "hello", "label1", "hello", "foo.jpg"), "wb") as f:
+            f.write(os.urandom(1024))
+        with open(os.path.join(sub_dir, "hello", "label2", "hello", "foo.jpg"), "wb") as f:
+            f.write(os.urandom(1024))
+
         zip_dir = os.path.join(self.inputs_path, "input_with_archive")
         os.makedirs(zip_dir)
         zip_path = os.path.join(zip_dir, "archive.zip")
@@ -35,6 +43,8 @@ class ValohaiTestEnvironment:
             zf.writestr("blerp/3katt.txt", b"Johannes")
             zf.writestr(zipfile.ZipInfo("blerp/blonk/"), "")
             zf.writestr("blerp/blonk/4blöf.txt", b"Teline")
+            zf.writestr("blerp/blonk/asdf.jpg", b"Keijo")
+
 
     def get_inputs(self):
         return {
@@ -56,18 +66,18 @@ class ValohaiTestEnvironment:
             "images_in_subdirs": {
                 "files": [
                     {
-                        "name": "label1/Example.jpg",
-                        "path": "%s/images_in_subdirs/label1/Example.jpg"
-                        % self.inputs_path,
-                        "size": 27661,
-                        "uri": "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg",
+                        "checksums": {},
+                        "name": "hello/label1/hello/foo.jpg",
+                        "path": "%s/images_in_subdirs/hello/label1/hello/foo.jpg" % self.inputs_path,
+                        "size": 1024,
+                        "uri": "",
                     },
                     {
-                        "name": "label2/Example.jpg",
-                        "path": "%s/images_in_subdirs/label2/Example.jpg"
-                        % self.inputs_path,
-                        "size": 27661,
-                        "uri": "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg",
+                        "checksums": {},
+                        "name": "hello/label2/hello/foo.jpg",
+                        "path": "%s/images_in_subdirs/hello/label2/hello/foo.jpg" % self.inputs_path,
+                        "size": 1024,
+                        "uri": "",
                     },
                 ]
             },

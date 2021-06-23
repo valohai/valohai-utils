@@ -2,6 +2,7 @@ import hashlib
 import os
 import shutil
 import tempfile
+import re
 from contextlib import ExitStack
 from tarfile import TarFile, TarInfo
 from typing import IO, List, Optional, Union
@@ -194,6 +195,10 @@ class VFS:
 
     def __exit__(self, *exc_details) -> None:
         self.exit_stack.__exit__(*exc_details)
+
+    def filter(self, path: str) -> List[File]:
+        pattern = re.compile(path.replace("**", "*").replace("*", ".*"))  # support for both * and ** notation
+        return [f for f in self.files if re.match(pattern, f.name)]
 
 
 def add_disk_file(
