@@ -8,7 +8,7 @@ from .utils import get_parsing_tests
 def read_test_data():
     """
     Expected files (tests/test_parsing):
-        mytest.py -- Python file calling valohai.prepare()
+        mytest.py -- Python (or .ipynb) file calling valohai.prepare()
         mytest.inputs.json -- Expected parsed inputs
         mytest.parameters.json -- Expected parsed parameters
         mytest.step.json -- Expected parsed step
