@@ -43,7 +43,9 @@ def read_yaml_test_data(root_path):
 
     """
     test_data = []
-    for source_path in glob.glob(f"{root_path}/*.py") + glob.glob(f"{root_path}/*.ipynb"):
+    for source_path in glob.glob(f"{root_path}/*.py") + glob.glob(
+        f"{root_path}/*.ipynb"
+    ):
         dirname = os.path.dirname(source_path)
         name, extension = os.path.splitext(os.path.basename(source_path))
         test_data.append(

@@ -7,7 +7,11 @@ from valohai_yaml.objs.parameter import Parameter
 from valohai_yaml.objs.step import Step
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
-from valohai.internals.notebooks import parse_ipynb, get_notebook_source_code, get_notebook_command
+from valohai.internals.notebooks import (
+    get_notebook_command,
+    get_notebook_source_code,
+    parse_ipynb,
+)
 from valohai.internals.parsing import parse
 
 ParameterDict = Dict[str, Any]
