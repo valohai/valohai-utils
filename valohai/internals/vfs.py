@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import tempfile
@@ -48,18 +49,29 @@ class FileOnDisk(File):
     def name(self) -> str:
         return self._name
 
+    @property
+    def container_temp_root(self) -> str:
+        path_hash = hashlib.sha1(self.path.encode("utf-8")).hexdigest()
+        return os.path.join(tempfile.gettempdir(), f"vh-vfs-{path_hash}")
+
 
 class FileInContainer(File):
+    parent_file: FileOnDisk
     _concrete_path: Optional[str] = None
 
     def open_concrete(self, delete: bool = True) -> IO[bytes]:
         if self._concrete_path and os.path.isfile(self._concrete_path):
             return open(self._concrete_path, "rb")  # noqa: SIM115
-        tf = tempfile.NamedTemporaryFile(suffix=self.extension, delete=delete)
+
+        file_path = os.path.join(
+            self.parent_file.container_temp_root, self.path_in_container
+        )
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        tf = open(file_path, "wb")  # noqa: SIM115
         self.extract(tf)
         tf.seek(0)
         self._concrete_path = tf.name
-        return tf
+        return tempfile._TemporaryFileWrapper(tf, tf.name, delete=delete)  # type: ignore
 
     def extract(self, destination: Union[str, IO]) -> None:
         if isinstance(destination, str):
@@ -78,9 +90,14 @@ class FileInContainer(File):
         with self.open() as f:
             shutil.copyfileobj(f, destination)
 
+    @property
+    def path_in_container(self) -> str:
+        raise NotImplementedError(
+            "FileInContainer subclass must implement path_in_container"
+        )
+
 
 class FileInZip(FileInContainer):
-    parent_file: FileOnDisk
     zipfile: ZipFile
     zipinfo: ZipInfo
 
@@ -97,18 +114,21 @@ class FileInZip(FileInContainer):
     @property
     def name(self) -> str:
         return os.path.join(
-            os.path.dirname(self.parent_file.name), self.zipinfo.filename
+            os.path.dirname(self.parent_file.name), self.path_in_container
         )
 
     @property
     def path(self) -> str:
         return os.path.join(
-            os.path.dirname(self.parent_file.path), self.zipinfo.filename
+            os.path.dirname(self.parent_file.path), self.path_in_container
         )
+
+    @property
+    def path_in_container(self) -> str:
+        return self.zipinfo.filename
 
 
 class FileInTar(FileInContainer):
-    parent_file: FileOnDisk
     tarfile: TarFile
     tarinfo: TarInfo
 
@@ -127,7 +147,13 @@ class FileInTar(FileInContainer):
 
     @property
     def name(self) -> str:
-        return os.path.join(os.path.dirname(self.parent_file.name), self.tarinfo.path)
+        return os.path.join(
+            os.path.dirname(self.parent_file.name), self.path_in_container
+        )
+
+    @property
+    def path_in_container(self) -> str:
+        return self.tarinfo.path
 
 
 def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
@@ -138,6 +164,7 @@ def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
         [
             FileInZip(parent_file=df, zipfile=zf, zipinfo=zinfo)
             for zinfo in zf.infolist()
+            if not zinfo.is_dir()
         ]
     )
 
