@@ -7,6 +7,11 @@ from valohai_yaml.objs.parameter import Parameter
 from valohai_yaml.objs.step import Step
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
+from valohai.internals.notebooks import (
+    get_notebook_command,
+    get_notebook_source_code,
+    parse_ipynb,
+)
 from valohai.internals.parsing import parse
 
 ParameterDict = Dict[str, Any]
@@ -24,10 +29,7 @@ def generate_step(
     config_step = Step(
         name=step,
         image=image,
-        command=[
-            "pip install -r requirements.txt",
-            "python %s {parameters}" % relative_source_path,
-        ],
+        command=get_command(relative_source_path),
     )
 
     for key, value in parameters.items():
@@ -93,18 +95,17 @@ def get_source_relative_path(source_path: str, config_path: str) -> str:
 
 
 def parse_config_from_source(source_path: str, config_path: str) -> Config:
-    with open(source_path) as source_file:
-        parsed = parse(source_file.read())
-        if not parsed.step:
-            raise ValueError("Source is missing a call to valohai.prepare()")
-        relative_source_path = get_source_relative_path(source_path, config_path)
-        return generate_config(
-            relative_source_path=relative_source_path,
-            step=parsed.step,
-            image=DEFAULT_DOCKER_IMAGE if parsed.image is None else parsed.image,
-            parameters=parsed.parameters,
-            inputs=parsed.inputs,
-        )
+    parsed = parse(get_source_code(source_path))
+    if not parsed.step:
+        raise ValueError("Source is missing a call to valohai.prepare()")
+    relative_source_path = get_source_relative_path(source_path, config_path)
+    return generate_config(
+        relative_source_path=relative_source_path,
+        step=parsed.step,
+        image=DEFAULT_DOCKER_IMAGE if parsed.image is None else parsed.image,
+        parameters=parsed.parameters,
+        inputs=parsed.inputs,
+    )
 
 
 def get_parameter_type_name(name: str, value: Any) -> str:
@@ -121,3 +122,27 @@ def get_parameter_type_name(name: str, value: Any) -> str:
         "Unrecognized parameter type for %s=%s. Supported Python types are float, int, string and bool."
         % (name, value)
     )
+
+
+def get_command(relative_source_path: str) -> List[str]:
+    if is_notebook_path(relative_source_path):
+        return get_notebook_command(relative_source_path)
+
+    return [
+        "pip install -r requirements.txt",
+        "python %s {parameters}" % relative_source_path,
+    ]
+
+
+def get_source_code(source_path: str) -> str:
+    with open(source_path) as source_file:
+        file_contents = source_file.read()
+        if is_notebook_path(source_path):
+            notebook_content = parse_ipynb(file_contents)
+            return get_notebook_source_code(notebook_content)
+        return file_contents
+
+
+def is_notebook_path(source_path: str) -> bool:
+    filename, extension = os.path.splitext(source_path)
+    return extension == ".ipynb"

@@ -16,7 +16,8 @@ from valohai.yaml import config_to_yaml
 )
 def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_yaml):
     yaml_path = os.path.join(tmpdir, "valohai.yaml")
-    source_path = os.path.join(tmpdir, "test.py")
+    filename, file_extension = os.path.splitext(source_python)
+    source_path = os.path.join(tmpdir, f"test{file_extension}")
 
     # Build repository with test.py and valohai.yaml
     if os.path.isfile(original_yaml):
