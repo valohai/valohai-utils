@@ -12,6 +12,7 @@ class Input:
 
     def paths(
         self,
+        path_filter: Optional[str] = None,
         default: Optional[Iterable[str]] = None,
         process_archives: bool = True,
         force_download: bool = False,
@@ -23,16 +24,20 @@ class Input:
 
         See streams() or path() for alternatives.
 
+        :param path_filter: Filter the results with wildcards. For example: "myfile.txt" or "myfolder/*.txt".
         :param default: Default fallback paths.
         :param process_archives: When facing an archive file, is it unpacked to several paths or returned as is
         :param force_download: Force re-download of file(s) even when they are cached already.
         :return: List of file system paths for all the files for this input.
         """
 
-        found_file = False
-        for file in self._get_input_vfs(
+        fs = self._get_input_vfs(
             process_archives=process_archives, force_download=force_download
-        ).files:
+        )
+        files = fs.filter(path_filter) if path_filter else fs.files
+
+        found_file = False
+        for file in files:
             if isinstance(file, vfs.FileInContainer):
                 yield file.open_concrete(delete=False).name
                 found_file = True
@@ -47,6 +52,7 @@ class Input:
 
     def path(
         self,
+        path_filter: Optional[str] = None,
         default: Optional[str] = None,
         process_archives: bool = True,
         force_download: bool = False,
@@ -59,18 +65,24 @@ class Input:
 
         See stream() or paths() for an alternative.
 
+        :param path_filter: Filter the results with wildcards. For example: "myfile.txt" or "myfolder/*.txt".
         :param process_archives: When facing an archive file, is it unpacked or returned as is
         :param default: Default fallback path.
         :param force_download: Force re-download of file(s) even when they are cached already.
         :return: File system path to a file for this input.
         """
         input_paths = self.paths(
-            process_archives=process_archives, force_download=force_download
+            path_filter=path_filter,
+            process_archives=process_archives,
+            force_download=force_download,
         )
         return next(input_paths, default)
 
     def streams(
-        self, process_archives: bool = True, force_download: bool = False
+        self,
+        path_filter: Optional[str] = None,
+        process_archives: bool = True,
+        force_download: bool = False,
     ) -> Iterator[IO]:
         """Get file streams to all files for a given input name.
 
@@ -80,17 +92,25 @@ class Input:
 
         See stream() or paths() for an alternative.
 
+        :param path_filter: Filter the results with wildcards. For example: "myfile.txt" or "myfolder/*.txt".
         :param process_archives: When facing an archive file, is it unpacked or returned as is
         :param force_download: Force re-download of file(s) even when they are cached already.
         :return: Iterable for all the IO streams of files for this input.
         """
-        for file in self._get_input_vfs(
+
+        fs = self._get_input_vfs(
             process_archives=process_archives, force_download=force_download
-        ).files:
+        )
+        files = fs.filter(path_filter) if path_filter else fs.files
+
+        for file in files:
             yield file.open()
 
     def stream(
-        self, process_archives: bool = True, force_download: bool = False
+        self,
+        path_filter: Optional[str] = None,
+        process_archives: bool = True,
+        force_download: bool = False,
     ) -> Optional[IO]:
         """Get a stream for to a file for a given input name.
 
@@ -100,13 +120,16 @@ class Input:
 
         See path() or streams() for an alternative.
 
+        :param path_filter: Filter the results with wildcards. For example: "myfile.txt" or "myfolder/*.txt".
         :param process_archives: When facing an archive file, is it unpacked or returned as is
         :param force_download: Force re-download of file(s) even when they are cached already.
         :return: IO stream to a file for this input.
         """
 
         streams = self.streams(
-            process_archives=process_archives, force_download=force_download
+            path_filter=path_filter,
+            process_archives=process_archives,
+            force_download=force_download,
         )
         return next(streams, None)
 
