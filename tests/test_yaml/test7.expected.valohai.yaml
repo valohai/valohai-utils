@@ -27,8 +27,7 @@
       type: string
     inputs:
     - name: my-image
-      default:
-      - https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg
+      default: https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg
       optional: false
     - name: my-optional-input
       optional: true

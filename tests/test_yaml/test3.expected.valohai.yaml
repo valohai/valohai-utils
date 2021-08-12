@@ -26,8 +26,7 @@
       type: float
     inputs:
     - name: input1
-      default:
-      - asdf
+      default: asdf
       optional: false
     - name: input2
       default:
