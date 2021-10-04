@@ -20,20 +20,21 @@ class Output:
     def path(self, filename: str, makedirs: bool = True) -> str:
         """Absolute path of an output file
 
-        Compress files into a temporary file, which is then copied to the target path.
-        Optionally removes original files and live uploads the package.
+        The main use-case is to provide absolute path for an relative path.
+        You can also feed it absolute path and it will always return you one back.
 
-        Returns the absolute path to the created package.
-
-        :param filename: Name of the file. Can also include sub path (example: myfolder/hello.txt)
+        :param filename: Name of the file. Can be relative or absolute (example: myfolder/hello.txt, /tmp/foo/hello.txt)
         :param makedirs: Auto-create folders if they do not exist.
 
         """
         path = get_outputs_path()
 
         # To guard against absolute paths in the output name.
+        # For example valohai.outputs('/home/johndoe/herpderp/outputs/images') instead of valohai.outputs('images')
+
         # If the absolute path is in the outputs dir, the path will be made relative.
-        # If it is some other absolute path, an exception is raised.
+        # If the output name is some other absolute path, an exception is raised.
+
         if os.path.isabs(self.name):
             if self.name.startswith(path):
                 self.name = os.path.relpath(self.name, path)
@@ -45,7 +46,12 @@ class Output:
         if self.name:
             path = os.path.join(path, self.name)
 
-        path = os.path.join(path, filename)
+        # Simple os.path.join() call would get us the same result, but
+        # The behavior for joining two absolute paths is made explicit here for clarity
+        if os.path.isabs(filename):
+            path = filename
+        else:
+            path = os.path.join(path, filename)
 
         if makedirs:
             os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -78,7 +84,6 @@ class Output:
         """
         target_path = self.path(filename)
         files_to_compress = expand_globs(source, preprocessor=self.path)
-        common_prefix = os.path.commonprefix(list(files_to_compress))
 
         # We can't use `delete=True` since we need to replace the file later, and moving
         # the `os.replace()` call within the block if it has delete=True means there'll be an
@@ -90,8 +95,8 @@ class Output:
         )
         with tmp_file, open_archive(tmp_file.name) as archive:  # type: ignore
             compressed_paths = []
-            for file_path in files_to_compress:
-                arc_path = os.path.relpath(file_path, common_prefix)
+            for file_path, root_path in files_to_compress:
+                arc_path = os.path.relpath(file_path, root_path)
                 archive.put(arc_path, file_path)
                 compressed_paths.append(file_path)
 

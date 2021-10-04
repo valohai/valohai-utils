@@ -27,16 +27,20 @@ def outputs_path(tmpdir, monkeypatch):
 
 @pytest.fixture
 def output_files(outputs_path):
-    os.makedirs(os.path.join(outputs_path, "folder"))
-    os.makedirs(os.path.join(outputs_path, "folder2"))
+    return create_files(outputs_path)
+
+
+def create_files(path):
+    os.makedirs(os.path.join(path, "folder"))
+    os.makedirs(os.path.join(path, "folder2"))
 
     outputs = [
-        os.path.join(outputs_path, "test1.bin"),
-        os.path.join(outputs_path, "test2.bin"),
-        os.path.join(outputs_path, "folder", "picture.jpg"),
-        os.path.join(outputs_path, "folder", "picturetoo.jpg"),
-        os.path.join(outputs_path, "folder", "imapng.png"),
-        os.path.join(outputs_path, "folder2", "asdf.dat"),
+        os.path.join(path, "test1.bin"),
+        os.path.join(path, "test2.bin"),
+        os.path.join(path, "folder", "picture.jpg"),
+        os.path.join(path, "folder", "picturetoo.jpg"),
+        os.path.join(path, "folder", "imapng.png"),
+        os.path.join(path, "folder2", "asdf.dat"),
     ]
 
     for output in outputs:
