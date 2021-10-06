@@ -153,7 +153,6 @@ class Input:
                 )
         return v
 
-    @property
     def dir_path(
         self,
     ) -> str:
