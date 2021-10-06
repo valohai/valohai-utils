@@ -6,6 +6,9 @@ import valohai
 def test_get_input_paths(use_test_config_dir):
     assert valohai.inputs("single_image").path().endswith("single_image/Example.jpg")
     assert os.path.exists(valohai.inputs("single_image").path())
+    assert os.path.exists(valohai.inputs("single_image").dir_path())
+    assert os.path.isdir(valohai.inputs("single_image").dir_path())
+
     assert (
         valohai.inputs("single_image")
         .path(default="unused_default")

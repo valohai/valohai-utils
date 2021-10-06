@@ -4,6 +4,7 @@ from valohai.internals.download_type import DownloadType
 
 from .internals import vfs
 from .internals.input_info import load_input_info
+from .paths import get_inputs_path
 
 
 class Input:
@@ -151,6 +152,11 @@ class Input:
                     process_archives=process_archives,
                 )
         return v
+
+    def dir_path(
+        self,
+    ) -> str:
+        return get_inputs_path(self.name)
 
 
 inputs = Input
