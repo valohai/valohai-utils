@@ -146,6 +146,10 @@ def get_parameter_type_name(name: str, value: Any) -> str:
 
 
 def get_command(relative_source_path: str) -> List[str]:
+    # We need to generate a POSIX-compliant command, even if we are running this method in Windows
+    # The path separator must be forced to POSIX
+    relative_source_path = relative_source_path.replace(os.sep, "/")
+
     if is_notebook_path(relative_source_path):
         return get_notebook_command(relative_source_path)
 

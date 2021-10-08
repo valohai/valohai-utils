@@ -6,7 +6,7 @@ from valohai_yaml import parse
 
 from tests.utils import read_yaml_test_data
 from valohai.internals.merge import python_to_yaml_merge_strategy
-from valohai.internals.yaml import parse_config_from_source
+from valohai.internals.yaml import generate_step, parse_config_from_source
 from valohai.yaml import config_to_yaml
 
 
@@ -41,3 +41,19 @@ def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_
     with open(expected_yaml) as expected_yaml:
         new_yaml = config_to_yaml(new_config)
         assert new_yaml == expected_yaml.read()
+
+
+def test_posix_path_separator(monkeypatch):
+    # Let's be sneaky and force the path separator to simulate Windows
+    monkeypatch.setattr(os, "sep", "\\")
+
+    step = generate_step(
+        relative_source_path="subfolder\\foo\\bar\\train.py",
+        step="train",
+        image="python:3.8",
+        parameters={},
+        inputs={},
+    )
+
+    # We expect the path separator be POSIX now
+    assert any("subfolder/foo/bar/train.py" in command for command in step.command)
