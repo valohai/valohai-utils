@@ -1,14 +1,15 @@
-from typing import IO, Iterable, Iterator, Optional
+from typing import IO, Iterable, Iterator, List, Optional, Union
 
 from valohai.internals.download_type import DownloadType
 
 from .internals import vfs
-from .internals.input_info import load_input_info
+from .internals.input_info import get_input_info
 
 
 class Input:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, default: Union[str, List[str]] = None) -> None:
         self.name = str(name)
+        self.default = default
 
     def paths(
         self,
@@ -137,9 +138,10 @@ class Input:
         self, process_archives: bool = True, force_download: bool = False
     ) -> vfs.VFS:
         v = vfs.VFS()
-        ii = load_input_info(
-            self.name,
+        ii = get_input_info(
+            name=self.name,
             download=DownloadType.ALWAYS if force_download else DownloadType.OPTIONAL,
+            default=self.default,
         )
         if ii:
             for file_info in ii.files:

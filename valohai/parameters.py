@@ -1,5 +1,4 @@
-from valohai.internals import global_state
-from valohai.internals.parameters import load_parameter, supported_types
+from valohai.internals.parameters import get_parameter_value, supported_types
 
 
 class Parameter:
@@ -9,13 +8,8 @@ class Parameter:
 
     @property
     def value(self) -> supported_types:
-        if self.name in global_state.parsed_parameters:
-            return global_state.parsed_parameters[self.name]
-        return load_parameter(self.name, self.default)
-
-    @value.setter
-    def value(self, value: supported_types):
-        global_state.parsed_parameters[self.name] = value
+        result = get_parameter_value(self.name, self.default)
+        return result
 
 
 parameters = Parameter

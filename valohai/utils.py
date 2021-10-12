@@ -1,13 +1,8 @@
 import argparse
-import glob
-import os
 import sys
-from typing import List, Optional, Union
+from typing import List, Optional
 
-from valohai.config import is_running_in_valohai
 from valohai.internals import global_state
-from valohai.internals.input_info import FileInfo, InputInfo
-from valohai.parameters import Parameter
 
 
 def prepare(
@@ -29,25 +24,27 @@ def prepare(
     :param image: Default docker image
 
     """
+
     if default_inputs is None:
         default_inputs = {}
     if default_parameters is None:
         default_parameters = {}
+
+    global_state.flush()
     global_state.step_name = step
     global_state.image_name = image
+    global_state.default_parameters = default_parameters
+    global_state.default_inputs = default_inputs
 
     parser = argparse.ArgumentParser()
-    for name, value in dict(default_inputs).items():
-        value = get_default_value(name, value)
-        parser.add_argument(f"--{name}", type=str, nargs="+", default=value)
-    for name, value in dict(default_parameters).items():
-        value = get_default_value(name, value)
-        parser.add_argument(f"--{name}", type=type(value), default=value)
+    for name, _ in default_inputs.items():
+        parser.add_argument(f"--{name}", type=str, nargs="+")
+    for name, value in default_parameters.items():
+        parser.add_argument(f"--{name}", type=type(value))
     known_args, unknown_args = parser.parse_known_args()
 
-    if not is_running_in_valohai():
-        _load_inputs(known_args, list(default_inputs.keys()))
-    _load_parameters(known_args, list(default_parameters.keys()))
+    _parse_cli_inputs(known_args, list(default_inputs.keys()))
+    _parse_cli_parameters(known_args, list(default_parameters.keys()))
 
     for unknown in unknown_args:
         print(  # noqa
@@ -56,64 +53,33 @@ def prepare(
         )
 
 
-def get_default_value(
-    name: str, value: Union[float, int, str, bool, dict]
-) -> Union[float, int, str, bool]:
-    if isinstance(value, dict):
-        if "default" in value:
-            return value["default"]
-        else:
-            raise ValueError(f"No default value defined for {name}")
-    return value
-
-
-def _load_inputs(args: argparse.Namespace, names: List[str]):
+def _parse_cli_inputs(args: argparse.Namespace, names: List[str]):
     """Pull inputs from the command-line args
 
     User provides inputs and their default values in a dict, when calling prepare().
     Here we parse possible overrides from the command-line args.
 
-    This is only ran for local executions. Cloud execution will get this same info directly from inputs.json.
-
     :param names: List of all possible input names
 
     """
+
     for name, values in vars(args).items():
+        # Filter out any inputs that we weren't expecting
         if name not in names:
+            continue
+
+        if values is None:
             continue
 
         if not isinstance(values, list):
             values = [values]
 
-        files = []
-        for value in values:
-            if "://" not in value:  # The string is a local path
-                for path in glob.glob(value):
-                    files.append(
-                        FileInfo(
-                            name=os.path.basename(path),
-                            uri=None,
-                            path=value,
-                            size=None,
-                            checksums=None,
-                        )
-                    )
-            else:  # The string is an URI
-                files.append(
-                    FileInfo(
-                        name=uri_to_filename(value),
-                        uri=value,
-                        path=None,
-                        size=None,
-                        checksums=None,
-                    )
-                )
-
-        input_info = InputInfo(files)
-        global_state.input_infos[name] = input_info
+        values = [v for v in values if v is not None]
+        if len(values) > 0:
+            global_state.parsed_cli_inputs[name] = values
 
 
-def _load_parameters(args: argparse.Namespace, names: List[str]):
+def _parse_cli_parameters(args: argparse.Namespace, names: List[str]):
     """Pull parameters from the command-line args
 
     User provides parameters and their default values in a dict, when calling prepare().
@@ -124,10 +90,9 @@ def _load_parameters(args: argparse.Namespace, names: List[str]):
 
     """
     for name, value in vars(args).items():
+        # Filter out any parameters that we weren't expecting
         if name not in names:
             continue
-        Parameter(name).value = value
 
-
-def uri_to_filename(uri: str) -> str:
-    return uri.rpartition("/")[-1]
+        if value is not None:
+            global_state.parsed_cli_parameters[name] = value
