@@ -29,4 +29,5 @@ setuptools.setup(
         "valohai-papi>=0.1.1",
     ],
     python_requires=">=3.6",
+    include_package_data=True,
 )
