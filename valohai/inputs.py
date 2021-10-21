@@ -1,10 +1,9 @@
 from typing import IO, Iterable, Iterator, Optional
 
+from valohai.internals import vfs
 from valohai.internals.download_type import DownloadType
-
-from .internals import vfs
-from .internals.input_info import load_input_info
-from .paths import get_inputs_path
+from valohai.internals.input_info import load_input_info
+from valohai.paths import get_inputs_path
 
 
 class Input:
