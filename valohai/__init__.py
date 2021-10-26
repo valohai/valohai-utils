@@ -2,11 +2,11 @@ __version__ = "0.1.11"
 
 import papi
 
-from .inputs import inputs
-from .metadata import logger
-from .outputs import outputs
-from .parameters import parameters
-from .utils import prepare
+from valohai.inputs import inputs
+from valohai.metadata import logger
+from valohai.outputs import outputs
+from valohai.parameters import parameters
+from valohai.utils import prepare
 
 Pipeline = papi.Papi
 
