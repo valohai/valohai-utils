@@ -6,7 +6,7 @@ from .inputs import inputs
 from .metadata import logger
 from .outputs import outputs
 from .parameters import parameters
-from .utils import prepare
+from .prepare_impl import prepare
 
 Pipeline = papi.Papi
 

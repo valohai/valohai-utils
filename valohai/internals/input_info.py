@@ -51,7 +51,7 @@ class InputInfo:
 
     def download_if_necessary(
         self, name: str, download: DownloadType = DownloadType.OPTIONAL
-    ):
+    ) -> None:
         if (
             download == DownloadType.ALWAYS
             or not self.is_downloaded()
@@ -98,58 +98,3 @@ class InputInfo:
 
         return cls(files=files)
 
-
-def get_input_info(
-    name: str,
-    download: DownloadType = DownloadType.OPTIONAL,
-    default: Union[str, List[str]] = None,
-) -> Optional[InputInfo]:
-
-    if name in global_state.inputs_cache:
-        return global_state.inputs_cache[name]
-
-    result = find_input_info(name)
-
-    if result is None and default is not None:
-        result = InputInfo.from_urls_and_paths(default)
-
-    if result:
-        result.download_if_necessary(name, download)
-        global_state.inputs_cache[name] = result
-
-    return result
-
-
-def find_input_info(
-    name: str,
-) -> Optional[InputInfo]:
-    """Find the InputInfo for a given input name.
-
-    The InputInfo can be loaded from various sources (in the order of priority):
-    1. Command-line argument
-    2. inputs.json Valohai config
-    3. default_inputs from valohai.prepare()
-
-    :param name: Name of the input.
-    :return: InputInfo instance for this input name
-    """
-
-    # Option 1: Command-line argument
-    if name in global_state.parsed_cli_inputs:
-        parsed_cli_input = global_state.parsed_cli_inputs[name]
-        return InputInfo.from_urls_and_paths(parsed_cli_input)
-
-    # Option 2: inputs.json Valohai config
-    elif os.path.isfile(paths.get_inputs_config_path()):
-        with open(paths.get_inputs_config_path()) as json_file:
-            data = json.load(json_file)
-            input_info_data = data.get(name)
-            if input_info_data:
-                return InputInfo.from_json_data(input_info_data)
-
-    # Option 3: default_inputs from valohai.prepare()
-    elif name in global_state.default_inputs:
-        default_value = sift_default_value(name, global_state.default_inputs[name])
-        return InputInfo.from_urls_and_paths(default_value)
-
-    return None

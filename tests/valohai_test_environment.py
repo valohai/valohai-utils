@@ -12,6 +12,7 @@ class ValohaiTestEnvironment:
         self.outputs_path = self.root_path / "outputs"
 
     def build(self):
+
         for path in (
             self.root_path,
             self.config_path,

@@ -3,6 +3,7 @@ import os
 import pytest
 
 from .valohai_test_environment import ValohaiTestEnvironment
+from valohai.internals import global_state_loader
 
 
 @pytest.fixture
@@ -16,6 +17,9 @@ def use_test_config_dir(vte, monkeypatch):
     monkeypatch.setenv("VH_CONFIG_DIR", str(vte.config_path))
     monkeypatch.setenv("VH_INPUT_DIR", str(vte.inputs_path))
     monkeypatch.setenv("VH_OUTPUT_DIR", str(vte.outputs_path))
+
+    # pytest carries global state between tests if we don't flush it
+    global_state_loader.flush_global_state()
 
 
 @pytest.fixture

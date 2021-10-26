@@ -1,9 +1,8 @@
 from typing import IO, Iterable, Iterator, List, Optional, Union
 
-from valohai.internals.download_type import DownloadType
-
+from .internals.download_type import DownloadType
+from .internals.inputs import get_input_vfs
 from .internals import vfs
-from .internals.input_info import get_input_info
 
 
 class Input:
@@ -32,8 +31,11 @@ class Input:
         :return: List of file system paths for all the files for this input.
         """
 
-        fs = self._get_input_vfs(
-            process_archives=process_archives, force_download=force_download
+        print(f"get_input_vfs {self.name}")
+        fs = get_input_vfs(
+            name=self.name,
+            process_archives=process_archives,
+            download_type=DownloadType.ALWAYS if force_download else DownloadType.OPTIONAL
         )
         files = fs.filter(path_filter) if path_filter else fs.files
 
@@ -99,8 +101,10 @@ class Input:
         :return: Iterable for all the IO streams of files for this input.
         """
 
-        fs = self._get_input_vfs(
-            process_archives=process_archives, force_download=force_download
+        fs = get_input_vfs(
+            name=self.name,
+            process_archives=process_archives,
+            download_type=DownloadType.ALWAYS if force_download else DownloadType.OPTIONAL
         )
         files = fs.filter(path_filter) if path_filter else fs.files
 
@@ -133,26 +137,6 @@ class Input:
             force_download=force_download,
         )
         return next(streams, None)
-
-    def _get_input_vfs(
-        self, process_archives: bool = True, force_download: bool = False
-    ) -> vfs.VFS:
-        v = vfs.VFS()
-        ii = get_input_info(
-            name=self.name,
-            download=DownloadType.ALWAYS if force_download else DownloadType.OPTIONAL,
-            default=self.default,
-        )
-        if ii:
-            for file_info in ii.files:
-                assert file_info.path
-                vfs.add_disk_file(
-                    v,
-                    name=file_info.name,
-                    path=file_info.path,
-                    process_archives=process_archives,
-                )
-        return v
 
 
 inputs = Input

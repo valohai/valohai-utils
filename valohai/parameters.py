@@ -8,8 +8,7 @@ class Parameter:
 
     @property
     def value(self) -> supported_types:
-        result = get_parameter_value(self.name, self.default)
-        return result
+        return get_parameter_value(self.name, self.default)
 
 
 parameters = Parameter
