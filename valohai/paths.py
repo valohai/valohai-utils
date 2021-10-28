@@ -24,7 +24,8 @@ def get_inputs_path(input_name: Optional[str] = None) -> str:
         path = os.environ.get("VH_INPUTS_DIR", "/valohai/inputs")
     else:
         path = os.environ.get(
-            "VH_INPUTS_DIR", os.path.join(VH_LOCAL_INPUTS_DIR, global_state.step_name)
+            "VH_INPUTS_DIR",
+            os.path.join(VH_LOCAL_INPUTS_DIR, global_state.step_name or "default"),
         )
 
     if input_name:
@@ -39,7 +40,9 @@ def get_outputs_path() -> str:
         return os.environ.get(
             "VH_OUTPUTS_DIR",
             os.path.join(
-                VH_LOCAL_OUTPUTS_DIR, get_execution_guid(), global_state.step_name
+                VH_LOCAL_OUTPUTS_DIR,
+                get_execution_guid(),
+                global_state.step_name or "default",
             ),
         )
 

@@ -1,11 +1,12 @@
-import json
+import glob
 import os
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional, Union
 
-from valohai import paths
-from valohai.internals import global_state
+from valohai_yaml.utils import listify
+
 from valohai.internals.download import download_url
 from valohai.internals.download_type import DownloadType
+from valohai.internals.utils import uri_to_filename
 from valohai.paths import get_inputs_path
 
 
@@ -47,51 +48,48 @@ class InputInfo:
 
         return all(f.is_downloaded() for f in self.files)
 
-    def download(self, path: str, force_download: bool = False) -> None:
-        for f in self.files:
-            f.download(path, force_download)
+    def download_if_necessary(
+        self, name: str, download: DownloadType = DownloadType.OPTIONAL
+    ) -> None:
+        if (
+            download == DownloadType.ALWAYS
+            or not self.is_downloaded()
+            and download == DownloadType.OPTIONAL
+        ):
+            path = get_inputs_path(name)
+            os.makedirs(path, exist_ok=True)
+            for f in self.files:
+                f.download(path, force_download=(download == DownloadType.ALWAYS))
 
     @classmethod
     def from_json_data(cls, json_data: dict) -> "InputInfo":
         return cls(files=[FileInfo(**d) for d in json_data.get("files", ())])
 
+    @classmethod
+    def from_urls_and_paths(cls, urls_and_paths: Union[str, List]) -> "InputInfo":
+        files = []
 
-def load_input_info(
-    name: str, download: DownloadType = DownloadType.OPTIONAL
-) -> Optional[InputInfo]:
-    """Get InputInfo for a given input name.
+        for value in listify(urls_and_paths):
+            if "://" not in value:  # The string is a local path
+                for path in glob.glob(value):
+                    files.append(
+                        FileInfo(
+                            name=os.path.basename(path),
+                            uri=None,
+                            path=value,
+                            size=None,
+                            checksums=None,
+                        )
+                    )
+            else:  # The string is an URL
+                files.append(
+                    FileInfo(
+                        name=uri_to_filename(value),
+                        uri=value,
+                        path=None,
+                        size=None,
+                        checksums=None,
+                    )
+                )
 
-    Looks for the InputInfo from the in-memory cache and if found, downloads the input according
-    to the download strategy (Never, Optional, Always)
-
-    If InputInfo not found from in-memory cache, look it up from inputs_config_path and store it.
-    If it is found this way, the file is always downloaded already.
-
-    :param name: Name of the input.
-    :param download: Download strategy for the input. (Never, Optional, Always)
-    :return: InputInfo instance for this input name
-    """
-    if name in global_state.input_infos:
-        info = global_state.input_infos[name]
-        if (
-            download == DownloadType.ALWAYS
-            or not info.is_downloaded()
-            and download == DownloadType.OPTIONAL
-        ):
-            path = get_inputs_path(name)
-            os.makedirs(path, exist_ok=True)
-            info.download(
-                get_inputs_path(name), force_download=(download == DownloadType.ALWAYS)
-            )
-        return info
-
-    inputs_config_path = paths.get_inputs_config_path()
-    if os.path.isfile(inputs_config_path):
-        with open(inputs_config_path) as json_file:
-            data = json.load(json_file)
-            input_info_data = data.get(name)
-            if input_info_data:
-                input_info = InputInfo.from_json_data(input_info_data)
-                global_state.input_infos[name] = input_info
-                return global_state.input_infos[name]
-    return None
+        return cls(files=files)
