@@ -2,8 +2,7 @@ import os
 import sys
 
 import valohai
-from valohai.internals.download_type import DownloadType
-from valohai.internals.input_info import load_input_info
+from valohai.internals.inputs import get_input_info
 
 
 def test_prepare(tmpdir, monkeypatch):
@@ -60,18 +59,16 @@ def test_prepare(tmpdir, monkeypatch):
     assert valohai.parameters("makemenegative").value < 0.0
 
     assert (
-        load_input_info("example", download=DownloadType.NEVER).files[0].uri
+        get_input_info("example").files[0].uri
         == "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz"
     )
     assert (
-        load_input_info("myimages", download=DownloadType.NEVER).files[0].uri
+        get_input_info("myimages").files[0].uri
         == "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg"
     )
     assert (
-        load_input_info("myimages", download=DownloadType.NEVER).files[1].uri
+        get_input_info("myimages").files[1].uri
         == "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png"
     )
-    assert not load_input_info("overrideme", download=DownloadType.NEVER).files[0].uri
-    assert os.path.isfile(
-        load_input_info("overrideme", download=DownloadType.NEVER).files[0].path
-    )
+    assert not get_input_info("overrideme").files[0].uri
+    assert os.path.isfile(get_input_info("overrideme").files[0].path)
