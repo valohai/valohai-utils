@@ -4,16 +4,17 @@ import shutil
 import pytest
 from valohai_yaml import parse
 
-from tests.utils import read_yaml_test_data
+from tests.utils import compare_yaml, read_yaml_test_data
 from valohai.internals.pipeline import get_pipeline_from_source
-from valohai.yaml import config_to_yaml
 
 
 @pytest.mark.parametrize(
-    "original_yaml, source_python, expected_yaml",
+    "original_yaml, source_python, expected_yaml_filename",
     read_yaml_test_data("tests/test_pipeline_yaml"),
 )
-def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_yaml):
+def test_pipeline_yaml_update_from_source(
+    tmpdir, original_yaml, source_python, expected_yaml_filename
+):
     yaml_path = os.path.join(tmpdir, "valohai.yaml")
     source_path = os.path.join(tmpdir, "test.py")
 
@@ -33,6 +34,5 @@ def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_
     new_config = old_config.merge_with(new_config)
 
     # Check against expected result
-    with open(expected_yaml) as expected_yaml:
-        new_yaml = config_to_yaml(new_config)
-        assert new_yaml == expected_yaml.read()
+    with open(expected_yaml_filename) as fp:
+        compare_yaml(new_config, fp.read())

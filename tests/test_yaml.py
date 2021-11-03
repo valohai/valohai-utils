@@ -4,17 +4,18 @@ import shutil
 import pytest
 from valohai_yaml import parse
 
-from tests.utils import read_yaml_test_data
+from tests.utils import compare_yaml, read_yaml_test_data
 from valohai.internals.merge import python_to_yaml_merge_strategy
 from valohai.internals.yaml import generate_step, parse_config_from_source
-from valohai.yaml import config_to_yaml
 
 
 @pytest.mark.parametrize(
-    "original_yaml, source_python, expected_yaml",
+    "original_yaml, source_python, expected_yaml_filename",
     read_yaml_test_data("tests/test_yaml"),
 )
-def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_yaml):
+def test_yaml_update_from_source(
+    tmpdir, original_yaml, source_python, expected_yaml_filename
+):
     yaml_path = os.path.join(tmpdir, "valohai.yaml")
     filename, file_extension = os.path.splitext(source_python)
     source_path = os.path.join(tmpdir, f"test{file_extension}")
@@ -38,9 +39,8 @@ def test_yaml_update_from_source(tmpdir, original_yaml, source_python, expected_
         new_config = old_config.merge_with(new_config, python_to_yaml_merge_strategy)
 
     # Check against expected result
-    with open(expected_yaml) as expected_yaml:
-        new_yaml = config_to_yaml(new_config)
-        assert new_yaml == expected_yaml.read()
+    with open(expected_yaml_filename) as fp:
+        compare_yaml(new_config, fp.read())
 
 
 def test_posix_path_separator(monkeypatch):
