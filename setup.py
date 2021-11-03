@@ -5,14 +5,14 @@ import re
 import setuptools
 
 
-def get_version():
+def get_version() -> str:
     with open(
         os.path.join(os.path.dirname(__file__), "valohai", "__init__.py")
     ) as infp:
         match = re.search("__version__ = (.+?)$", infp.read(), re.M)
         if not match:
             raise ValueError("No version could be found")
-        return ast.literal_eval(match.group(1))
+        return str(ast.literal_eval(match.group(1)))
 
 
 setuptools.setup(

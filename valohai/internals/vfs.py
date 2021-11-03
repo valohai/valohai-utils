@@ -5,8 +5,11 @@ import shutil
 import tempfile
 from contextlib import ExitStack
 from tarfile import TarFile, TarInfo
-from typing import IO, List, Optional, Union
+from typing import IO, TYPE_CHECKING, List, Optional, Union
 from zipfile import ZipFile, ZipInfo
+
+if TYPE_CHECKING:
+    DirEntry = os.DirEntry[str]
 
 
 class File:
@@ -19,7 +22,7 @@ class File:
         with self.open() as f:
             return f.read()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: {self.name}>"
 
     @property
@@ -34,10 +37,10 @@ class File:
 class FileOnDisk(File):
     _name: str
     path: str
-    dir_entry: Optional[os.DirEntry]
+    dir_entry: Optional["DirEntry"]
 
     def __init__(
-        self, name: str, path: str, dir_entry: Optional[os.DirEntry] = None
+        self, name: str, path: str, dir_entry: Optional["DirEntry"] = None
     ) -> None:
         self._name = name
         self.path = path
@@ -74,7 +77,7 @@ class FileInContainer(File):
         self._concrete_path = tf.name
         return tempfile._TemporaryFileWrapper(tf, tf.name, delete=delete)  # type: ignore
 
-    def extract(self, destination: Union[str, IO]) -> None:
+    def extract(self, destination: Union[str, IO[bytes]]) -> None:
         if isinstance(destination, str):
             destination = open(destination, "wb")  # noqa: SIM115
             should_close = True
@@ -86,7 +89,7 @@ class FileInContainer(File):
             if should_close:
                 destination.close()
 
-    def _do_extract(self, destination: IO) -> None:
+    def _do_extract(self, destination: IO[bytes]) -> None:
         # if a file has a better idea how to write itself into an IO, this is the place
         with self.open() as f:
             shutil.copyfileobj(f, destination)
@@ -193,7 +196,7 @@ class VFS:
     def __enter__(self) -> "VFS":
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details) -> None:  # type: ignore[no-untyped-def]
         self.exit_stack.__exit__(*exc_details)
 
     def filter(self, path: str) -> List[File]:
@@ -207,7 +210,7 @@ def add_disk_file(
     vfs: VFS,
     name: str,
     path: str,
-    dir_entry: Optional[os.DirEntry] = None,
+    dir_entry: Optional["DirEntry"] = None,
     process_archives: bool = False,
 ) -> None:
     disk_file = FileOnDisk(name=name, path=path, dir_entry=dir_entry)
@@ -223,9 +226,9 @@ def add_disk_file(
 
 
 def find_files(vfs: VFS, root: str, *, process_archives: bool) -> None:
-    dent: os.DirEntry
+    dent: "DirEntry"
 
-    def _walk(path):
+    def _walk(path: str) -> None:
         for dent in os.scandir(path):
             if dent.is_dir():
                 _walk(dent.path)

@@ -1,6 +1,6 @@
 import glob
 import os
-from typing import Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from valohai_yaml.utils import listify
 
@@ -18,11 +18,11 @@ class FileInfo:
         uri: Optional[str],
         path: Optional[str],
         size: Optional[int],
-        checksums: Optional[dict],
+        checksums: Optional[Dict[str, str]],
     ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
-        self.checksums = checksums
+        self.checksums = dict(checksums) if checksums else {}
         self.path = str(path) if path else None
         self.size = int(size) if size else None
 
@@ -62,11 +62,11 @@ class InputInfo:
                 f.download(path, force_download=(download == DownloadType.ALWAYS))
 
     @classmethod
-    def from_json_data(cls, json_data: dict) -> "InputInfo":
+    def from_json_data(cls, json_data: Dict[str, Any]) -> "InputInfo":
         return cls(files=[FileInfo(**d) for d in json_data.get("files", ())])
 
     @classmethod
-    def from_urls_and_paths(cls, urls_and_paths: Union[str, List]) -> "InputInfo":
+    def from_urls_and_paths(cls, urls_and_paths: Union[str, List[str]]) -> "InputInfo":
         files = []
 
         for value in listify(urls_and_paths):

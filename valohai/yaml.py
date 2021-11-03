@@ -18,4 +18,4 @@ def config_to_yaml(config: Config) -> str:
     :param config: valohai_yaml.objs.Config object
     """
 
-    return yaml.dump(config.serialize(), default_flow_style=False)
+    return str(yaml.dump(config.serialize(), default_flow_style=False))

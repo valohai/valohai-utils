@@ -10,6 +10,9 @@ def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
         return False
 
 
+ParseResult = namedtuple("ParseResult", ["step", "parameters", "inputs", "image"])
+
+
 class PrepareParser(ast.NodeVisitor):
     """Parses .py file for Valohai inputs, parameters, step name
 
@@ -92,12 +95,11 @@ class PrepareParser(ast.NodeVisitor):
             raise NotImplementedError()
 
 
-def parse(source):
+def parse(source: str) -> ParseResult:
     tree = ast.parse(source)
     parser = PrepareParser()
     parser.visit(tree)
-    result = namedtuple("result", ["step", "parameters", "inputs", "image"])
-    return result(
+    return ParseResult(
         step=parser.step,
         parameters=parser.parameters,
         inputs=parser.inputs,

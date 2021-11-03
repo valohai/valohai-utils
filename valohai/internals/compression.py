@@ -8,6 +8,8 @@ import zipfile
 from mimetypes import guess_type
 from typing import IO, Union
 
+FilenameOrStream = Union[str, IO[bytes]]
+
 # A short and likely incomplete list of file extensions that are likely not to
 # compress well or at all.
 INCOMPRESSIBLE_SUFFIXES = {
@@ -56,7 +58,7 @@ class BaseArchive:
     Base class for writable archives with an unified signature for adding files.
     """
 
-    def put(self, archive_name, source: Union[str, IO]):
+    def put(self, archive_name: str, source: FilenameOrStream) -> None:
         raise NotImplementedError("...")
 
 
@@ -91,7 +93,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
                 shutil.copyfileobj(data, dest, 524288)
         assert zinfo.file_size
 
-    def put(self, archive_name: str, source: Union[str, IO]) -> None:
+    def put(self, archive_name: str, source: FilenameOrStream) -> None:
         compress_type = (
             zipfile.ZIP_DEFLATED
             if guess_compressible(archive_name)
@@ -112,7 +114,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
 
 
 class TarArchive(BaseArchive, tarfile.TarFile):
-    def put(self, archive_name: str, source: Union[str, IO]) -> None:
+    def put(self, archive_name: str, source: FilenameOrStream) -> None:
         with contextlib.ExitStack() as es:
             if isinstance(source, str):
                 size = os.stat(source).st_size

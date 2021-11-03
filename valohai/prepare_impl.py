@@ -1,15 +1,16 @@
-from typing import Dict, Optional
+from typing import Optional
 
 from valohai.internals import global_state
 from valohai.internals.global_state_loader import load_global_state
+from valohai.types import InputDict, ParameterDict
 
 
 def prepare(
     *,
     step: str,
-    default_parameters: Optional[Dict] = None,
-    default_inputs: Optional[Dict] = None,
-    image: str = None,
+    default_parameters: Optional[ParameterDict] = None,
+    default_inputs: Optional[InputDict] = None,
+    image: Optional[str] = None,
 ) -> None:
     """Define the name of the step and it's required inputs, parameters and Docker image
 

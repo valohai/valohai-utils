@@ -14,10 +14,10 @@ class Logger:
         self.partial_logs = {}
         return self
 
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type, value, traceback) -> None:  # type: ignore[no-untyped-def]
         self.flush()
 
-    def log(self, *args, **kwargs) -> None:
+    def log(self, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
         """Log a single name/value pair to be flushed into standard output later as batch.
 
         For a repeating iteration like a machine learning training loop, Valohai expects

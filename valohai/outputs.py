@@ -1,7 +1,7 @@
 import glob
 import os
 import tempfile
-from typing import Union
+from typing import List, Union
 
 from valohai.internals.compression import open_archive
 from valohai.internals.files import (
@@ -64,7 +64,7 @@ class Output:
 
     def compress(
         self,
-        source: Union[str, list],
+        source: Union[str, List[str]],
         filename: str,
         live_upload: bool = False,
         remove_originals: bool = True,

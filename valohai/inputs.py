@@ -90,7 +90,7 @@ class Input:
         path_filter: Optional[str] = None,
         process_archives: bool = True,
         force_download: bool = False,
-    ) -> Iterator[IO]:
+    ) -> Iterator[IO[bytes]]:
         """Get file streams to all files for a given input name.
 
         Returns an Iterable for all the file IO streams for an input.
@@ -122,7 +122,7 @@ class Input:
         path_filter: Optional[str] = None,
         process_archives: bool = True,
         force_download: bool = False,
-    ) -> Optional[IO]:
+    ) -> Optional[IO[bytes]]:
         """Get a stream for to a file for a given input name.
 
         Returns an IO stream to a file for this input.

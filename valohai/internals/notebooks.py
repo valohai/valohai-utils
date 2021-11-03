@@ -1,13 +1,15 @@
 import json
 import os
 import shlex
-from typing import List, Union
+from typing import Any, Dict, List, Union
+
+NotebookDict = Dict[str, Any]
 
 # TODO: This file is a copy-pasta from https://github.com/valohai/jupyhai
 # TODO: DRY between libs
 
 
-def parse_ipynb(content_or_str: Union[str, dict]) -> dict:
+def parse_ipynb(content_or_str: Union[str, NotebookDict]) -> NotebookDict:
     """
     "Smartly" parse content that contains a notebook.
     * If a string, it's first JSON deserialized.
@@ -22,17 +24,16 @@ def parse_ipynb(content_or_str: Union[str, dict]) -> dict:
         content = content_or_str
     if not isinstance(content, dict):
         raise ValueError("Ipynb not a dict")
-    assert isinstance(content, dict)
     if content.get("type") == "notebook":
         content = content["content"]
 
     nbformat = content.get("nbformat")
     if not isinstance(nbformat, int):
         raise ValueError("Nbformat value %s invalid" % nbformat)
-    return content
+    return dict(content)
 
 
-def get_notebook_source_code(contents: dict) -> str:
+def get_notebook_source_code(contents: NotebookDict) -> str:
     source = [
         cell["source"] for cell in contents["cells"] if cell["cell_type"] == "code"
     ]
@@ -49,7 +50,7 @@ def get_notebook_source_code(contents: dict) -> str:
     return "\n".join(source)
 
 
-def get_notebook_command(notebook_relative_path) -> List[str]:
+def get_notebook_command(notebook_relative_path: str) -> List[str]:
     notebook_dir, notebook_name = os.path.split(notebook_relative_path)
     papermill_command = " ".join(
         [

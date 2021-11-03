@@ -9,7 +9,7 @@ step_name: Optional[str] = None
 image_name: Optional[str] = None
 
 
-def flush_global_state():
+def flush_global_state() -> None:
     global loaded, inputs, parameters, step_name, image_name
     loaded = False
     inputs = {}
