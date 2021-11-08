@@ -24,6 +24,8 @@ def get_pipeline_from_source(source_path: str, old_config: Config) -> Config:
     spec = importlib.util.spec_from_file_location(
         name="pipeline_source", location=source_path
     )
+    if not spec:
+        raise ValueError(f"Could not find import spec from {source_path}")
     module = importlib.util.module_from_spec(spec)
     loader: Optional[Loader] = spec.loader  # type: ignore
     if not loader:

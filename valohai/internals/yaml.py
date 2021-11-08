@@ -11,9 +11,7 @@ from valohai.internals.notebooks import (
     parse_ipynb,
 )
 from valohai.internals.parsing import parse
-
-ParameterDict = Dict[str, Any]
-InputDict = Dict[str, Any]
+from valohai.types import InputDict, ParameterDict
 
 
 def generate_step(
@@ -21,8 +19,8 @@ def generate_step(
     relative_source_path: str,
     step: str,
     image: str,
-    parameters: ParameterDict,
-    inputs: InputDict,
+    parameters: Dict[str, Any],
+    inputs: Dict[str, Any],
 ) -> Step:
     config_step = Step(
         name=step,
@@ -39,7 +37,7 @@ def generate_step(
     return config_step
 
 
-def parse_parameter(key, value):
+def parse_parameter(key: str, value: Any) -> Parameter:
     if isinstance(value, dict):
         value["name"] = key
         if "default" in value and "type" not in value:
@@ -53,7 +51,7 @@ def parse_parameter(key, value):
     )
 
 
-def parse_input(key, value):
+def parse_input(key: str, value: Any) -> Input:
     if isinstance(value, dict):
         value["name"] = key
         return Input.parse(value)
@@ -61,19 +59,22 @@ def parse_input(key, value):
     has_wildcards = any(
         "*" in uri for uri in ([value] if isinstance(value, str) else value)
     )
-    keep_directories = KeepDirectories.SUFFIX.value if has_wildcards else False
     empty_default = (
         not value
         or isinstance(value, List)
         and (len(value) == 0 or len(value) == 1 and not value[0])
     )
 
-    return Input(
+    input = Input(
         name=key,
         default=None if empty_default else value,
-        keep_directories=keep_directories,
         optional=empty_default,
     )
+    # TODO: remove this when https://github.com/valohai/valohai-yaml/pull/57 is available
+    input.keep_directories = (
+        KeepDirectories.SUFFIX if has_wildcards else KeepDirectories.NONE
+    )
+    return input
 
 
 def generate_config(

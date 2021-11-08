@@ -9,16 +9,13 @@ from valohai_yaml.utils import listify
 from valohai.internals import global_state
 from valohai.internals.input_info import InputInfo
 from valohai.paths import get_inputs_config_path, get_parameters_config_path
+from valohai.types import InputDict, ParameterDict
 
 
 def load_global_state(
-    default_inputs_from_prepare: Optional[
-        Dict[str, Union[str, List[str], Dict]]
-    ] = None,
-    default_parameters_from_prepare: Optional[
-        Dict[str, Union[int, bool, float, str, Dict]]
-    ] = None,
-):
+    default_inputs_from_prepare: Optional[InputDict] = None,
+    default_parameters_from_prepare: Optional[ParameterDict] = None,
+) -> None:
     """Loads inputs & parameters and stores their value in the global_state
 
     Inputs & parameters (with values) can be defined in three places:
@@ -47,12 +44,14 @@ def load_global_state(
         parameters = sift_defaults(default_parameters_from_prepare)
 
     # Use inputs.json and parameters.json instead if found
-    file_inputs, file_parameters = load_from_configs()
-    inputs = file_inputs or inputs
-    parameters = file_parameters or parameters
+    inputs = load_inputs_from_config() or inputs
+    parameters = load_parameters_from_config() or parameters
 
     # Parse and override input & parameter values from CLI
-    cli_inputs, cli_parameters = parse_overrides_from_cli(inputs, parameters)
+    cli_inputs, cli_parameters = parse_overrides_from_cli(
+        input_names=set(inputs),
+        parameters=parameters,
+    )
     inputs = {key: cli_inputs.get(key, value) for key, value in inputs.items()}
     final_parameters = {
         key: cli_parameters.get(key, value) for key, value in parameters.items()
@@ -69,7 +68,7 @@ def load_global_state(
     global_state.loaded = True
 
 
-def load_global_state_if_necessary():
+def load_global_state_if_necessary() -> None:
     """Loads the global state if it is not already loaded
 
     It is possible that user hasn't called valohai.prepare() at all,
@@ -82,17 +81,22 @@ def load_global_state_if_necessary():
         load_global_state()
 
 
-def parse_overrides_from_cli(inputs: Dict, parameters: Dict) -> Tuple[Dict, Dict]:
+def parse_overrides_from_cli(
+    *,
+    input_names: Set[str],
+    parameters: ParameterDict,
+) -> Tuple[Dict[str, List[str]], Dict[str, Any]]:
     """Override inputs and parameters from the command-line
 
-    :param inputs: Dict of inputs and their values
+    :param input_names: List of input names
     :param parameters: Dict of parameters and their values
     """
 
     parser = argparse.ArgumentParser()
-    for name, _ in inputs.items():
+    for name in input_names:
         parser.add_argument(f"--{name}", type=str, nargs="+")
     for name, value in parameters.items():
+        # TODO: this does not properly handle `value` possibly being a default dict
         parser.add_argument(f"--{name}", type=type(value))
     known_args, unknown_args = parser.parse_known_args()
 
@@ -102,35 +106,29 @@ def parse_overrides_from_cli(inputs: Dict, parameters: Dict) -> Tuple[Dict, Dict
             file=sys.stderr,
         )
 
-    cli_inputs = sift_cli_inputs(known_args, set(inputs.keys()))
+    cli_inputs = sift_cli_inputs(known_args, input_names)
     cli_parameters = sift_cli_parameters(known_args, set(parameters.keys()))
 
     return cli_inputs, cli_parameters
 
 
-def load_from_configs() -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    """Load input & parameter values from the config file(s)
-
-    Valohai offers mechanism to load inputs & parameters from a JSON config file.
-    See if those config files exist and load the values.
-
-    :param default_inputs: Dict of inputs and their default values
-    :param default_inputs: Dict of parameters and their default values
-    """
-
-    inputs, parameters = {}, {}
-
+def load_inputs_from_config() -> InputDict:
+    """Load input values from the config file if it exists."""
+    inputs = {}
     config_path = get_inputs_config_path()
     if os.path.isfile(config_path):
         with open(config_path) as json_file:
             inputs = json.load(json_file)
+    return inputs
 
+
+def load_parameters_from_config() -> ParameterDict:
+    parameters = {}
     config_path = get_parameters_config_path()
     if os.path.isfile(config_path):
         with open(config_path) as json_file:
             parameters = json.load(json_file)
-
-    return inputs, parameters
+    return parameters
 
 
 def sift_cli_inputs(
@@ -168,7 +166,7 @@ def sift_cli_parameters(
     }
 
 
-def sift_defaults(values: Dict[str, Any]) -> Dict[str, List[str]]:
+def sift_defaults(values: Dict[str, Any]) -> Dict[str, Any]:
     """Returns the default values which user defined in .prepare()
 
     Works for both inputs and parameters.
@@ -199,7 +197,7 @@ def sift_defaults(values: Dict[str, Any]) -> Dict[str, List[str]]:
     return result
 
 
-def convert_to_input_info(input: Union[str, List[str], Dict]) -> InputInfo:
+def convert_to_input_info(input: Union[str, List[str], Dict[str, Any]]) -> InputInfo:
     """Converts inputs from different formats into an InputInfo
 
     Inputs can be defined in either .prepare() or inputs.json

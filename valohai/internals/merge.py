@@ -1,4 +1,5 @@
 import copy
+from typing import TypeVar
 
 from valohai_yaml.objs.base import Item
 from valohai_yaml.objs.config import Config
@@ -7,8 +8,10 @@ from valohai_yaml.utils.merge import merge_dicts, merge_simple
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
 
+MergeT = TypeVar("MergeT", Config, Step, Item)
 
-def python_to_yaml_merge_strategy(original: Item, parsed: Item) -> Item:
+
+def python_to_yaml_merge_strategy(original: MergeT, parsed: MergeT) -> MergeT:
     """Merging strategy in the valohai-utils AST parser use-case
 
     :param original: Original Item from an existing valohai.yaml
@@ -32,9 +35,11 @@ def _merge_config(original: Config, parsed: Config) -> Config:
     result = copy.deepcopy(original)
     for key, step in parsed.steps.items():
         if key in result.steps:
-            result.steps[key] = original.steps[key].merge_with(
+            original_step = original.steps[key]
+            # TODO: remove the type: ignore when https://github.com/valohai/valohai-yaml/pull/58 is available
+            result.steps[key] = original_step.merge_with(
                 step, python_to_yaml_merge_strategy
-            )
+            )  # type: ignore[assignment]
         else:
             result.steps[key] = step
     return result

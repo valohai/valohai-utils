@@ -6,12 +6,15 @@ flake8-print
 flake8-return
 flake8-simplify
 isort
+jsonschema<4.0
 mypy
 pip-tools
 pydocstyle
 pytest
 pytest-cov
-requests
 requests-mock
+requests<2.26.0
 tqdm
+types-PyYAML
+types-requests
 valohai-yaml

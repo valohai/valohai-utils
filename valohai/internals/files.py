@@ -2,7 +2,9 @@ import glob
 import os
 import pathlib
 from stat import S_IREAD, S_IRGRP, S_IROTH
-from typing import Set, Tuple, Union
+from typing import Callable, List, Set, Tuple, Union
+
+from valohai_yaml.utils import listify
 
 
 def set_file_read_only(path: str) -> None:
@@ -17,7 +19,7 @@ def get_glob_pattern(source: str) -> str:
 
 
 def expand_globs(
-    sources: Union[str, list], preprocessor=lambda s: s
+    sources: Union[str, List[str]], preprocessor: Callable[[str], str] = lambda s: s
 ) -> Set[Tuple[str, str]]:
     """Returns a set of paths as a result of expanding all the source wildcards
 
@@ -36,8 +38,7 @@ def expand_globs(
     :return:
     """
 
-    if isinstance(sources, str):
-        sources = [sources]
+    sources = listify(sources)
     files_to_compress = set()
     for source_path in sources:
         source_path = preprocessor(source_path)
