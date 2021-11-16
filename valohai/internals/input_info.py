@@ -76,7 +76,7 @@ class InputInfo:
                         FileInfo(
                             name=os.path.basename(path),
                             uri=None,
-                            path=value,
+                            path=path,
                             size=None,
                             checksums=None,
                         )
