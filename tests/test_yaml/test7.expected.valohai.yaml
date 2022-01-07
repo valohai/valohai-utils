@@ -19,6 +19,8 @@
     - name: flaggy
       default: true
       multiple-separator: ','
+      pass-false-as: --flaggy=false
+      pass-true-as: --flaggy=true
       type: flag
     - name: stringy
       default: holla
