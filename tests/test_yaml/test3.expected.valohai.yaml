@@ -8,6 +8,8 @@
     - name: param1
       default: true
       multiple-separator: ','
+      pass-false-as: --param1=false
+      pass-true-as: --param1=true
       type: flag
     - name: param2
       default: asdf

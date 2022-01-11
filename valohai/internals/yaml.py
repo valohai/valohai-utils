@@ -44,11 +44,17 @@ def parse_parameter(key: str, value: Any) -> Parameter:
             value["type"] = get_parameter_type_name(key, value["default"])
         return Parameter.parse(value)
 
-    return Parameter(
+    parameter = Parameter(
         name=key,
         type=get_parameter_type_name(key, value),
         default=value,
     )
+
+    if parameter.type == "flag":
+        parameter.pass_true_as = f"--{parameter.name}=true"
+        parameter.pass_false_as = f"--{parameter.name}=false"
+
+    return parameter
 
 
 def parse_input(key: str, value: Any) -> Input:

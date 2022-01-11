@@ -23,6 +23,7 @@ def test_prepare(tmpdir, monkeypatch):
         "integerboi": 123,
         "floaty": 0.0001,
         "makemetrue": False,
+        "makemefalse": True,
         "makemeqwer": "asdf",
         "makeme321": 123,
         "makemenegative": 0.0001,
@@ -42,6 +43,7 @@ def test_prepare(tmpdir, monkeypatch):
         args = [
             "",
             "--makemetrue=true",
+            "--makemefalse=false",
             "--makemeqwer=qwer",
             "--makeme321=321",
             "--makemenegative=-0.123",
@@ -62,6 +64,7 @@ def test_prepare(tmpdir, monkeypatch):
     assert valohai.parameters("integerboi").value == 123
     assert valohai.parameters("floaty").value == 0.0001
     assert valohai.parameters("makemetrue").value is True
+    assert valohai.parameters("makemefalse").value is False
     assert valohai.parameters("makemeqwer").value == "qwer"
     assert valohai.parameters("makeme321").value == 321
     assert valohai.parameters("makemenegative").value < 0.0
