@@ -15,16 +15,18 @@ class FileInfo:
         self,
         *,
         name: str,
-        uri: Optional[str],
-        path: Optional[str],
-        size: Optional[int],
-        checksums: Optional[Dict[str, str]],
+        uri: Optional[str] = None,
+        path: Optional[str] = None,
+        size: Optional[int] = None,
+        checksums: Optional[Dict[str, str]] = None,
+        metadata: Optional[List[Dict[str, Any]]] = None,
     ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
         self.checksums = dict(checksums) if checksums else {}
         self.path = str(path) if path else None
         self.size = int(size) if size else None
+        self.metadata = list(metadata) if metadata else {}
 
     def is_downloaded(self) -> Optional[bool]:
         return bool(self.path and os.path.isfile(self.path))
