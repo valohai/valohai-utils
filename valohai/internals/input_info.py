@@ -39,6 +39,17 @@ class FileInfo:
         )
         # TODO: Store size & checksums if they become useful
 
+    @classmethod
+    def from_json_data(cls, json_data: Dict[str, Any]) -> "FileInfo":
+        return cls(
+            name=json_data["name"],
+            uri=json_data.get("uri"),
+            path=json_data.get("path"),
+            size=json_data.get("size"),
+            checksums=json_data.get("checksums"),
+            metadata=json_data.get("metadata"),
+        )
+
 
 class InputInfo:
     def __init__(self, files: Iterable[FileInfo]):
@@ -65,7 +76,9 @@ class InputInfo:
 
     @classmethod
     def from_json_data(cls, json_data: Dict[str, Any]) -> "InputInfo":
-        return cls(files=[FileInfo(**d) for d in json_data.get("files", ())])
+        return cls(
+            files=[FileInfo.from_json_data(d) for d in json_data.get("files", ())]
+        )
 
     @classmethod
     def from_urls_and_paths(cls, urls_and_paths: Union[str, List[str]]) -> "InputInfo":
