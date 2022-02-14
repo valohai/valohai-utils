@@ -26,7 +26,7 @@ class FileInfo:
         self.checksums = dict(checksums) if checksums else {}
         self.path = str(path) if path else None
         self.size = int(size) if size else None
-        self.metadata = list(metadata) if metadata else {}
+        self.metadata = list(metadata) if metadata else []
 
     def is_downloaded(self) -> Optional[bool]:
         return bool(self.path and os.path.isfile(self.path))
