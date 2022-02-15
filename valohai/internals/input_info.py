@@ -15,16 +15,18 @@ class FileInfo:
         self,
         *,
         name: str,
-        uri: Optional[str],
-        path: Optional[str],
-        size: Optional[int],
-        checksums: Optional[Dict[str, str]],
+        uri: Optional[str] = None,
+        path: Optional[str] = None,
+        size: Optional[int] = None,
+        checksums: Optional[Dict[str, str]] = None,
+        metadata: Optional[List[Dict[str, Any]]] = None,
     ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
         self.checksums = dict(checksums) if checksums else {}
         self.path = str(path) if path else None
         self.size = int(size) if size else None
+        self.metadata = list(metadata) if metadata else []
 
     def is_downloaded(self) -> Optional[bool]:
         return bool(self.path and os.path.isfile(self.path))
@@ -36,6 +38,17 @@ class FileInfo:
             self.uri, os.path.join(path, self.name), force_download
         )
         # TODO: Store size & checksums if they become useful
+
+    @classmethod
+    def from_json_data(cls, json_data: Dict[str, Any]) -> "FileInfo":
+        return cls(
+            name=json_data["name"],
+            uri=json_data.get("uri"),
+            path=json_data.get("path"),
+            size=json_data.get("size"),
+            checksums=json_data.get("checksums"),
+            metadata=json_data.get("metadata"),
+        )
 
 
 class InputInfo:
@@ -63,7 +76,9 @@ class InputInfo:
 
     @classmethod
     def from_json_data(cls, json_data: Dict[str, Any]) -> "InputInfo":
-        return cls(files=[FileInfo(**d) for d in json_data.get("files", ())])
+        return cls(
+            files=[FileInfo.from_json_data(d) for d in json_data.get("files", ())]
+        )
 
     @classmethod
     def from_urls_and_paths(cls, urls_and_paths: Union[str, List[str]]) -> "InputInfo":
