@@ -20,6 +20,7 @@ class FileInfo:
         size: Optional[int] = None,
         checksums: Optional[Dict[str, str]] = None,
         metadata: Optional[List[Dict[str, Any]]] = None,
+        datum_id: Optional[str] = None,
     ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
@@ -27,6 +28,7 @@ class FileInfo:
         self.path = str(path) if path else None
         self.size = int(size) if size else None
         self.metadata = list(metadata) if metadata else []
+        self.datum_id = str(datum_id) if datum_id else None
 
     def is_downloaded(self) -> Optional[bool]:
         return bool(self.path and os.path.isfile(self.path))
@@ -48,6 +50,7 @@ class FileInfo:
             size=json_data.get("size"),
             checksums=json_data.get("checksums"),
             metadata=json_data.get("metadata"),
+            datum_id=json_data.get("datum_id"),
         )
 
 
