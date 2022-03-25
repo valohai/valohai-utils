@@ -16,7 +16,7 @@ class File:
     parent_file: Optional["File"] = None
 
     def open(self) -> IO[bytes]:
-        raise NotImplementedError("...")
+        raise NotImplementedError(f"{self.__class__.__name__}.open() not implemented")
 
     def read(self) -> bytes:
         with self.open() as f:
@@ -27,7 +27,7 @@ class File:
 
     @property
     def name(self) -> str:
-        raise NotImplementedError("...")
+        raise NotImplementedError(f"{self.__class__.__name__}.name not implemented")
 
     @property
     def extension(self) -> str:

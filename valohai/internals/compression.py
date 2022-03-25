@@ -59,7 +59,7 @@ class BaseArchive:
     """
 
     def put(self, archive_name: str, source: FilenameOrStream) -> None:
-        raise NotImplementedError("...")
+        raise NotImplementedError(f"{self.__class__.__name__}.put() not implemented")
 
 
 class ZipArchive(BaseArchive, zipfile.ZipFile):
