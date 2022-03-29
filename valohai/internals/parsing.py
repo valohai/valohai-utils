@@ -78,21 +78,18 @@ class PrepareParser(ast.NodeVisitor):
                 elif key.arg == "image":
                     self.image = ast.literal_eval(key.value)
 
-    def process_default_inputs_arg(self, key: ast.keyword) -> None:
+    def _process_kwarg(self, key: ast.keyword, *, error_hint: str = "") -> Any:
         if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
-            self.inputs = self.assignments[key.value.id]
-        elif isinstance(key.value, ast.Dict):
-            self.inputs = ast.literal_eval(key.value)
-        else:
-            raise NotImplementedError()
+            return self.assignments[key.value.id]
+        if isinstance(key.value, ast.Dict):
+            return ast.literal_eval(key.value)
+        raise NotImplementedError(f"Unable to parse {error_hint}: {key.value!r}")
+
+    def process_default_inputs_arg(self, key: ast.keyword) -> None:
+        self.inputs = self._process_kwarg(key, error_hint="inputs=")
 
     def process_default_parameters_arg(self, key: ast.keyword) -> None:
-        if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
-            self.parameters = self.assignments[key.value.id]
-        elif isinstance(key.value, ast.Dict):
-            self.parameters = ast.literal_eval(key.value)
-        else:
-            raise NotImplementedError()
+        self.parameters = self._process_kwarg(key, error_hint="parameters=")
 
 
 def parse(source: str) -> ParseResult:
