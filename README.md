@@ -33,8 +33,8 @@ vh exec run -a mystep
 
 ```python
 default_parameters = {
-  'iterations': 100,
-  'learning_rate': 0.001
+    'iterations': 100,
+    'learning_rate': 0.001
 }
 ```
 
@@ -62,7 +62,7 @@ for i in range(valohai.parameters('iterations').value):
 
 ```python
 default_inputs = {
-  'input_name': 'http://example.com/1.png'
+    'input_name': 'http://example.com/1.png'
 }
 ```
 
@@ -70,15 +70,15 @@ An input can also be a list of URLs or a folder:
 
 ```python
 default_inputs = {
-  'input_name': [
-    'http://example.com/1.png', 
-    'http://example.com/2.png'
-  ],
-  'input_folder': [
-    's3://mybucket/images/*',
-    'azure://mycontainer/images/*',
-    'gs://mybucket/images/*'
-  ]
+    'input_name': [
+        'http://example.com/1.png', 
+        'http://example.com/2.png'
+    ],
+    'input_folder': [
+        's3://mybucket/images/*',
+        'azure://mycontainer/images/*',
+        'gs://mybucket/images/*'
+    ]
 }
 ```
 
@@ -86,7 +86,7 @@ Or it can be an archive full of files (uncompressed automagically on-demand):
 
 ```python
 default_inputs = {
-  'images': 'http://example.com/myimages.zip'
+    'images': 'http://example.com/myimages.zip'
 }
 ```
 
@@ -100,7 +100,7 @@ import csv
 import valohai
 
 default_inputs = {
-  'myinput': 'https://pokemon-images-example.s3-eu-west-1.amazonaws.com/pokemon.csv'
+    'myinput': 'https://pokemon-images-example.s3-eu-west-1.amazonaws.com/pokemon.csv'
 }
 
 valohai.prepare(step="test", default_inputs=default_inputs)
@@ -143,10 +143,10 @@ It is important for visualization that logs for single epoch are flushed out as 
 import valohai
 
 for epoch in range(100):
-	with valohai.metadata.logger() as logger:
-		logger.log("epoch", epoch)
-		logger.log("accuracy", accuracy)
-		logger.log("loss", loss)
+    with valohai.metadata.logger() as logger:
+        logger.log("epoch", epoch)
+        logger.log("accuracy", accuracy)
+        logger.log("loss", loss)
 ```
 
 ## Example 2
@@ -155,10 +155,10 @@ import valohai
 
 logger = valohai.logger()
 for epoch in range(100):
-	logger.log("epoch", epoch)
-	logger.log("accuracy", accuracy)
-	logger.log("loss", loss)
-	logger.flush()
+    logger.log("epoch", epoch)
+    logger.log("accuracy", accuracy)
+    logger.log("loss", loss)
+    logger.flush()
 ```
 
 # Full example
