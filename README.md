@@ -2,17 +2,17 @@
 Python helper library for the Valohai machine learning platform.
 
 # Install
-```python
+```bash
 pip install valohai-utils
 ```
 
 # Execution
 Run locally
-```python
+```bash
 python mycode.py
 ```
 Run in the cloud
-```python
+```bash
 vh yaml step mycode.py
 vh exec run -a mystep
 ```
