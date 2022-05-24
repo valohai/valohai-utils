@@ -242,3 +242,13 @@ Will produce this `valohai.yaml` config:
       - https://homepages.cae.wisc.edu/~ece533/images/airplane.png
       optional: false
 ```
+
+# Development
+
+If you wish to further develop `valohai-utils`, remember to install development dependencies and write tests for your additions.
+
+```bash
+pip install -e . -r requirements-dev.txt
+make lint
+pytest
+```
