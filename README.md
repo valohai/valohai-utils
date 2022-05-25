@@ -161,6 +161,33 @@ for epoch in range(100):
     logger.flush()
 ```
 
+# Distributed Workloads
+
+`valohai.distributed` contains a toolset for running distributed tasks on Valohai.
+
+```python
+import valohai
+
+if valohai.distributed.is_distributed_task():
+
+    # `master()` reports the same worker on all contexts
+    master = valohai.distributed.master()
+    master_url = f'tcp://{master.primary_local_ip}:1234'
+
+    # `members()` contains all workers in the distributed task
+    member_public_ips = ",".join([
+        m.primary_public_ip 
+        for m 
+        in valohai.distributed.members()
+    ])
+    
+    # `me()` has full details about the current worker context
+    details = valohai.distributed.me()  
+
+    size = valohai.distributed.required_count
+    rank = valohai.distributed.rank  # 0, 1, 2, etc. depending on run context
+```
+
 # Full example
 
 ## Preprocess step for resizing image files
