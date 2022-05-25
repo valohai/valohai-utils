@@ -60,3 +60,7 @@ def get_inputs_config_path() -> str:
 
 def get_parameters_config_path() -> str:
     return os.path.join(get_config_path(), "parameters.json")
+
+
+def get_distributed_config_path() -> str:
+    return os.path.join(get_config_path(), "distributed.json")
