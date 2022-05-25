@@ -1,0 +1,81 @@
+{
+  "config": {
+    "group_name": "task-0180f5a9-9ffe-4e09-d5a7-9a0a507019d4",
+    "member_id": "0",
+    "required_count": 3
+  },
+  "members": [
+    {
+      "announce_time": "2022-05-24T10:42:57",
+      "identity": "happy-yjaqaqlx",
+      "job_id": "exec-0180f5a9-a002-45a0-f0e6-8e98720eeaad",
+      "member_id": "0",
+      "network": {
+        "exposed_ports": {
+          "1234": "1234"
+        },
+        "local_ips": [
+          "10.0.16.61",
+          "fe80::4001:aff:fe00:103d"
+        ],
+        "public_ips": [
+          "34.121.32.110"
+        ]
+      }
+    },
+    {
+      "announce_time": "2022-05-24T10:42:58",
+      "identity": "happy-kwfncqxe",
+      "job_id": "exec-0180f5a9-a007-633b-8af3-e11593482653",
+      "member_id": "2",
+      "network": {
+        "exposed_ports": {
+          "1234": "1234"
+        },
+        "local_ips": [
+          "10.0.16.60",
+          "fe80::4001:aff:fe00:103c"
+        ],
+        "public_ips": [
+          "34.134.18.149"
+        ]
+      }
+    },
+    {
+      "announce_time": "2022-05-24T10:42:57",
+      "identity": "happy-tcuaezxm",
+      "job_id": "exec-0180f5a9-a005-f2ef-693a-3b4c4c115ed8",
+      "member_id": "1",
+      "network": {
+        "exposed_ports": {
+          "1234": "1234"
+        },
+        "local_ips": [
+          "10.0.16.59",
+          "fe80::4001:aff:fe00:103b"
+        ],
+        "public_ips": [
+          "35.194.55.255"
+        ]
+      }
+    }
+  ],
+  "self": {
+    "announce_time": "2022-05-24T10:42:57.461646",
+    "identity": "happy-yjaqaqlx",
+    "job_id": "exec-0180f5a9-a002-45a0-f0e6-8e98720eeaad",
+    "member_id": "0",
+    "network": {
+      "exposed_ports": {
+        "1234": "1234"
+      },
+      "local_ips": [
+        "10.0.16.61",
+        "fe80::4001:aff:fe00:103d"
+      ],
+      "public_ips": [
+        "34.121.32.110"
+      ]
+    }
+  }
+}

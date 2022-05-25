@@ -24,6 +24,21 @@ def use_test_config_dir(vte, monkeypatch):
 
 
 @pytest.fixture
+def use_distributed_config(request, monkeypatch):
+    config_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "test_parsing_distributed",
+        request.param,
+    )
+    with monkeypatch.context() as m:
+        from valohai.distributed import Distributed
+
+        m.setattr(Distributed, "_get_config_path", lambda self: config_path)
+        yield config_path
+    global_state.flush_global_state()
+
+
+@pytest.fixture
 def outputs_path(tmpdir, monkeypatch):
     outputs_path = os.path.join(str(tmpdir), "outputs")
     monkeypatch.setenv("VH_OUTPUTS_DIR", outputs_path)
