@@ -1,0 +1,51 @@
+{
+  "config": {
+    "group_name": "task-20f5bfe1-ea93-47a4-b449-805649f0651d",
+    "member_id": "0",
+    "required_count": 2
+  },
+  "members": [
+    {
+      "announce_time": "2022-05-24T10:36:01",
+      "identity": "happy-tcuaezxm",
+      "job_id": "exec-5c8c367d-00ce-4866-8b3f-69e66008e980",
+      "member_id": "0",
+      "network": {
+        "exposed_ports": {},
+        "local_ips": [
+          "10.0.16.59",
+          "fe80::4001:aff:fe00:103b"
+        ],
+        "public_ips": []
+      }
+    },
+    {
+      "announce_time": "2022-05-24T10:36:05",
+      "identity": "happy-kwfncqxe",
+      "job_id": "exec-0e4f7f9e-ee92-4b59-92fa-187fe026d3af",
+      "member_id": "1",
+      "network": {
+        "exposed_ports": {},
+        "local_ips": [
+          "10.0.16.60",
+          "fe80::4001:aff:fe00:103c"
+        ],
+        "public_ips": []
+      }
+    }
+  ],
+  "self": {
+    "announce_time": "2022-05-24T10:36:01.696740",
+    "identity": "happy-tcuaezxm",
+    "job_id": "exec-5c8c367d-00ce-4866-8b3f-69e66008e980",
+    "member_id": "0",
+    "network": {
+      "exposed_ports": {},
+      "local_ips": [
+        "10.0.16.59",
+        "fe80::4001:aff:fe00:103b"
+      ],
+      "public_ips": []
+    }
+  }
+}
