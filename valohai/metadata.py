@@ -74,7 +74,9 @@ class Logger:
         """
         if self.partial_logs:
             # Start with \n, ensuring JSON prints on it's own line
-            print(f"\n{json.dumps(self.partial_logs, default=str)}")  # noqa
+            # End with \n, as for example Keras versions >=2.7.0 print
+            # an updating progress bar which erases the last output
+            print(f"\n{json.dumps(self.partial_logs, default=str)}\n")  # noqa
             self.partial_logs.clear()
 
     def _serialize(self, name: str, value: Any) -> None:
