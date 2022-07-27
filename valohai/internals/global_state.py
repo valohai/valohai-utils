@@ -8,14 +8,16 @@ inputs: Dict[str, InputInfo] = {}
 parameters: Dict[str, Any] = {}
 step_name: Optional[str] = None
 image_name: Optional[str] = None
+environment: Optional[str] = None
 distributed = Distributed()
 
 
 def flush_global_state() -> None:
-    global loaded, inputs, parameters, step_name, image_name, distributed
+    global loaded, inputs, parameters, step_name, image_name, distributed, environment
     loaded = False
     inputs = {}
     parameters = {}
     step_name = None
     image_name = None
+    environment = None
     distributed.flush_state()

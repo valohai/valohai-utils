@@ -85,4 +85,7 @@ def _merge_step(original: Step, parsed: Step) -> Step:
     if parsed.image is not None and parsed.image != DEFAULT_DOCKER_IMAGE:
         result.image = parsed.image
 
+    if parsed.environment is not None:
+        result.environment = parsed.environment
+
     return result

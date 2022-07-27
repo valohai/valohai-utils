@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
@@ -21,11 +21,13 @@ def generate_step(
     image: str,
     parameters: Dict[str, Any],
     inputs: Dict[str, Any],
+    environment: Optional[str] = None,
 ) -> Step:
     config_step = Step(
         name=step,
         image=image,
         command=get_command(relative_source_path),
+        environment=environment,
     )
 
     for key, value in parameters.items():
@@ -90,6 +92,7 @@ def generate_config(
     image: str,
     parameters: ParameterDict,
     inputs: InputDict,
+    environment: Optional[str] = None,
 ) -> Config:
     step_obj = generate_step(
         relative_source_path=relative_source_path,
@@ -97,6 +100,7 @@ def generate_config(
         image=image,
         parameters=parameters,
         inputs=inputs,
+        environment=environment,
     )
     config = Config()
     config.steps[step_obj.name] = step_obj
@@ -130,7 +134,8 @@ def parse_config_from_source(source_path: str, config_path: str) -> Config:
     return generate_config(
         relative_source_path=relative_source_path,
         step=parsed.step,
-        image=DEFAULT_DOCKER_IMAGE if parsed.image is None else parsed.image,
+        image=parsed.image or DEFAULT_DOCKER_IMAGE,
+        environment=parsed.environment,
         parameters=parsed.parameters,
         inputs=parsed.inputs,
     )

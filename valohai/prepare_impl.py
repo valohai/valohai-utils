@@ -11,6 +11,7 @@ def prepare(
     default_parameters: Optional[ParameterDict] = None,
     default_inputs: Optional[InputDict] = None,
     image: Optional[str] = None,
+    environment: Optional[str] = None,
 ) -> None:
     """Define the name of the step and it's required inputs, parameters and Docker image
 
@@ -22,11 +23,13 @@ def prepare(
     :param default_parameters: Dict of parameters and default values
     :param default_inputs: Dict of inputs with (list of) default URIs
     :param image: Default docker image
+    :param environment: Default environment ID or slug
 
     """
 
     global_state.step_name = step
     global_state.image_name = image
+    global_state.environment = environment
 
     load_global_state(
         default_inputs_from_prepare=default_inputs,
