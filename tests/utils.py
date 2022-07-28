@@ -1,7 +1,6 @@
 import glob
 import json
 import os
-import re
 
 from valohai_yaml.objs import Config
 
@@ -64,7 +63,4 @@ def read_yaml_test_data(root_path):
 
 
 def compare_yaml(config: Config, fixture_yaml: str) -> None:
-    new_yaml = config_to_yaml(config)
-    # TODO: remove this when https://github.com/valohai/valohai-yaml/pull/59 lands
-    new_yaml = re.sub(r"\s+actions: \[]", "", new_yaml)
-    assert new_yaml == fixture_yaml
+    assert config_to_yaml(config) == fixture_yaml

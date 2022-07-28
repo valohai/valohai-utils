@@ -88,6 +88,9 @@ class InputInfo:
         files = []
 
         for value in listify(urls_and_paths):
+            # TODO: this cast shouldn't be required,
+            #       but listify()'s types are wonky with new mypy
+            value = str(value)
             if "://" not in value:  # The string is a local path
                 for path in glob.glob(value):
                     files.append(

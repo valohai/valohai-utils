@@ -44,9 +44,9 @@ class PrepareParser(ast.NodeVisitor):
         valohai.prepare(parameters=get_parameters())
     """
 
-    assignments: Dict[str, Any]  # TODO: embetter type
-    parameters: Dict[str, Any]  # TODO: embetter type
-    inputs: Dict[str, Any]  # TODO: embetter type
+    assignments: Dict[str, Any]
+    parameters: Dict[str, Any]
+    inputs: Dict[str, Any]
     step: Optional[str]
     environment: Optional[str]
 

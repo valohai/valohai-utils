@@ -36,10 +36,9 @@ def _merge_config(original: Config, parsed: Config) -> Config:
     for key, step in parsed.steps.items():
         if key in result.steps:
             original_step = original.steps[key]
-            # TODO: remove the type: ignore when https://github.com/valohai/valohai-yaml/pull/58 is available
             result.steps[key] = original_step.merge_with(
                 step, python_to_yaml_merge_strategy
-            )  # type: ignore[assignment]
+            )
         else:
             result.steps[key] = step
     return result
