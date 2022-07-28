@@ -13,3 +13,4 @@
       multiple-separator: ','
       optional: false
       type: integer
+    environment: big-cpu-box

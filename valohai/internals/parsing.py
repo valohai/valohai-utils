@@ -10,7 +10,9 @@ def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
         return False
 
 
-ParseResult = namedtuple("ParseResult", ["step", "parameters", "inputs", "image"])
+ParseResult = namedtuple(
+    "ParseResult", ["step", "parameters", "inputs", "image", "environment"]
+)
 
 
 class PrepareParser(ast.NodeVisitor):
@@ -46,6 +48,7 @@ class PrepareParser(ast.NodeVisitor):
     parameters: Dict[str, Any]  # TODO: embetter type
     inputs: Dict[str, Any]  # TODO: embetter type
     step: Optional[str]
+    environment: Optional[str]
 
     def __init__(self) -> None:
         self.assignments = {}
@@ -53,6 +56,7 @@ class PrepareParser(ast.NodeVisitor):
         self.inputs = {}
         self.step = None
         self.image = None
+        self.environment = None
 
     def visit_Assign(self, node: ast.Assign) -> None:
         try:
@@ -77,6 +81,8 @@ class PrepareParser(ast.NodeVisitor):
                     self.step = ast.literal_eval(key.value)
                 elif key.arg == "image":
                     self.image = ast.literal_eval(key.value)
+                elif key.arg == "environment":
+                    self.environment = ast.literal_eval(key.value)
 
     def _process_kwarg(self, key: ast.keyword, *, error_hint: str = "") -> Any:
         if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
@@ -101,4 +107,5 @@ def parse(source: str) -> ParseResult:
         parameters=parser.parameters,
         inputs=parser.inputs,
         image=parser.image,
+        environment=parser.environment,
     )
