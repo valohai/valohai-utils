@@ -44,14 +44,17 @@
       target: evaluate_1.input.models
     nodes:
     - name: batch_feature_extraction_1
+      on-error: stop-all
       override: {}
       step: Batch feature extraction
       type: execution
     - name: train_model_1
+      on-error: stop-all
       override: {}
       step: Train model
       type: task
     - name: evaluate_1
+      on-error: stop-all
       override: {}
       step: Evaluate
       type: execution
