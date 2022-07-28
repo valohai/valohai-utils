@@ -64,11 +64,12 @@ class BaseArchive:
 
 class ZipArchive(BaseArchive, zipfile.ZipFile):
     _lock: threading.RLock  # This is actually defined in ZipFile...
+    compresslevel: int
 
     def __init__(self, file: str, mode: str = "r", *, compresslevel: int = 1) -> None:
         # Only Python 3.7+ has the compresslevel kwarg here
-        super().__init__(file, mode, compression=zipfile.ZIP_STORED)
-        self.compresslevel = compresslevel
+        super().__init__(file, mode, compression=zipfile.ZIP_STORED)  # type: ignore[arg-type]
+        self.compresslevel = int(compresslevel)
 
     def writestream(
         self,
@@ -116,6 +117,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
 class TarArchive(BaseArchive, tarfile.TarFile):
     def put(self, archive_name: str, source: FilenameOrStream) -> None:
         with contextlib.ExitStack() as es:
+            stream: IO[bytes]
             if isinstance(source, str):
                 size = os.stat(source).st_size
                 stream = open(source, "rb")  # noqa: SIM115
@@ -134,8 +136,8 @@ def open_archive(path: str) -> BaseArchive:
     if path.endswith(".zip"):
         return ZipArchive(path, "w")
     elif path.endswith(".tar"):
-        return TarArchive.open(path, "w")  # type: ignore
+        return TarArchive.open(path, "w")
     elif path.endswith(".tgz") or path.endswith(".tar.gz"):
-        return TarArchive.open(path, "w:gz")  # type: ignore
+        return TarArchive.open(path, "w:gz")
 
     raise ValueError(f"Unrecognized compression format for {path}")

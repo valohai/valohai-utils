@@ -75,7 +75,7 @@ class FileInContainer(File):
         self.extract(tf)
         tf.seek(0)
         self._concrete_path = tf.name
-        return tempfile._TemporaryFileWrapper(tf, tf.name, delete=delete)  # type: ignore
+        return tempfile._TemporaryFileWrapper(tf, tf.name, delete=delete)
 
     def extract(self, destination: Union[str, IO[bytes]]) -> None:
         if isinstance(destination, str):
