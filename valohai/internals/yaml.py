@@ -71,16 +71,13 @@ def parse_input(key: str, value: Any) -> Input:
         and (len(value) == 0 or len(value) == 1 and not value[0])
     )
 
-    input = Input(
+    keep_directories = KeepDirectories.SUFFIX if has_wildcards else KeepDirectories.NONE
+    return Input(
         name=key,
         default=None if empty_default else value,
         optional=empty_default,
+        keep_directories=keep_directories,
     )
-    # TODO: remove this when https://github.com/valohai/valohai-yaml/pull/57 is available
-    input.keep_directories = (
-        KeepDirectories.SUFFIX if has_wildcards else KeepDirectories.NONE
-    )
-    return input
 
 
 def generate_config(
