@@ -8,6 +8,7 @@ from valohai.metadata import logger
 from valohai.outputs import outputs
 from valohai.parameters import parameters
 from valohai.prepare_impl import prepare
+from valohai.e2c import set_status_detail
 
 Pipeline = papi.Papi
 
@@ -19,4 +20,5 @@ __all__ = [
     "parameters",
     "prepare",
     "Pipeline",
+    "set_status_detail",
 ]
