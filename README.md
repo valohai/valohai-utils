@@ -29,7 +29,7 @@ vh exec run -a mystep
 
 # Parameters
 
-[Valohai parameters ](https://docs.valohai.com/core-concepts/parameters/) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary: 
+[Valohai parameters ](https://help.valohai.com/hc/en-us/articles/4419896836881-Use-parameters) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary: 
 
 ```python
 default_parameters = {
@@ -58,7 +58,7 @@ for i in range(valohai.parameters('iterations').value):
 
 # Inputs
 
-[Valohai inputs](https://docs.valohai.com/valohai-yaml/step-inputs/#option-1-custom-store-url) are the data files required by the experiment. They are automatically downloaded for you, if the data is from a public source. You define inputs with a dictionary:
+[Valohai inputs](https://help.valohai.com/hc/en-us/articles/4422921110929-Add-input-files-to-your-execution) are the data files required by the experiment. They are automatically downloaded for you, if the data is from a public source. You define inputs with a dictionary:
 
 ```python
 default_inputs = {
@@ -111,7 +111,7 @@ with open(valohai.inputs("myinput").path()) as csv_file:
 
 # Outputs
 
-[Valohai outputs](https://docs.valohai.com/executions/outputs/index.html) are the files that your step produces an end result.
+[Valohai outputs](https://help.valohai.com/hc/en-us/articles/4419909997713-Upload-output-data) are the files that your step produces an end result.
 
 When you are ready to save your output file, you can query for the correct path from the `valohai-utils`.
 
@@ -134,7 +134,7 @@ valohai.outputs('resized').compress("*.png", "images.zip", remove_originals=True
 
 # Logging
 
-You can log metrics using the [Valohai metadata system](https://docs.valohai.com/executions/metadata/) and then render interactive graphs on the web interface. The `valohai-utils` logger will print JSON logs that Valohai will parse as metadata.
+You can log metrics using the [Valohai metadata system](https://help.valohai.com/hc/en-us/articles/4419919418129-Collect-and-view-metrics) and then render interactive graphs on the web interface. The `valohai-utils` logger will print JSON logs that Valohai will parse as metadata.
 
 It is important for visualization that logs for single epoch are flushed out as a single JSON object.
 
