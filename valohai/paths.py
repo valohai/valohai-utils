@@ -64,3 +64,7 @@ def get_parameters_config_path() -> str:
 
 def get_distributed_config_path() -> str:
     return os.path.join(get_config_path(), "distributed.json")
+
+
+def get_api_config_path() -> str:
+    return os.path.join(get_config_path(), "api.json")

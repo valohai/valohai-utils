@@ -2,6 +2,7 @@ __version__ = "0.2.0"
 
 import papi
 
+from valohai.controller_api import set_status_detail
 from valohai.inputs import inputs
 from valohai.internals.global_state import distributed
 from valohai.metadata import logger
@@ -19,4 +20,5 @@ __all__ = [
     "parameters",
     "prepare",
     "Pipeline",
+    "set_status_detail",
 ]
