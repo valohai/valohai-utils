@@ -110,5 +110,11 @@ class Output:
 
         return target_path
 
+    @property
+    def dir_path(
+        self,
+    ) -> str:
+        return get_outputs_path()
+
 
 outputs = Output

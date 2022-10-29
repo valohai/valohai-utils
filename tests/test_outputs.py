@@ -12,6 +12,8 @@ def test_get_output_path(outputs_path, name, fragment):
     path = valohai.outputs(name).path(fragment)
     assert path == os.path.join(outputs_path, name, fragment)
     assert os.path.isdir(os.path.dirname(path))
+    assert os.path.exists(valohai.outputs().dir_path)
+    assert os.path.isdir(valohai.outputs().dir_path)
 
 
 def test_live_upload(outputs_path):
