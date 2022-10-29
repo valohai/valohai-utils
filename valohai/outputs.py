@@ -2,7 +2,6 @@ import glob
 import os
 import tempfile
 from typing import List, Union
-from .paths import get_outputs_path
 
 from valohai.internals.compression import open_archive
 from valohai.internals.files import (
@@ -115,6 +114,7 @@ class Output:
     def dir_path(
         self,
     ) -> str:
-        return get_outputs_path(self.name)
+        return get_outputs_path()
+
 
 outputs = Output
