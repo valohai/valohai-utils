@@ -10,8 +10,8 @@ def download_url(url: str, path: str, force_download: bool = False) -> str:
             from tqdm import tqdm
         except ImportError as ie:
             raise RuntimeError(
-                "The `requests` and `tqdm` modules must be available "
-                "for download support (attempting to download %s)" % url
+                f"The `requests` and `tqdm` modules must be available "
+                f"for download support (attempting to download {url})"
             ) from ie
 
         tmp_path = tempfile.NamedTemporaryFile().name

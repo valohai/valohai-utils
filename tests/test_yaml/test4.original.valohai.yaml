@@ -57,4 +57,3 @@
     edges:
       - [generate.output.images*, train.input.dataset-images]
       - [generate.output.labels*, train.input.dataset-labels]
-
