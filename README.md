@@ -29,7 +29,7 @@ vh exec run -a mystep
 
 # Parameters
 
-[Valohai parameters ](https://help.valohai.com/hc/en-us/articles/4419896836881-Use-parameters) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary: 
+[Valohai parameters ](https://help.valohai.com/hc/en-us/articles/4419896836881-Use-parameters) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary:
 
 ```python
 default_parameters = {
@@ -71,7 +71,7 @@ An input can also be a list of URLs or a folder:
 ```python
 default_inputs = {
     'input_name': [
-        'http://example.com/1.png', 
+        'http://example.com/1.png',
         'http://example.com/2.png'
     ],
     'input_folder': [
@@ -123,7 +123,7 @@ out_path = valohai.outputs('resized').path('resized_image.png')
 new_image.save(out_path)
 ```
 
-Sometimes there are so many outputs that you may want to compress them into a single file. 
+Sometimes there are so many outputs that you may want to compress them into a single file.
 
 In this case, once you have all your outputs saved, you can finalize the output with the `compress()` method.
 
@@ -176,13 +176,13 @@ if valohai.distributed.is_distributed_task():
 
     # `members()` contains all workers in the distributed task
     member_public_ips = ",".join([
-        m.primary_public_ip 
-        for m 
+        m.primary_public_ip
+        for m
         in valohai.distributed.members()
     ])
-    
+
     # `me()` has full details about the current worker context
-    details = valohai.distributed.me()  
+    details = valohai.distributed.me()
 
     size = valohai.distributed.required_count
     rank = valohai.distributed.rank  # 0, 1, 2, etc. depending on run context

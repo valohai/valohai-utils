@@ -149,8 +149,8 @@ def get_parameter_type_name(name: str, value: Any) -> str:
         return "string"
 
     raise ValueError(
-        "Unrecognized parameter type for %s=%s. Supported Python types are float, int, string and bool."
-        % (name, value)
+        f"Unrecognized parameter type for {name}={value}. "
+        f"Supported Python types are float, int, string and bool."
     )
 
 
@@ -164,7 +164,7 @@ def get_command(relative_source_path: str) -> List[str]:
 
     return [
         "pip install -r requirements.txt",
-        "python %s {parameters}" % relative_source_path,
+        f"python {relative_source_path} {{parameters}}",
     ]
 
 

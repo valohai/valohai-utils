@@ -29,7 +29,7 @@ def parse_ipynb(content_or_str: Union[str, NotebookDict]) -> NotebookDict:
 
     nbformat = content.get("nbformat")
     if not isinstance(nbformat, int):
-        raise ValueError("Nbformat value %s invalid" % nbformat)
+        raise ValueError(f"Nbformat value {nbformat} invalid")
     return dict(content)
 
 
@@ -56,13 +56,9 @@ def get_notebook_command(notebook_relative_path: str) -> List[str]:
         [
             "papermill -k python3 -f /valohai/config/parameters.yaml",
             shlex.quote(
-                "/valohai/repository/{}".format(
-                    notebook_relative_path.replace(os.sep, "/")
-                )
+                f"/valohai/repository/{notebook_relative_path.replace(os.sep, '/')}"
             ),
-            shlex.quote(
-                "/valohai/outputs/{}".format(notebook_name.replace(os.sep, "/"))
-            ),
+            shlex.quote(f"/valohai/outputs/{notebook_name.replace(os.sep, '/')}"),
         ]
     )
     return ["pip install -r requirements.txt", papermill_command]
