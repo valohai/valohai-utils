@@ -274,8 +274,22 @@ Will produce this `valohai.yaml` config:
 
 If you wish to further develop `valohai-utils`, remember to install development dependencies and write tests for your additions.
 
+### Linting
+
+Lints are run via pre-commit.
+
+If you want pre-commit to check your commits via git hooks,
+
+```
+pip install pre-commit
+pre-commit install
+```
+
+You can also run the lints manually with `pre-commit run --all-files`.
+
+### Testing
+
 ```bash
 pip install -e . -r requirements-dev.txt
-make lint
 pytest
 ```
