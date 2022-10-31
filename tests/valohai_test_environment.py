@@ -62,7 +62,7 @@ class ValohaiTestEnvironment:
                         "name": "Example.jpg",
                         "path": f"{self.inputs_path}/single_image/Example.jpg",
                         "size": 27661,
-                        "uri": "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg",
+                        "uri": "https://dist.valohai.com/valohai-utils-tests/Example.jpg",
                     }
                 ]
             },

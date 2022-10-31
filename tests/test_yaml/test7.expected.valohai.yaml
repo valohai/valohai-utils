@@ -29,7 +29,7 @@
       type: string
     inputs:
     - name: my-image
-      default: https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg
+      default: https://dist.valohai.com/valohai-utils-tests/Example.jpg
       optional: false
     - name: my-optional-input
       optional: true
