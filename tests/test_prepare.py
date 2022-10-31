@@ -28,12 +28,14 @@ def test_prepare(tmpdir, monkeypatch):
         "makeme321": 123,
         "makemenegative": 0.0001,
     }
+    url1 = "https://dist.valohai.com/valohai-utils-tests/Example.svg"
+    url2 = "https://dist.valohai.com/valohai-utils-tests/sharktavern.jpg"
     inputs = {
         "example": "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz",
         "overrideme": "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz",
         "myimages": [
-            "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg",
-            "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png",
+            url1,
+            url2,
         ],
         "localdata_as_list": [str(local_data), str(local_data2)],
         "localdata_with_wildcard": os.path.join(str(data_dir), "*.dat"),
@@ -73,14 +75,9 @@ def test_prepare(tmpdir, monkeypatch):
         get_input_info("example").files[0].uri
         == "https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz"
     )
-    assert (
-        get_input_info("myimages").files[0].uri
-        == "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg"
-    )
-    assert (
-        get_input_info("myimages").files[1].uri
-        == "https://upload.wikimedia.org/wikipedia/commons/0/01/Example_Wikipedia_sandbox_move_UI.png"
-    )
+    images = get_input_info("myimages").files
+    assert images[0].uri == url1
+    assert images[1].uri == url2
     assert not get_input_info("overrideme").files[0].uri
     assert os.path.isfile(get_input_info("overrideme").files[0].path)
 

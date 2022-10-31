@@ -46,7 +46,7 @@ def test_parsing_priorities(tmpdir, monkeypatch):
                     "files": [
                         {
                             "name": "example.svg",
-                            "uri": "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg",
+                            "uri": "https://dist.valohai.com/valohai-utils-tests/Example.svg",
                             "path": None,
                             "size": 0,
                             "checksums": [],
@@ -62,7 +62,7 @@ def test_parsing_priorities(tmpdir, monkeypatch):
     valohai.prepare(step="test", default_parameters=parameters, default_inputs=inputs)
     assert (
         get_input_info("example").files[0].uri
-        == "https://upload.wikimedia.org/wikipedia/commons/8/84/Example.svg"
+        == "https://dist.valohai.com/valohai-utils-tests/Example.svg"
     )
     assert valohai.parameters("floaty").value == 0.5
 

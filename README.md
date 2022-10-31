@@ -208,8 +208,8 @@ default_parameters = {
 }
 default_inputs = {
     "images": [
-        "https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg",
-        "https://homepages.cae.wisc.edu/~ece533/images/airplane.png",
+        "https://dist.valohai.com/valohai-utils-tests/Example.jpg",
+        "https://dist.valohai.com/valohai-utils-tests/planeshark.jpg",
     ],
 }
 
@@ -265,8 +265,8 @@ Will produce this `valohai.yaml` config:
     inputs:
     - name: images
       default:
-      - https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg
-      - https://homepages.cae.wisc.edu/~ece533/images/airplane.png
+      - https://dist.valohai.com/valohai-utils-tests/Example.jpg
+      - https://dist.valohai.com/valohai-utils-tests/planeshark.jpg
       optional: false
 ```
 
