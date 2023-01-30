@@ -4,3 +4,43 @@ target-version = ["py36"]
 [build-system]
 requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+ignore = [
+    "E501",
+    "RET504",
+    "SIM105",
+]
+select = [
+    "C9",
+    "E",
+    "F",
+    "RET",
+    "SIM",
+    "T2",
+    "W",
+]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["T201"]
+
+[tool]
+[tool.mypy]
+exclude = "tests/*"
+
+[[tool.mypy.overrides]]
+module = "setuptools.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tqdm.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+norecursedirs = [".git", ".tox"]
+
+[tool.coverage.run]
+omit = ["*site-packages*", "setup.py"]
