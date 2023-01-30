@@ -48,10 +48,7 @@ class Output:
 
         # Simple os.path.join() call would get us the same result, but
         # The behavior for joining two absolute paths is made explicit here for clarity
-        if os.path.isabs(filename):
-            path = filename
-        else:
-            path = os.path.join(path, filename)
+        path = filename if os.path.isabs(filename) else os.path.join(path, filename)
 
         if makedirs:
             os.makedirs(os.path.dirname(path), exist_ok=True)

@@ -219,16 +219,15 @@ def add_disk_file(
         if extension == ".zip":
             find_files_in_zip(vfs, disk_file)
             return
-        elif extension in (".tar", ".tar.gz", ".tar.bz2", ".tar.xz"):
+        if extension in (".tar", ".tar.gz", ".tar.bz2", ".tar.xz"):
             find_files_in_tar(vfs, disk_file)
             return
     vfs.files.append(disk_file)
 
 
 def find_files(vfs: VFS, root: str, *, process_archives: bool) -> None:
-    dent: "DirEntry"
-
     def _walk(path: str) -> None:
+        dent: "DirEntry"
         for dent in os.scandir(path):
             if dent.is_dir():
                 _walk(dent.path)

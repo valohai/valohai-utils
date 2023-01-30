@@ -135,9 +135,11 @@ class TarArchive(BaseArchive, tarfile.TarFile):
 def open_archive(path: str) -> BaseArchive:
     if path.endswith(".zip"):
         return ZipArchive(path, "w")
-    elif path.endswith(".tar"):
+
+    if path.endswith(".tar"):
         return TarArchive.open(path, "w")
-    elif path.endswith(".tgz") or path.endswith(".tar.gz"):
+
+    if path.endswith(".tgz") or path.endswith(".tar.gz"):
         return TarArchive.open(path, "w:gz")
 
     raise ValueError(f"Unrecognized compression format for {path}")
