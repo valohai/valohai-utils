@@ -52,7 +52,7 @@ def test_vfs(tmpdir):
             with file.open() as of:
                 open_read_contents[file.name] = of.read()
 
-            with (file.open() if not file.parent_file else file.open_concrete()) as cf:
+            with file.open() if not file.parent_file else file.open_concrete() as cf:
                 # If os.open() can read the file, it's a concrete disk file
                 fd = os.open(cf.name, os.R_OK)
                 concrete_contents[file.name] = os.read(fd, 10_000)
