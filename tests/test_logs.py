@@ -1,11 +1,18 @@
 import valohai
 
 
-def test_basic_logging(capsys):
+def test_basic_logging(capsys, monkeypatch):
     with valohai.logger() as logger:
         logger.log("myint", 123)
     captured = capsys.readouterr()
     assert captured.out == '\n{"myint": 123}\n'
+
+    with monkeypatch.context() as m:
+        m.setenv('VALOHAI_PORT', 1234)
+        with valohai.logger() as logger:
+            logger.log("with_port", True)
+        captured = capsys.readouterr()
+        assert captured.out == '\n{"vh_metadata": {"with_port": true}}\n'
 
     with valohai.logger() as logger:
         logger.log("I am float", 0.1241234435877)
