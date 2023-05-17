@@ -37,9 +37,7 @@ def get_outputs_path() -> str:
         return os.environ.get("VH_OUTPUTS_DIR", "/valohai/outputs")
     return os.environ.get(
         "VH_OUTPUTS_DIR",
-        os.path.join(
-            VH_LOCAL_OUTPUTS_DIR,
-        ),
+        VH_LOCAL_OUTPUTS_DIR
     )
 
 
