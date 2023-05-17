@@ -9,7 +9,6 @@ from valohai.consts import (
     VH_LOCAL_REPOSITORY_DIR,
 )
 from valohai.internals import global_state
-from valohai.internals.guid import get_execution_guid
 
 
 def get_config_path() -> str:
@@ -40,8 +39,6 @@ def get_outputs_path() -> str:
         "VH_OUTPUTS_DIR",
         os.path.join(
             VH_LOCAL_OUTPUTS_DIR,
-            get_execution_guid(),
-            global_state.step_name or "default",
         ),
     )
 
