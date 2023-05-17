@@ -8,7 +8,7 @@ def test_basic_logging(capsys, monkeypatch):
     assert captured.out == '\n{"myint": 123}\n'
 
     with monkeypatch.context() as m:
-        m.setenv('VALOHAI_PORT', 1234)
+        m.setenv("VALOHAI_PORT", 1234)
         with valohai.logger() as logger:
             logger.log("with_port", True)
         captured = capsys.readouterr()

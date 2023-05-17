@@ -6,4 +6,7 @@ def is_running_in_valohai() -> bool:
 
 
 def is_valohai_deployment() -> bool:
-    return bool(os.environ.get('VALOHAI_PORT') or os.path.exists("/valohai/valohai-metadata.json"))
+    return bool(
+        os.environ.get("VALOHAI_PORT")
+        or os.path.exists("/valohai/valohai-metadata.json")
+    )
