@@ -1,13 +1,7 @@
 import json
-import os
 from typing import Any, Dict
-
+from valohai.config import is_valohai_deployment
 _supported_types = [int, float]
-
-
-def is_valohai_deployment():
-    return os.environ.get('VALOHAI_PORT') or \
-        os.path.exists("/valohai/valohai-metadata.json")
 
 class Logger:
     partial_logs: Dict[str, Any]
@@ -78,8 +72,11 @@ class Logger:
         This will log all three metrics at once.
         """
         if self.partial_logs:
+            to_print = self.partial_logs
+            if is_valohai_deployment():
+                # Wrap in `vh_metadata` so deployment log machinery detects this
+                to_print = {"vh_metadata": to_print}
             # Start with \n, ensuring JSON prints on its own line
-            to_print = {'vh_metadata': self.partial_logs} if is_valohai_deployment() else self.partial_logs
             print(f"\n{json.dumps(to_print, default=str)}")
             self.partial_logs.clear()
 
