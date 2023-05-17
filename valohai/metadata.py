@@ -1,5 +1,6 @@
 import json
 from typing import Any, Dict
+from valohai.config import is_valohai_deployment
 
 _supported_types = [int, float]
 
@@ -73,8 +74,12 @@ class Logger:
         This will log all three metrics at once.
         """
         if self.partial_logs:
-            # Start with \n, ensuring JSON prints on it's own line
-            print(f"\n{json.dumps(self.partial_logs, default=str)}")  # noqa
+            to_print = self.partial_logs
+            if is_valohai_deployment():
+                # Wrap in `vh_metadata` so deployment log machinery detects this
+                to_print = {"vh_metadata": to_print}
+            # Start with \n, ensuring JSON prints on its own line
+            print(f"\n{json.dumps(to_print, default=str)}")  # noqa: T201
             self.partial_logs.clear()
 
     def _serialize(self, name: str, value: Any) -> None:
