@@ -8,13 +8,13 @@ def string_to_bool(value: str) -> bool:
     return True
 
 
-def check_sha256_hashing(filepath: str) -> ...:
+def check_sha256_hashing(filepath: str) -> str:
     try:
-        from valohai_cli.utils.hashing import get_fp_sha256
+        from valohai_cli.utils.hashing import get_fp_sha256  # type: ignore
     except ImportError as ie:
         raise RuntimeError(
             "The `valohai-cli` module must be available " "for verifying hash"
         ) from ie
 
     with open(filepath, "rb") as f:
-        return get_fp_sha256(f)
+        return str(get_fp_sha256(f))

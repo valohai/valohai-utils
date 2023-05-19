@@ -1,20 +1,21 @@
 import os
 import tempfile
+from requests import Response
 from valohai.internals.utils import uri_to_filename, check_sha256_hashing
 
 
 # TODO: This is close to valohai-local-run. Possibility to merge.
-def resolve_datum(datum_id: str) -> ...:
+def resolve_datum(datum_id: str) -> Response:
     try:
-        from valohai_cli.api import request
+        from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
         raise RuntimeError("Can't resolve datum without valohai-cli") from ie
-    resp = request(url=f"/api/v0/data/{datum_id}", method="GET", stream=True)
+    resp: Response = request(url=f"/api/v0/data/{datum_id}", method="GET", stream=True)
     resp.raise_for_status()
     return resp
 
 
-def verify_datum(response: any, input_folder_path: str) -> str:
+def verify_datum(response: Response, input_folder_path: str) -> str:
     datum_obj = response.json()
     filename = datum_obj["name"]
     checksums = {
