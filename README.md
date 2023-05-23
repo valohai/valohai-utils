@@ -270,6 +270,14 @@ Will produce this `valohai.yaml` config:
       optional: false
 ```
 
+# Configuration
+
+There are some environment variables that affect how `valohai-utils` works when not running within a Valohai execution context.
+
+* `VH_FLAT_LOCAL_OUTPUTS`
+  * If set, flattens the local outputs directory structure into a single directory.
+    This means that outputs from subsequent runs can clobber old files.
+
 # Development
 
 If you wish to further develop `valohai-utils`, remember to install development dependencies and write tests for your additions.
