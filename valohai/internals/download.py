@@ -39,15 +39,6 @@ def verify_datum(response: Any, input_folder_path: str) -> str:
 
 def download_url(url: str, path: str, force_download: bool = False) -> str:
     if not os.path.isfile(path) or force_download:
-        try:
-            import requests
-            from tqdm import tqdm
-        except ImportError as ie:
-            raise RuntimeError(
-                f"The `requests` and `tqdm` modules must be available "
-                f"for download support (attempting to download {url})"
-            ) from ie
-
         if url.startswith("datum://"):
             input_folder_path = os.path.dirname(path)
             response = resolve_datum(uri_to_filename(url))
