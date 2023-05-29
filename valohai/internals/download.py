@@ -8,7 +8,7 @@ from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
 # TODO: This is close to valohai-local-run. Possibility to merge.
-def resolve_datum(datum_id: str) -> Any:
+def resolve_datum(datum_id: str) -> Dict[str, Any]:
     try:
         from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
