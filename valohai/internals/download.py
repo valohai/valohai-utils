@@ -1,7 +1,8 @@
+import json
 import os
 import tempfile
 from requests import Response
-from valohai.internals.utils import uri_to_filename, check_sha256_hashing
+from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
 # TODO: This is close to valohai-local-run. Possibility to merge.
@@ -10,13 +11,13 @@ def resolve_datum(datum_id: str) -> Response:
         from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
         raise RuntimeError("Can't resolve datum without valohai-cli") from ie
-    resp: Response = request(url=f"/api/v0/data/{datum_id}", method="GET", stream=True)
+    resp: Response = request(url=f"/api/v0/data/{datum_id}", method="GET")
     resp.raise_for_status()
-    return resp
+    return resp.json()
 
 
-def verify_datum(response: Response, input_folder_path: str) -> str:
-    datum_obj = response.json()
+def verify_datum(response: json, input_folder_path: str) -> str:
+    datum_obj = response
     filename = datum_obj["name"]
     checksums = {
         "md5": datum_obj["md5"],
@@ -26,11 +27,11 @@ def verify_datum(response: Response, input_folder_path: str) -> str:
     file_path = os.path.join(input_folder_path, filename)
     if filename in os.listdir(input_folder_path) and checksums[
         "sha256"
-    ] == check_sha256_hashing(file_path):
-        return os.path.join(input_folder_path, filename)
+    ] == get_sha256_hash(file_path):
+        return file_path
     raise Exception(
-        "Datum details (name or content) are not matched with"
-        " locally available file. Please check again."
+        "Datum details are not matched with"
+        " locally available file. Either the name or content of local file is altered."
     )
 
 
@@ -45,15 +46,10 @@ def download_url(url: str, path: str, force_download: bool = False) -> str:
                 f"for download support (attempting to download {url})"
             ) from ie
 
-        if "datum://" in url:
-            input_folder_path = path.rsplit("/", 1)[0]  # getting folder path only
+        if url.startswith("datum://"):
+            input_folder_path = os.path.dirname(path)
             response = resolve_datum(uri_to_filename(url))
-            if response.status_code == 200:
-                path = verify_datum(response, input_folder_path)
-            else:
-                raise Exception(
-                    f"Failed to resolve: {uri_to_filename(url)}, Error code: {response.status_code}"
-                )
+            path = verify_datum(response, input_folder_path)
         else:
             # force download new file
             tmp_path = tempfile.NamedTemporaryFile().name
