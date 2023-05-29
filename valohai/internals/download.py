@@ -15,7 +15,9 @@ def resolve_datum(datum_id: str) -> Dict[str, Any]:
         raise RuntimeError("Can't resolve datum without valohai-cli") from ie
     resp: Response = request(url=f"/api/v0/data/{datum_id}", method="GET")
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    assert isinstance(data, dict)
+    return data
 
 
 def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
