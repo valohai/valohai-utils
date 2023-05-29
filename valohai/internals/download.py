@@ -18,8 +18,7 @@ def resolve_datum(datum_id: str) -> Any:
     return resp.json()
 
 
-def verify_datum(response: Any, input_folder_path: str) -> str:
-    datum_obj = response
+def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
     filename = datum_obj["name"]
     checksums = {
         "md5": datum_obj["md5"],
