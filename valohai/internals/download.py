@@ -1,12 +1,13 @@
-import json
 import os
 import tempfile
+from typing import Any
+
 from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
 # TODO: This is close to valohai-local-run. Possibility to merge.
-def resolve_datum(datum_id: str) -> Response:
+def resolve_datum(datum_id: str) -> Any:
     try:
         from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
@@ -16,7 +17,7 @@ def resolve_datum(datum_id: str) -> Response:
     return resp.json()
 
 
-def verify_datum(response: json, input_folder_path: str) -> str:
+def verify_datum(response: Any, input_folder_path: str) -> str:
     datum_obj = response
     filename = datum_obj["name"]
     checksums = {
