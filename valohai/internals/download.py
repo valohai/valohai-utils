@@ -33,8 +33,8 @@ def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
     ] == get_sha256_hash(file_path):
         return file_path
     raise Exception(
-        "Datum details are not matched with"
-        " locally available file. Either the name or content of local file is altered."
+        f"The local file {file_path!r} does not exist, "
+        f"or its checksum does not match with datum {datum_obj['id']}."
     )
 
 
