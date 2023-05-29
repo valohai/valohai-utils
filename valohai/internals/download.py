@@ -1,7 +1,7 @@
 import contextlib
 import os
 import tempfile
-from typing import Any
+from typing import Any, Dict
 
 from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
