@@ -28,9 +28,7 @@ def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
         "sha256": datum_obj["sha256"],
     }
     file_path = os.path.join(input_folder_path, filename)
-    if filename in os.listdir(input_folder_path) and checksums[
-        "sha256"
-    ] == get_sha256_hash(file_path):
+    if os.path.exists(file_path) and checksums["sha256"] == get_sha256_hash(file_path):
         return file_path
     raise Exception(
         f"The local file {file_path!r} does not exist, "
