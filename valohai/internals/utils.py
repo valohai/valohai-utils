@@ -13,7 +13,7 @@ def get_sha256_hash(filepath: str) -> str:
         from valohai_cli.utils.hashing import get_fp_sha256  # type: ignore
     except ImportError as ie:
         raise RuntimeError(
-            "The `valohai-cli` module must be available " "for verifying hash"
+            "The `valohai-cli` module must be available for verifying hash"
         ) from ie
 
     with open(filepath, "rb") as f:

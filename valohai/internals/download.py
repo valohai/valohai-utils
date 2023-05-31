@@ -7,7 +7,6 @@ from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
-# TODO: This is close to valohai-local-run. Possibility to merge.
 def resolve_datum(datum_id: str) -> Dict[str, Any]:
     try:
         from valohai_cli.api import request  # type: ignore
@@ -22,13 +21,8 @@ def resolve_datum(datum_id: str) -> Dict[str, Any]:
 
 def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
     filename = datum_obj["name"]
-    checksums = {
-        "md5": datum_obj["md5"],
-        "sha1": datum_obj["sha1"],
-        "sha256": datum_obj["sha256"],
-    }
     file_path = os.path.join(input_folder_path, filename)
-    if os.path.exists(file_path) and checksums["sha256"] == get_sha256_hash(file_path):
+    if os.path.exists(file_path) and datum_obj["sha256"] == get_sha256_hash(file_path):
         return file_path
     raise Exception(
         f"The local file {file_path!r} does not exist, "
@@ -36,6 +30,7 @@ def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
     )
 
 
+# TODO: This is close to valohai-local-run. Possibility to merge.
 def download_url(url: str, path: str, force_download: bool = False) -> str:
     if not os.path.isfile(path) or force_download:
         if url.startswith("datum://"):
