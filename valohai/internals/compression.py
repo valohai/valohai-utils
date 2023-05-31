@@ -68,7 +68,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
 
     def __init__(self, file: str, mode: str = "r", *, compresslevel: int = 1) -> None:
         # Only Python 3.7+ has the compresslevel kwarg here
-        super().__init__(file, mode, compression=zipfile.ZIP_STORED)  # type: ignore[arg-type]
+        super().__init__(file, mode, compression=zipfile.ZIP_STORED)  # type: ignore
         self.compresslevel = int(compresslevel)
 
     def writestream(
