@@ -65,7 +65,7 @@ def _do_download(url: str, path: str) -> None:
     except ImportError:
         prog = contextlib.nullcontext()
 
-    with prog, open(tmp_path, "wb") as f:
+    with prog as prog, open(tmp_path, "wb") as f:
         for chunk in r.iter_content(1048576):
             if prog:
                 prog.update(len(chunk))

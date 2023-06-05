@@ -1,11 +1,35 @@
-[tool.black]
-target-version = ["py36"]
-
 [build-system]
-requires = ["setuptools>=42"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "valohai-utils"
+dynamic = ["version"]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+authors = [
+    { name = "Valohai", email = "hait@valohai.com" },
+]
+dependencies = [
+    "requests",
+    "valohai-papi>=0.1.1",
+    "valohai-yaml>=0.22.0",
+]
+
+[tool.hatch.version]
+path = "valohai/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/valohai",
+]
+
+[tool.black]
+target-version = ["py37"]
 
 [tool.ruff]
+target-version = "py37"
 ignore = [
     "E501",
     "RET504",
