@@ -5,23 +5,19 @@
     parameters:
     - name: param1
       default: true
-      multiple-separator: ','
       pass-false-as: --param1=false
       pass-true-as: --param1=true
       type: flag
     - name: param2
       default: asdf
-      multiple-separator: ','
       optional: false
       type: string
     - name: param3
       default: 123
-      multiple-separator: ','
       optional: false
       type: integer
     - name: param4
       default: 0.0001
-      multiple-separator: ','
       optional: false
       type: float
     inputs:
@@ -59,11 +55,9 @@
     nodes:
     - name: generate
       on-error: stop-all
-      override: {}
       step: generate-dataset
       type: execution
     - name: train
       on-error: stop-all
-      override: {}
       step: train-model
       type: execution

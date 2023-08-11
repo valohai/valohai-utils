@@ -1,4 +1,8 @@
 - step:
+    name: herpderp
+    image: busybox
+    command: python ./yomama.py {parameters}
+- step:
     name: foobar1
     image: python:3.7
     command:
@@ -7,23 +11,19 @@
     parameters:
     - name: param1
       default: true
-      multiple-separator: ','
       pass-false-as: --param1=false
       pass-true-as: --param1=true
       type: flag
     - name: param2
       default: asdf
-      multiple-separator: ','
       optional: false
       type: string
     - name: param3
       default: 123
-      multiple-separator: ','
       optional: false
       type: integer
     - name: param4
       default: 0.0001
-      multiple-separator: ','
       optional: false
       type: float
     inputs:
@@ -37,7 +37,3 @@
       optional: false
     - name: my-optional-input
       optional: true
-- step:
-    name: herpderp
-    image: busybox
-    command: python ./yomama.py {parameters}
