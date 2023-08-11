@@ -59,11 +59,9 @@
     nodes:
     - name: generate
       on-error: stop-all
-      override: {}
       step: generate-dataset
       type: execution
     - name: train
       on-error: stop-all
-      override: {}
       step: train-model
       type: execution

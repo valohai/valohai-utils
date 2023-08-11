@@ -63,4 +63,5 @@ def read_yaml_test_data(root_path):
 
 
 def compare_yaml(config: Config, fixture_yaml: str) -> None:
-    assert config_to_yaml(config) == fixture_yaml
+    generated_yaml = config_to_yaml(config)
+    assert generated_yaml == fixture_yaml

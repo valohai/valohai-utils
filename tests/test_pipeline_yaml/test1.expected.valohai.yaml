@@ -5,14 +5,6 @@
     - date > /valohai/outputs/aaa.md5
     - date > /valohai/outputs/bbb.sha256
 - step:
-    name: Evaluate
-    image: ubuntu:18.04
-    command:
-    - ls -lar
-    inputs:
-    - name: models
-      optional: false
-- step:
     name: Train model
     image: ubuntu:18.04
     command:
@@ -30,6 +22,14 @@
       optional: false
     - name: bbb
       optional: false
+- step:
+    name: Evaluate
+    image: ubuntu:18.04
+    command:
+    - ls -lar
+    inputs:
+    - name: models
+      optional: false
 - pipeline:
     name: mypipeline
     edges:
@@ -45,16 +45,13 @@
     nodes:
     - name: batch_feature_extraction_1
       on-error: stop-all
-      override: {}
       step: Batch feature extraction
       type: execution
     - name: train_model_1
       on-error: stop-all
-      override: {}
       step: Train model
       type: task
     - name: evaluate_1
       on-error: stop-all
-      override: {}
       step: Evaluate
       type: execution
