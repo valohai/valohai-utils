@@ -2,6 +2,8 @@ import glob
 import json
 import os
 
+from difflib import unified_diff as diff
+
 from valohai_yaml.objs import Config
 
 from valohai.yaml import config_to_yaml
@@ -64,4 +66,4 @@ def read_yaml_test_data(root_path):
 
 def compare_yaml(config: Config, fixture_yaml: str) -> None:
     generated_yaml = config_to_yaml(config)
-    assert generated_yaml == fixture_yaml
+    assert generated_yaml == fixture_yaml, diff(generated_yaml, fixture_yaml)

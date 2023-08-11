@@ -13,7 +13,6 @@
     - name: learning_rate
       default: 0.001
       description: Initial learning rate
-      multiple-separator: ','
       optional: false
       pass-as: --learning_rate={v}
       type: float

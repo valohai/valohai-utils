@@ -8,12 +8,10 @@
     parameters:
     - name: iterations
       default: 500
-      multiple-separator: ','
       optional: false
       type: integer
     - name: learning-rate
       default: 0.001
-      multiple-separator: ','
       optional: false
       type: float
     inputs:
