@@ -14,18 +14,15 @@
     - name: batch_size
       default: 32
       description: Size of the training batch
-      multiple-separator: '!'
       optional: true
       pass-as: --batch:{v}
       type: integer
     - name: learning_rate
       default: 0.001
-      multiple-separator: ','
       optional: false
       type: float
     - name: dropout
       default: 0.2
-      multiple-separator: ','
       optional: false
       type: float
     inputs:

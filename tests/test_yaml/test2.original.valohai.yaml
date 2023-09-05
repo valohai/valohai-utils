@@ -14,16 +14,13 @@
     name: foobar1
     parameters:
     - default: false
-      multiple-separator: ','
       name: param1
       type: flag
     - default: This should be updated
-      multiple-separator: ','
       name: param2
       optional: false
       type: string
     - default: This should be removed
-      multiple-separator: ','
       name: deleteme
       optional: false
       type: string

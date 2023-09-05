@@ -5,21 +5,17 @@
     parameters:
     - name: param1
       default: true
-      multiple-separator: ','
       type: flag
     - name: param2
       default: asdf
-      multiple-separator: ','
       optional: false
       type: string
     - name: param3
       default: 123
-      multiple-separator: ','
       optional: false
       type: integer
     - name: param4
       default: 0.0001
-      multiple-separator: ','
       optional: false
       type: float
     inputs:
