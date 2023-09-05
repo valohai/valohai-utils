@@ -1,6 +1,8 @@
 import json
-from typing import Any, Dict
+import sys
+from typing import Any, Dict, TextIO
 from valohai.config import is_valohai_deployment
+from valohai.internals.notebooks import is_in_notebook
 
 _supported_types = [int, float]
 
@@ -79,11 +81,23 @@ class Logger:
                 # Wrap in `vh_metadata` so deployment log machinery detects this
                 to_print = {"vh_metadata": to_print}
             # Start with \n, ensuring JSON prints on its own line
-            print(f"\n{json.dumps(to_print, default=str)}")  # noqa: T201
+            print(  # noqa: T201
+                f"\n{json.dumps(to_print, default=str)}",
+                file=self._get_output_stream(),
+            )
             self.partial_logs.clear()
 
     def _serialize(self, name: str, value: Any) -> None:
         self.partial_logs.update({str(name): value})
+
+    def _get_output_stream(self) -> TextIO:
+        """Get the output stream to print metadata logs to."""
+        if is_in_notebook():
+            # When in a notebook, Jupyter will have redirected stdout to the stream that will show up
+            # in the notebook.  We need to print to the original stdout instead so Valohai machinery
+            # can pick up the logs.
+            return getattr(sys, "__stdout__", sys.stdout)
+        return sys.stdout
 
 
 logger = Logger

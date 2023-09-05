@@ -1,3 +1,6 @@
+import io
+import sys
+
 import valohai
 
 
@@ -34,3 +37,17 @@ def test_partial_logging(capsys):
     logger.flush()
     captured = capsys.readouterr()
     assert captured.out == '\n{"myint": 234, "myfloat": 0.2322323, "extrathing": 2}\n'
+
+
+def test_redirected_logs(monkeypatch):
+    out = io.StringIO()
+    fake_out = io.StringIO()
+    monkeypatch.setenv("JPY_PARENT_PID", "1234")  # Pretend we're in a notebook...
+    monkeypatch.setattr(sys, "__stdout__", out)
+    monkeypatch.setattr(sys, "stdout", fake_out)
+    with valohai.logger() as logger:
+        logger.log("myint", 123)
+    # didn't get written to the redirected output?
+    assert not fake_out.getvalue()
+    # but did get written to the original stdout?
+    assert out.getvalue() == '\n{"myint": 123}\n'
