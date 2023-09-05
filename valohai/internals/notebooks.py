@@ -62,3 +62,13 @@ def get_notebook_command(notebook_relative_path: str) -> List[str]:
         ]
     )
     return ["pip install -r requirements.txt", papermill_command]
+
+
+def is_in_notebook() -> bool:
+    """
+    Figure out if we're running in a (Jupyter) notebook or a Valohai notebook execution.
+    """
+    for key in ("JPY_PARENT_PID", "JPY_SESSION_NAME", "VALOHAI_NOTEBOOK_INSTANCE_ID"):
+        if os.environ.get(key):
+            return True
+    return False
