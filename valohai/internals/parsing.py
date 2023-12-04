@@ -11,7 +11,7 @@ def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
 
 
 ParseResult = namedtuple(
-    "ParseResult", ["step", "parameters", "inputs", "image", "environment"]
+    "ParseResult", ["step", "parameters", "inputs", "image", "environment", "multifile"]
 )
 
 
@@ -49,6 +49,7 @@ class PrepareParser(ast.NodeVisitor):
     inputs: Dict[str, Any]
     step: Optional[str]
     environment: Optional[str]
+    multifile: bool
 
     def __init__(self) -> None:
         self.assignments = {}
@@ -57,6 +58,7 @@ class PrepareParser(ast.NodeVisitor):
         self.step = None
         self.image = None
         self.environment = None
+        self.multifile = False
 
     def visit_Assign(self, node: ast.Assign) -> None:
         try:
@@ -83,6 +85,8 @@ class PrepareParser(ast.NodeVisitor):
                     self.image = ast.literal_eval(key.value)
                 elif key.arg == "environment":
                     self.environment = ast.literal_eval(key.value)
+                elif key.arg == "multifile":
+                    self.multifile = bool(ast.literal_eval(key.value))
 
     def _process_kwarg(self, key: ast.keyword, *, error_hint: str = "") -> Any:
         if isinstance(key.value, ast.Name) and key.value.id in self.assignments:
@@ -108,4 +112,5 @@ def parse(source: str) -> ParseResult:
         inputs=parser.inputs,
         image=parser.image,
         environment=parser.environment,
+        multifile=parser.multifile,
     )

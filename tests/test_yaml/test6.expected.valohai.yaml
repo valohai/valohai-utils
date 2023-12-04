@@ -3,8 +3,8 @@
     image: valohai/pypermill
     command:
     - pip install -r requirements.txt
-    - papermill -k python3 -f /valohai/config/parameters.yaml /valohai/repository/./test.ipynb
-      /valohai/outputs/test.ipynb
+    - papermill -k python3 -f /valohai/config/parameters.yaml /valohai/repository/./test6.ipynb
+      /valohai/outputs/test6.ipynb
     parameters:
     - name: iterations
       default: 500

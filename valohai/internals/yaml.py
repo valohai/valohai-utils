@@ -22,11 +22,17 @@ def generate_step(
     parameters: Dict[str, Any],
     inputs: Dict[str, Any],
     environment: Optional[str] = None,
+    multifile: bool = False,
 ) -> Step:
+    # We need to generate a POSIX-compliant command, even if we are running this method in Windows
+    # The path separator must be forced to POSIX
+    relative_source_path = relative_source_path.replace(os.sep, "/")
+
     config_step = Step(
         name=step,
         image=image,
-        command=get_command(relative_source_path),
+        command=get_command(relative_source_path, multifile=multifile),
+        source_path=relative_source_path if multifile else None,
         environment=environment,
     )
 
@@ -90,6 +96,7 @@ def generate_config(
     parameters: ParameterDict,
     inputs: InputDict,
     environment: Optional[str] = None,
+    multifile: bool = False,
 ) -> Config:
     step_obj = generate_step(
         relative_source_path=relative_source_path,
@@ -98,6 +105,7 @@ def generate_config(
         parameters=parameters,
         inputs=inputs,
         environment=environment,
+        multifile=multifile,
     )
     config = Config()
     config.steps[step_obj.name] = step_obj
@@ -135,6 +143,7 @@ def parse_config_from_source(source_path: str, config_path: str) -> Config:
         environment=parsed.environment,
         parameters=parsed.parameters,
         inputs=parsed.inputs,
+        multifile=parsed.multifile,
     )
 
 
@@ -154,17 +163,18 @@ def get_parameter_type_name(name: str, value: Any) -> str:
     )
 
 
-def get_command(relative_source_path: str) -> List[str]:
-    # We need to generate a POSIX-compliant command, even if we are running this method in Windows
-    # The path separator must be forced to POSIX
-    relative_source_path = relative_source_path.replace(os.sep, "/")
-
+def get_command(relative_source_path: str, multifile: bool) -> List[str]:
     if is_notebook_path(relative_source_path):
         return get_notebook_command(relative_source_path)
 
+    if multifile:
+        python_invoke = "python {source-path} {parameters}"
+    else:
+        python_invoke = f"python {relative_source_path} {{parameters}}"
+
     return [
         "pip install -r requirements.txt",
-        f"python {relative_source_path} {{parameters}}",
+        python_invoke,
     ]
 
 

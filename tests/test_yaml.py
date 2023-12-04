@@ -17,8 +17,8 @@ def test_yaml_update_from_source(
     tmpdir, original_yaml, source_python, expected_yaml_filename
 ):
     yaml_path = os.path.join(tmpdir, "valohai.yaml")
-    filename, file_extension = os.path.splitext(source_python)
-    source_path = os.path.join(tmpdir, f"test{file_extension}")
+    python_filename = os.path.basename(source_python)
+    source_path = os.path.join(tmpdir, python_filename)
 
     # Build repository with test.py and valohai.yaml
     if os.path.isfile(original_yaml):
@@ -56,4 +56,4 @@ def test_posix_path_separator(monkeypatch):
     )
 
     # We expect the path separator be POSIX now
-    assert any("subfolder/foo/bar/train.py" in command for command in step.command)
+    assert any("subfolder/foo/bar/train.py" in line for line in step.command)

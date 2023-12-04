@@ -52,7 +52,8 @@ def _merge_step(original: Step, parsed: Step) -> Step:
     :return: Merged Step
     """
 
-    # AST parser overrides parameters, inputs and step name. Respect the original values for everything else.
+    # AST parser overrides parameters, inputs, source-path and step name.
+    # Respect the original values for everything else.
     result = Step(
         name=parsed.name,
         image=original.image,
@@ -61,6 +62,7 @@ def _merge_step(original: Step, parsed: Step) -> Step:
         description=original.description,
         outputs=original.outputs,
         mounts=original.mounts,
+        source_path=parsed.source_path,
     )
 
     # If user first types "learning_rage", creates config, and finally fixes the typo,

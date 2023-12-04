@@ -1,0 +1,7 @@
+- step:
+    name: train
+    image: tensorflow/tensorflow:2.4.0-gpu
+    command:
+    - pip install -r requirements.txt
+    - python {source-path} {parameters}
+    source-path: ./test9.py
