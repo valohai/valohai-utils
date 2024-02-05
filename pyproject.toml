@@ -25,6 +25,12 @@ include = [
     "/valohai",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = [
+    "/valohai",
+]
+
+
 [tool.black]
 target-version = ["py37"]
 
