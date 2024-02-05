@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
+from valohai_yaml.utils import listify
 
 from valohai.consts import DEFAULT_DOCKER_IMAGE
 from valohai.internals.notebooks import (
@@ -12,6 +13,7 @@ from valohai.internals.notebooks import (
 )
 from valohai.internals.parsing import parse
 from valohai.types import InputDict, ParameterDict
+from valohai.internals.utils import is_local_file_path
 
 
 def generate_step(
@@ -27,7 +29,6 @@ def generate_step(
     # We need to generate a POSIX-compliant command, even if we are running this method in Windows
     # The path separator must be forced to POSIX
     relative_source_path = relative_source_path.replace(os.sep, "/")
-
     config_step = Step(
         name=step,
         image=image,
@@ -41,7 +42,6 @@ def generate_step(
 
     for key, value in inputs.items():
         config_step.inputs[key] = parse_input(key, value)
-
     return config_step
 
 
@@ -70,20 +70,16 @@ def parse_input(key: str, value: Any) -> Input:
         value["name"] = key
         return Input.parse(value)
 
-    has_wildcards = any(
-        "*" in uri for uri in ([value] if isinstance(value, str) else value)
-    )
-    empty_default = (
-        not value
-        or isinstance(value, List)
-        and (len(value) == 0 or len(value) == 1 and not value[0])
-    )
+    # Check and ignore the local path file
+    checked_value = [val for val in listify(value) if not is_local_file_path(val)]
+
+    has_wildcards = any("*" in uri for uri in checked_value)
 
     keep_directories = KeepDirectories.SUFFIX if has_wildcards else KeepDirectories.NONE
     return Input(
         name=key,
-        default=None if empty_default else value,
-        optional=empty_default,
+        default=checked_value if checked_value else None,
+        optional=not checked_value,
         keep_directories=keep_directories,
     )
 

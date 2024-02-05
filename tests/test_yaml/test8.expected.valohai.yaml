@@ -35,5 +35,6 @@
       default: s3://special-bucket/images/**.jpg
       optional: false
     - name: weights
-      default: s3://special-bucket/weights/yolo.pb
+      default:
+      - s3://special-bucket/weights/yolo.pb
       optional: false

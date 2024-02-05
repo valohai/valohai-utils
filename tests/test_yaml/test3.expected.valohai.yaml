@@ -24,10 +24,9 @@
       type: float
     inputs:
     - name: input1
-      default: asdf
-      optional: false
+      optional: true
     - name: input2
       default:
-      - yolol
-      - yalala
+      - datum://yolol
+      - datum://yalala
       optional: false

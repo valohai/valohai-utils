@@ -22,14 +22,9 @@
       type: float
     inputs:
     - name: input1
-      default: asdf/*
-      keep-directories: suffix
-      optional: false
+      optional: true
     - name: input2
-      default:
-      - yolol
-      - yalala
-      optional: false
+      optional: true
 - step:
     name: herpderp
     image: busybox

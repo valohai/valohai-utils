@@ -18,3 +18,9 @@ def get_sha256_hash(filepath: str) -> str:
 
     with open(filepath, "rb") as f:
         return get_fp_sha256(f)  # type: ignore
+
+
+def is_local_file_path(path_str: str) -> bool:
+    if "://" in path_str:
+        return False
+    return True
