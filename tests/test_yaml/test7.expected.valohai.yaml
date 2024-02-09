@@ -25,7 +25,8 @@
       type: string
     inputs:
     - name: my-image
-      default: https://dist.valohai.com/valohai-utils-tests/Example.jpg
+      default:
+      - https://dist.valohai.com/valohai-utils-tests/Example.jpg
       optional: false
     - name: my-optional-input
       optional: true

@@ -7,7 +7,14 @@ params = {
     "param4": 0.0001,
 }
 
-inputs = {"input1": "asdf", "input2": ["yolol", "yalala"], "my-optional-input": ""}
+inputs = {
+    "input1": "datum://asdf",
+    "input2": [
+        "datum://yolol",
+        "yalala",  # this local path should be ignored
+    ],
+    "my-optional-input": "",
+}
 
 
 def prepare(a, b):

@@ -28,12 +28,12 @@
       type: float
     inputs:
     - name: input1
-      default: asdf
+      default:
+      - datum://asdf
       optional: false
     - name: input2
       default:
-      - yolol
-      - yalala
+      - datum://yolol
       optional: false
     - name: my-optional-input
       optional: true
