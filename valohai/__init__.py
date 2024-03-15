@@ -9,6 +9,7 @@ from valohai.metadata import logger
 from valohai.outputs import outputs
 from valohai.parameters import parameters
 from valohai.prepare_impl import prepare
+from valohai.triggers import triggers
 
 Pipeline = papi.Papi
 
@@ -21,4 +22,5 @@ __all__ = [
     "prepare",
     "Pipeline",
     "set_status_detail",
+    "triggers",
 ]
