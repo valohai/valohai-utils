@@ -1,3 +1,6 @@
+from typing import List, Callable, Optional
+
+
 def uri_to_filename(uri: str) -> str:
     return uri.rpartition("/")[-1].split("?", 1)[0]
 
@@ -24,3 +27,15 @@ def is_local_file_path(path_str: str) -> bool:
     if "://" in path_str:
         return False
     return True
+
+
+def string_to_list_separated_by_separator(
+    separator: Optional[str] = None,
+) -> Callable[[str], List[str]]:
+    if not separator:
+        separator = ","
+
+    def string_to_separated_list(value: str) -> List[str]:
+        return value.split(separator)
+
+    return string_to_separated_list
