@@ -8,8 +8,14 @@ from valohai_yaml.utils import listify
 
 from valohai.internals import global_state
 from valohai.internals.input_info import InputInfo
-from valohai.internals.utils import string_to_bool
-from valohai.paths import get_inputs_config_path, get_parameters_config_path
+from valohai.internals.utils import (
+    string_to_bool,
+    string_to_list_separated_by_separator,
+)
+from valohai.paths import (
+    get_inputs_config_path,
+    get_parameters_config_path,
+)
 from valohai.types import InputDict, ParameterDict
 
 
@@ -102,6 +108,10 @@ def parse_overrides_from_cli(
         if isinstance(value, bool):
             # We need to fiddle booleans in a bit different way, since they are treated as flags per default
             parser.add_argument(f"--{name}", type=string_to_bool, nargs="?", const=True)
+        elif isinstance(value, list):
+            parser.add_argument(
+                f"--{name}", type=string_to_list_separated_by_separator()
+            )
         else:
             parser.add_argument(f"--{name}", type=type(value))
     known_args, unknown_args = parser.parse_known_args()
