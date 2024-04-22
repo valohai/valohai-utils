@@ -102,6 +102,8 @@ def parse_overrides_from_cli(
         if isinstance(value, bool):
             # We need to fiddle booleans in a bit different way, since they are treated as flags per default
             parser.add_argument(f"--{name}", type=string_to_bool, nargs="?", const=True)
+        elif isinstance(value, list):
+            parser.add_argument(f"--{name}", type=lambda s: str(s).split(","))
         else:
             parser.add_argument(f"--{name}", type=type(value))
     known_args, unknown_args = parser.parse_known_args()

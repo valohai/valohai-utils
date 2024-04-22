@@ -27,6 +27,7 @@ def test_prepare(tmpdir, monkeypatch):
         "makemeqwer": "asdf",
         "makeme321": 123,
         "makemenegative": 0.0001,
+        "list_bar": ["bar1", "bar2"],
     }
     url1 = "https://dist.valohai.com/valohai-utils-tests/Example.svg"
     url2 = "https://dist.valohai.com/valohai-utils-tests/sharktavern.jpg"
@@ -51,6 +52,7 @@ def test_prepare(tmpdir, monkeypatch):
             "--makemenegative=-0.123",
             "--some_totally_random_parameter_to_ignore=666",
             f"--overrideme={str(local_file)}",
+            "--list_bar=bar1,bar2,bar3",
         ]
         m.setattr(
             sys,
@@ -70,6 +72,7 @@ def test_prepare(tmpdir, monkeypatch):
     assert valohai.parameters("makemeqwer").value == "qwer"
     assert valohai.parameters("makeme321").value == 321
     assert valohai.parameters("makemenegative").value < 0.0
+    assert valohai.parameters("list_bar").value == ["bar1", "bar2", "bar3"]
 
     assert (
         get_input_info("example").files[0].uri
