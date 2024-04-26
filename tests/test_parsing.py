@@ -1,11 +1,11 @@
 import pytest
 
 from valohai.internals.parsing import parse
+from .utils import get_parsing_tests, ParsingTestData
 
-from .utils import get_parsing_tests
 
-
-def read_test_data():
+@pytest.mark.parametrize("test_data", get_parsing_tests(), ids=lambda ptd: ptd.name)
+def test_parse(test_data: ParsingTestData):
     """
     Expected files (tests/test_parsing):
         mytest.py -- Python (or .ipynb) file calling valohai.prepare()
@@ -13,21 +13,9 @@ def read_test_data():
         mytest.parameters.json -- Expected parsed parameters
         mytest.step.json -- Expected parsed step
     """
-    for info in get_parsing_tests():
-        yield (
-            info["source"],
-            info["parameters"],
-            info["inputs"],
-            info["step"]["name"],
-            info["step"].get("image"),
-        )
+    result = parse(test_data.source)
 
-
-@pytest.mark.parametrize("source, parameters, inputs, step, image", read_test_data())
-def test_parse(source, inputs, parameters, step, image):
-    result = parse(source)
-
-    assert result.inputs == inputs
-    assert result.parameters == parameters
-    assert result.step == step
-    assert result.image == image
+    assert result.inputs == test_data.inputs
+    assert result.parameters == test_data.parameters
+    assert result.step == test_data.step_name
+    assert result.image == test_data.image

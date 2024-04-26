@@ -1,3 +1,5 @@
+from __future__ import annotations
+import dataclasses
 import glob
 import json
 import os
@@ -9,7 +11,24 @@ from valohai_yaml.objs import Config
 from valohai.yaml import config_to_yaml
 
 
-def read_source_files(path_without_ext):
+@dataclasses.dataclass(frozen=True)
+class ParsingTestData:
+    name: str
+    source: str
+    parameters: dict
+    inputs: dict
+    step: dict
+
+    @property
+    def image(self) -> str | None:
+        return self.step.get("image")
+
+    @property
+    def step_name(self) -> str | None:
+        return self.step.get("name")
+
+
+def read_source_files(path_without_ext) -> ParsingTestData:
     with open(f"{path_without_ext}.py") as source_python:
         source = source_python.read()
     with open(f"{path_without_ext}.parameters.json") as parameters_json:
@@ -18,12 +37,13 @@ def read_source_files(path_without_ext):
         inputs = json.load(inputs_json)
     with open(f"{path_without_ext}.step.json") as step_json:
         step = json.load(step_json)
-    return {
-        "source": source,
-        "parameters": parameters,
-        "inputs": inputs,
-        "step": step,
-    }
+    return ParsingTestData(
+        name=os.path.basename(path_without_ext),
+        source=source,
+        parameters=parameters,
+        inputs=inputs,
+        step=step,
+    )
 
 
 def get_parsing_tests():
