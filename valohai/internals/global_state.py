@@ -14,7 +14,9 @@ multifile: bool = False
 
 
 def flush_global_state() -> None:
+    # fmt: off
     global loaded, inputs, parameters, step_name, image_name, distributed, environment, multifile
+    # fmt: off
     loaded = False
     inputs = {}
     parameters = {}

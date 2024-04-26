@@ -92,7 +92,7 @@ class FileInContainer(File):
     def _do_extract(self, destination: IO[bytes]) -> None:
         # if a file has a better idea how to write itself into an IO, this is the place
         with self.open() as f:
-            shutil.copyfileobj(f, destination)
+            shutil.copyfileobj(f, destination)  # type: ignore[misc]
 
     @property
     def path_in_container(self) -> str:
