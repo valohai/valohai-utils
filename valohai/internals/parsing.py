@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import ast
 from collections import namedtuple
 from typing import Any, Dict, Optional
@@ -60,12 +62,31 @@ class PrepareParser(ast.NodeVisitor):
         self.environment = None
         self.multifile = False
 
-    def visit_Assign(self, node: ast.Assign) -> None:
+    def visit_Assign(self, node: ast.Assign | ast.AnnAssign) -> None:
+        if hasattr(node, "targets"):
+            if len(node.targets) != 1:
+                # We can't handle multiple assignments
+                return
+            target = node.targets[0]
+        elif hasattr(node, "target"):
+            target = node.target
+        else:
+            return  # What a weird node...
+
+        if not isinstance(target, ast.Name):
+            # If the target is not a simple name, it's not an assignment
+            # we could handle here.
+            return
+
         try:
-            self.assignments[node.targets[0].id] = ast.literal_eval(node.value)  # type: ignore
+            self.assignments[target.id] = ast.literal_eval(node.value)  # type: ignore
         except (ValueError, AttributeError):
             # We don't care about assignments that can't be literal_eval():ed
             pass
+
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
+        # Annotated assignment – we handle this like a regular assignment.
+        return self.visit_Assign(node)
 
     def visit_Call(self, node: ast.Call) -> None:
         if is_module_function_call(node, "valohai", "prepare"):
