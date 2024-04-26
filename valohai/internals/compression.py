@@ -82,7 +82,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
         zinfo = zipfile.ZipInfo(filename=arcname)
         zinfo.compress_type = compress_type
         if hasattr(zinfo, "_compresslevel"):  # only has an effect on Py3.7+
-            zinfo._compresslevel = compresslevel  # type: ignore
+            zinfo._compresslevel = compresslevel
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.
         with self._lock, self.open(zinfo, mode="w") as dest:
@@ -91,7 +91,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             elif isinstance(data, bytes):
                 dest.write(data)
             else:
-                shutil.copyfileobj(data, dest, 524288)
+                shutil.copyfileobj(data, dest, 524288)  # type: ignore[misc]
         assert zinfo.file_size
 
     def put(self, archive_name: str, source: FilenameOrStream) -> None:
