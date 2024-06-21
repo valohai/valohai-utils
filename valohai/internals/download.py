@@ -7,21 +7,40 @@ from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
-def resolve_datum(datum_id: str) -> Dict[str, Any]:
+def resolve_datum(datum_id_or_alias: str) -> Dict[str, Any]:
     try:
         from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
         raise RuntimeError("Can't resolve datum without valohai-cli") from ie
-    resp: Response = request(url=f"/api/v0/data/{datum_id}", method="GET")
-    resp.raise_for_status()
-    data = resp.json()
+
+    try:
+        from uuid import UUID
+
+        UUID(datum_id_or_alias, version=4)
+        resp: Response = request(url=f"/api/v0/data/{datum_id_or_alias}", method="GET")
+        resp.raise_for_status()
+        data = resp.json()
+    except ValueError:
+        from valohai_cli.settings import settings
+
+        project = settings.get_project(".")
+        if project is None:
+            raise RuntimeError(
+                f"Can't resolve datum alias '{datum_id_or_alias}' without a project"
+                ", linked by valohai-cli"
+            )
+        resp: Response = request(
+            url=f"/api/v0/datum-aliases/resolve/?name={datum_id_or_alias}&project={project.id}",
+            method="GET",
+        )
+        resp.raise_for_status()
+        data = resp.json()["datum"]
+
     assert isinstance(data, dict)
     return data
 
 
-def verify_datum(datum_obj: Dict[str, Any], input_folder_path: str) -> str:
-    filename = datum_obj["name"]
-    file_path = os.path.join(input_folder_path, filename)
+def verify_datum(datum_obj: Dict[str, Any], file_path: str) -> str:
     if os.path.exists(file_path) and datum_obj["sha256"] == get_sha256_hash(file_path):
         return file_path
     raise Exception(
@@ -35,8 +54,21 @@ def download_url(url: str, path: str, force_download: bool = False) -> str:
     if not os.path.isfile(path) or force_download:
         if url.startswith("datum://"):
             input_folder_path = os.path.dirname(path)
-            response = resolve_datum(uri_to_filename(url))
-            path = verify_datum(response, input_folder_path)
+            datum_id_or_alias = uri_to_filename(url)
+            datum_obj = resolve_datum(datum_id_or_alias)
+            filename = datum_obj["name"]
+            file_path = os.path.join(input_folder_path, filename)
+
+            # it's safe to import valohai_cli, because resolve_datum bails out if it is not available
+            from valohai_cli.api import request
+
+            download_response = request(
+                url=f"/api/v0/data/{datum_obj['id']}/download/", method="GET"
+            )
+            download_response.raise_for_status()
+            _do_download(download_response.json()["url"], file_path)
+
+            path = verify_datum(datum_obj, file_path)
         else:
             _do_download(url, path)
     else:
