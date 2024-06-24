@@ -1,13 +1,14 @@
 import contextlib
 import os
 import tempfile
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
-def resolve_datum(datum_id_or_alias: str) -> Dict[str, Any]:
+def resolve_datum(datum_id: str) -> Dict[str, Any]:
+    datum_id_or_alias = datum_id
     try:
         from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
@@ -17,11 +18,13 @@ def resolve_datum(datum_id_or_alias: str) -> Dict[str, Any]:
         from uuid import UUID
 
         UUID(datum_id_or_alias, version=4)
-        resp: Response = request(url=f"/api/v0/data/{datum_id_or_alias}", method="GET")
-        resp.raise_for_status()
-        data = resp.json()
+        resp_by_id: Response = request(
+            url=f"/api/v0/data/{datum_id_or_alias}", method="GET"
+        )
+        resp_by_id.raise_for_status()
+        data = resp_by_id.json()
     except ValueError:
-        from valohai_cli.settings import settings
+        from valohai_cli.settings import settings  # type: ignore
 
         project = settings.get_project(".")
         if project is None:
@@ -29,22 +32,39 @@ def resolve_datum(datum_id_or_alias: str) -> Dict[str, Any]:
                 f"Can't resolve datum alias '{datum_id_or_alias}' without a project"
                 ", linked by valohai-cli"
             )
-        resp: Response = request(
+        resp_by_alias: Response = request(
             url=f"/api/v0/datum-aliases/resolve/?name={datum_id_or_alias}&project={project.id}",
             method="GET",
         )
-        resp.raise_for_status()
-        data = resp.json()["datum"]
+        resp_by_alias.raise_for_status()
+        data = resp_by_alias.json()["datum"]
 
     assert isinstance(data, dict)
     return data
 
 
-def verify_datum(datum_obj: Dict[str, Any], file_path: str) -> str:
-    if os.path.exists(file_path) and datum_obj["sha256"] == get_sha256_hash(file_path):
-        return file_path
+def verify_datum(
+    datum_obj: Dict[str, Any],
+    input_folder_path: Union[str, None] = None,
+    *,
+    file_path: Union[str, None] = None,
+) -> str:
+    datum_file_path: str
+    if input_folder_path is not None:
+        filename = datum_obj["name"]
+        datum_file_path = str(os.path.join(input_folder_path, filename))
+    elif file_path is not None:
+        datum_file_path = file_path
+    else:
+        raise ValueError(
+            "either input folder path or file path (keyword-only argument) must be given"
+        )
+    if os.path.exists(datum_file_path) and datum_obj["sha256"] == get_sha256_hash(
+        datum_file_path
+    ):
+        return datum_file_path
     raise Exception(
-        f"The local file {file_path!r} does not exist, "
+        f"The local file {datum_file_path!r} does not exist, "
         f"or its checksum does not match with datum {datum_obj['id']}."
     )
 
@@ -68,7 +88,7 @@ def download_url(url: str, path: str, force_download: bool = False) -> str:
             download_response.raise_for_status()
             _do_download(download_response.json()["url"], file_path)
 
-            path = verify_datum(datum_obj, file_path)
+            path = verify_datum(datum_obj, file_path=file_path)
         else:
             _do_download(url, path)
     else:
