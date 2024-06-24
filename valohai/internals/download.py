@@ -1,13 +1,14 @@
 import contextlib
 import os
 import tempfile
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
 
 
-def resolve_datum(datum_id_or_alias: str) -> Dict[str, Any]:
+def resolve_datum(datum_id: str) -> Dict[str, Any]:
+    datum_id_or_alias = datum_id
     try:
         from valohai_cli.api import request  # type: ignore
     except ImportError as ie:
@@ -40,7 +41,19 @@ def resolve_datum(datum_id_or_alias: str) -> Dict[str, Any]:
     return data
 
 
-def verify_datum(datum_obj: Dict[str, Any], file_path: str) -> str:
+def verify_datum(
+    datum_obj: Dict[str, Any],
+    input_folder_path: Union[str, None] = None,
+    *,
+    file_path: Union[str, None] = None,
+) -> str:
+    if input_folder_path is not None:
+        filename = datum_obj["name"]
+        file_path = os.path.join(input_folder_path, filename)
+    if input_folder_path is None and file_path is None:
+        raise ValueError(
+            "either input folder path or file path (keyword-only argument) must be given"
+        )
     if os.path.exists(file_path) and datum_obj["sha256"] == get_sha256_hash(file_path):
         return file_path
     raise Exception(
@@ -68,7 +81,7 @@ def download_url(url: str, path: str, force_download: bool = False) -> str:
             download_response.raise_for_status()
             _do_download(download_response.json()["url"], file_path)
 
-            path = verify_datum(datum_obj, file_path)
+            path = verify_datum(datum_obj, file_path=file_path)
         else:
             _do_download(url, path)
     else:

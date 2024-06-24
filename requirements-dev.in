@@ -1,2 +1,3 @@
 pytest-cov
 requests-mock
+valohai-cli
