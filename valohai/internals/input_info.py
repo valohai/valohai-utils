@@ -4,7 +4,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 from valohai_yaml.utils import listify
 
-from valohai.internals.download import download_url
+from valohai.internals.download import download_url, request_download_urls
 from valohai.internals.download_type import DownloadType
 from valohai.internals.utils import uri_to_filename
 from valohai.paths import get_inputs_path
@@ -24,6 +24,7 @@ class FileInfo:
     ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
+        self.download_url = self.uri
         self.checksums = dict(checksums) if checksums else {}
         self.path = str(path) if path else None
         self.size = int(size) if size else None
@@ -34,10 +35,10 @@ class FileInfo:
         return bool(self.path and os.path.isfile(self.path))
 
     def download(self, path: str, force_download: bool = False) -> None:
-        if not self.uri:
+        if not self.download_url:
             raise ValueError("Can not download file with no URI")
         self.path = download_url(
-            self.uri, os.path.join(path, self.name), force_download
+            self.download_url, os.path.join(path, self.name), force_download
         )
         # TODO: Store size & checksums if they become useful
 
@@ -55,8 +56,9 @@ class FileInfo:
 
 
 class InputInfo:
-    def __init__(self, files: Iterable[FileInfo]):
+    def __init__(self, files: Iterable[FileInfo], input_id: Optional[str] = None):
         self.files = list(files)
+        self.input_id = input_id
 
     def is_downloaded(self) -> bool:
         if not self.files:
@@ -74,13 +76,20 @@ class InputInfo:
         ):
             path = get_inputs_path(name)
             os.makedirs(path, exist_ok=True)
+            if self.input_id:
+                # Resolve download URLs from Valohai before downloading
+                filenames_to_urls = request_download_urls(self.input_id)
+                for file in self.files:
+                    if not file.is_downloaded():
+                        file.download_url = filenames_to_urls[file.name]
             for f in self.files:
                 f.download(path, force_download=(download == DownloadType.ALWAYS))
 
     @classmethod
     def from_json_data(cls, json_data: Dict[str, Any]) -> "InputInfo":
         return cls(
-            files=[FileInfo.from_json_data(d) for d in json_data.get("files", ())]
+            input_id=json_data.get("input_id"),
+            files=[FileInfo.from_json_data(d) for d in json_data.get("files", ())],
         )
 
     @classmethod
