@@ -1,6 +1,6 @@
 - step:
     name: mystep
-    image: python:3.7
+    image: python:3.11-slim
     command: python ./test.py {parameters}
     parameters:
     - name: seq_length
