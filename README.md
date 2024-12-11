@@ -249,7 +249,7 @@ Will produce this `valohai.yaml` config:
 ```yaml
 - step:
     name: resize
-    image: python:3.7
+    image: python:3.11-slim
     command: python ./resize.py {parameters}
     parameters:
     - name: width
