@@ -5,14 +5,20 @@ in JSON lines format.
 """
 
 import json
+import logging
+from collections import Counter
+from itertools import chain
 from pathlib import Path
-from typing import Any, Union, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from valohai.paths import get_outputs_path
 
 File = Union[str, Path]  # path to the file (relative to outputs directory)
 Properties = Dict[str, Any]  # metadata properties for a file
 FilesProperties = Dict[File, Properties]
+DatasetVersionURI = str  # dataset version URI (e.g. 'dataset://dataset-1/version')
+
+logger = logging.getLogger()
 
 
 class OutputProperties:
@@ -29,8 +35,15 @@ class OutputProperties:
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self._save()
+        self._log_created_datasets()
 
-    def set(self, *, file: File, properties: Optional[Properties] = None) -> None:
+    def set(
+        self,
+        *,
+        file: File,
+        properties: Optional[Properties] = None,
+        datasets: Optional[List[DatasetVersionURI]] = None,
+    ) -> None:
         """
         Set properties for a file.
         If the file already has properties, they will be overwritten.
@@ -38,9 +51,18 @@ class OutputProperties:
         Args:
             file: The path to the file (relative to the execution outputs root directory).
             properties: The metadata properties for the file.
+            datasets: List of URIs of the dataset versions the file belongs to.
         """
         props: Properties = properties or {}
-        self._files_properties[str(file)] = props
+        dataset_props: Properties = (
+            {"valohai.dataset-versions": datasets} if datasets else {}
+        )
+        self._files_properties[str(file)] = {**props, **dataset_props}
+
+    @staticmethod
+    def dataset_uri(dataset: str, version: str) -> DatasetVersionURI:
+        """Return the dataset URI for the given dataset and version."""
+        return f"dataset://{dataset}/{version}"
 
     def _save(self):
         Path(self.properties_file).write_text(
@@ -49,6 +71,19 @@ class OutputProperties:
                 for file_path, file_metadata in self._files_properties.items()
             )
         )
+
+    def _log_created_datasets(self):
+        """Print out a summary of created datasets to the execution log."""
+        datasets = [
+            file_metadata["valohai.dataset-versions"]
+            for file_metadata in self._files_properties.values()
+            if file_metadata.get("valohai.dataset-versions")
+        ]
+        if not datasets:
+            return
+        dataset_counter = Counter(chain.from_iterable(datasets))
+        for dataset, nr_of_files in dataset_counter.items():
+            print(f"Created dataset version '{dataset}' with {nr_of_files:,} files")  # noqa: T201
 
 
 output_properties = OutputProperties

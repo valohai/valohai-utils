@@ -43,6 +43,45 @@ def test_create_properties(tmp_metadata_file):
     assert saved_properties.get("path/to/another/file.txt") == {"quux": "quuz"}
 
 
+def test_add_files_to_dataset(tmp_path, random_string):
+    """Add files to a new dataset version."""
+    with valohai.output_properties() as properties:
+        properties.properties_file = tmp_path / "valohai.metadata.jsonl"
+        dataset_version_1 = properties.dataset_uri("dataset-1", "version")
+        dataset_version_2 = properties.dataset_uri("dataset-2", "another-version")
+
+        properties.set(
+            file="properties_and_dataset_version.txt",
+            properties={"foo": "bar"},
+            datasets=[dataset_version_1],
+        )
+        properties.set(file="only_dataset_version.txt", datasets=[dataset_version_1])
+        properties.set(
+            file="properties_and_two_datasets.txt",
+            properties={
+                "name": "test with properties and datasets",
+                "random": random_string,
+            },
+            datasets=[dataset_version_1, dataset_version_2],
+        )
+
+    assert properties._files_properties.get("properties_and_dataset_version.txt") == {
+        "foo": "bar",
+        "valohai.dataset-versions": ["dataset://dataset-1/version"],
+    }, "Should add both properties and dataset version metadata"
+    assert properties._files_properties.get("only_dataset_version.txt") == {
+        "valohai.dataset-versions": ["dataset://dataset-1/version"]
+    }, "Should add dataset version metadata without any properties"
+    assert properties._files_properties.get("properties_and_two_datasets.txt") == {
+        "name": "test with properties and datasets",
+        "random": random_string,
+        "valohai.dataset-versions": [
+            "dataset://dataset-1/version",
+            "dataset://dataset-2/another-version",
+        ],
+    }, "Should add both properties and multiple dataset versions"
+
+
 def test_large_number_of_files(tmp_metadata_file, random_string):
     """Test handling metadata for a very large number of outputs."""
     test_properties = {
@@ -56,9 +95,14 @@ def test_large_number_of_files(tmp_metadata_file, random_string):
     start = time.perf_counter()
     with valohai.output_properties() as properties:
         properties.properties_file = tmp_metadata_file
+        dataset_version = properties.dataset_uri("test-dataset", "v1")
 
         for i in range(nr_of_files):
-            properties.set(file=f"file_{i}.txt", properties=test_properties)
+            properties.set(
+                file=f"file_{i}.txt",
+                properties=test_properties,
+                datasets=[dataset_version],
+            )
     end = time.perf_counter()
 
     assert (
