@@ -31,6 +31,7 @@ class OutputProperties:
         self.properties_file = Path(get_outputs_path()) / "valohai.metadata.jsonl"
 
     def __enter__(self) -> "OutputProperties":
+        self._initialize_existing_properties()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -75,8 +76,17 @@ class OutputProperties:
         """Return the dataset URI for the given dataset and version."""
         return f"dataset://{dataset}/{version}"
 
+    def _initialize_existing_properties(self) -> None:
+        try:
+            for json_line in self.properties_file.read_bytes().splitlines():
+                line = json.loads(json_line)
+                if isinstance(line.get("file"), str) and "metadata" in line:
+                    self._files_properties[line["file"]] = line["metadata"]
+        except FileNotFoundError:
+            return
+
     def _save(self):
-        Path(self.properties_file).write_text(
+        self.properties_file.write_text(
             "".join(
                 format_line(file_path, file_metadata)
                 for file_path, file_metadata in self._files_properties.items()

@@ -4,6 +4,7 @@ import json
 import logging
 import random
 import string
+import sys
 import time
 from pathlib import Path
 
@@ -17,8 +18,6 @@ logger = logging.getLogger(__name__)
 def test_create_properties(tmp_metadata_file):
     """Test creating a properties file."""
     with valohai.output_properties() as properties:
-        properties.properties_file = tmp_metadata_file
-
         # file in the outputs directory
         properties.add(file="file.txt", properties={"foo": "bar"})
         # file in a subdirectory
@@ -45,8 +44,6 @@ def test_create_properties(tmp_metadata_file):
 def test_add_to_existing_properties(tmp_metadata_file):
     """You can add new properties to a file that already has properties."""
     with valohai.output_properties() as properties:
-        properties.properties_file = tmp_metadata_file
-
         properties.add(
             file="file.txt", properties={"foo": "bar", "baz": "will be overwritten"}
         )
@@ -62,10 +59,9 @@ def test_add_to_existing_properties(tmp_metadata_file):
     }
 
 
-def test_add_files_to_dataset(tmp_path, random_string):
+def test_add_files_to_dataset(tmp_metadata_file, random_string):
     """Add files to a new dataset version."""
     with valohai.output_properties() as properties:
-        properties.properties_file = tmp_path / "valohai.metadata.jsonl"
         dataset_version_1 = properties.dataset_version_uri("dataset-1", "version")
         dataset_version_2 = properties.dataset_version_uri(
             "dataset-2", "another-version"
@@ -120,6 +116,20 @@ def test_add_files_to_dataset(tmp_path, random_string):
     }, "Should add both properties and multiple dataset versions"
 
 
+def test_preserve_existing_properties_between_contexts(tmp_metadata_file):
+    """You should be able to add metadata bit by bit over several contexts."""
+    with valohai.output_properties() as properties:
+        properties.add(file="file.txt", properties={"foo": "bar"})
+
+    with valohai.output_properties() as properties:
+        properties.add(file="file.txt", properties={"baz": "qux"})
+        properties.add(file="another_file.txt", properties={"baz": "qux"})
+
+    saved_properties = read_json_lines(tmp_metadata_file)
+    assert saved_properties.get("file.txt") == {"foo": "bar", "baz": "qux"}
+    assert saved_properties.get("another_file.txt") == {"baz": "qux"}
+
+
 def test_large_number_of_files(tmp_metadata_file, random_string):
     """Test handling metadata for a very large number of outputs."""
     test_properties = {
@@ -132,7 +142,6 @@ def test_large_number_of_files(tmp_metadata_file, random_string):
 
     start = time.perf_counter()
     with valohai.output_properties() as properties:
-        properties.properties_file = tmp_metadata_file
         dataset_version = properties.dataset_version_uri("test-dataset", "v1")
 
         for i in range(nr_of_files):
@@ -171,7 +180,17 @@ def read_json_lines(properties_file: Path):
 
 
 @pytest.fixture
-def tmp_metadata_file(tmp_path) -> Path:
+def tmp_metadata_file(tmp_path, monkeypatch) -> Path:
+    """
+    Create a temporary metadata file for testing.
+
+    NOTE: overrides the default outputs path function the OutputProperties class uses.
+    """
+    monkeypatch.setattr(
+        sys.modules["valohai.output_properties"],
+        "get_outputs_path",
+        lambda: str(tmp_path),
+    )
     return tmp_path / "valohai.metadata.jsonl"
 
 
