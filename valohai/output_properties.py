@@ -6,16 +6,16 @@ in JSON lines format.
 
 import json
 import logging
-from collections import Counter
+from collections import Counter, defaultdict
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, DefaultDict, Dict, Union
 
 from valohai.paths import get_outputs_path
 
 File = Union[str, Path]  # path to the file (relative to outputs directory)
 Properties = Dict[str, Any]  # metadata properties for a file
-FilesProperties = Dict[File, Properties]
+FilesProperties = DefaultDict[File, Properties]
 DatasetVersionURI = str  # dataset version URI (e.g. 'dataset://dataset-1/version')
 
 logger = logging.getLogger()
@@ -27,7 +27,7 @@ class OutputProperties:
     _files_properties: FilesProperties
 
     def __init__(self) -> None:
-        self._files_properties = {}
+        self._files_properties = defaultdict(FilesProperties)
         self.properties_file = Path(get_outputs_path()) / "valohai.metadata.jsonl"
 
     def __enter__(self) -> "OutputProperties":
@@ -36,6 +36,22 @@ class OutputProperties:
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self._save()
         self._log_created_datasets()
+
+    def add(
+        self,
+        *,
+        file: File,
+        properties: Properties,
+    ) -> None:
+        """
+        Add properties to a file.
+        If the file already has properties, the new properties will be added to them.
+
+        Args:
+            file: The path to the file (relative to the execution outputs root directory).
+            properties: The metadata properties for the file.
+        """
+        self._files_properties[str(file)].update(properties)
 
     def set(
         self,

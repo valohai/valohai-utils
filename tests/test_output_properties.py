@@ -21,11 +21,11 @@ def test_create_properties(tmp_metadata_file):
         properties.properties_file = tmp_metadata_file
 
         # file in the outputs directory
-        properties.set(file="file.txt", properties={"foo": "bar"})
+        properties.add(file="file.txt", properties={"foo": "bar"})
         # file in a subdirectory
-        properties.set(file="path/to/file.txt", properties={"baz": "qux"})
+        properties.add(file="path/to/file.txt", properties={"baz": "qux"})
         # file can also be a Path object
-        properties.set(
+        properties.add(
             file=Path("path/to/another/file.txt"), properties={"quux": "quuz"}
         )
 
@@ -41,6 +41,26 @@ def test_create_properties(tmp_metadata_file):
     assert saved_properties.get("file.txt") == {"foo": "bar"}
     assert saved_properties.get("path/to/file.txt") == {"baz": "qux"}
     assert saved_properties.get("path/to/another/file.txt") == {"quux": "quuz"}
+
+
+def test_add_to_existing_properties(tmp_metadata_file):
+    """You can add new properties to a file that already has properties."""
+    with valohai.output_properties() as properties:
+        properties.properties_file = tmp_metadata_file
+
+        properties.add(
+            file="file.txt", properties={"foo": "bar", "baz": "will be overwritten"}
+        )
+        properties.add(
+            file="file.txt", properties={"baz": "can overwrite existing value"}
+        )
+        properties.add(file="file.txt", properties={"corge": "can add new properties"})
+
+    assert properties._files_properties.get("file.txt") == {
+        "foo": "bar",
+        "baz": "can overwrite existing value",
+        "corge": "can add new properties",
+    }
 
 
 def test_add_files_to_dataset(tmp_path, random_string):
