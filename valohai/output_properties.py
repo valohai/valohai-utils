@@ -53,6 +53,23 @@ class OutputProperties:
         """
         self._files_properties[str(file)].update(properties)
 
+    def add_to_dataset(self, *, file: File, dataset_version: DatasetVersionURI) -> None:
+        """
+        Add a file to a dataset.
+
+        Args:
+            file: The path to the file (relative to the execution outputs root directory).
+            dataset_version: The dataset version to add the file to.
+        """
+        dataset_versions = set(
+            self._files_properties[str(file)].get("valohai.dataset-versions", [])
+        )
+        dataset_versions.add(dataset_version)
+        self.add(
+            file=file,
+            properties={"valohai.dataset-versions": list(dataset_versions)},
+        )
+
     def set(
         self,
         *,
@@ -76,7 +93,7 @@ class OutputProperties:
         self._files_properties[str(file)] = {**props, **dataset_props}
 
     @staticmethod
-    def dataset_uri(dataset: str, version: str) -> DatasetVersionURI:
+    def dataset_version_uri(dataset: str, version: str) -> DatasetVersionURI:
         """Return the dataset URI for the given dataset and version."""
         return f"dataset://{dataset}/{version}"
 

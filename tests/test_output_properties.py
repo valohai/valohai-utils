@@ -11,7 +11,6 @@ import pytest  # type: ignore
 
 import valohai
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -67,22 +66,39 @@ def test_add_files_to_dataset(tmp_path, random_string):
     """Add files to a new dataset version."""
     with valohai.output_properties() as properties:
         properties.properties_file = tmp_path / "valohai.metadata.jsonl"
-        dataset_version_1 = properties.dataset_uri("dataset-1", "version")
-        dataset_version_2 = properties.dataset_uri("dataset-2", "another-version")
+        dataset_version_1 = properties.dataset_version_uri("dataset-1", "version")
+        dataset_version_2 = properties.dataset_version_uri(
+            "dataset-2", "another-version"
+        )
 
-        properties.set(
+        properties.add(
             file="properties_and_dataset_version.txt",
             properties={"foo": "bar"},
-            datasets=[dataset_version_1],
         )
-        properties.set(file="only_dataset_version.txt", datasets=[dataset_version_1])
-        properties.set(
+        properties.add_to_dataset(
+            file="properties_and_dataset_version.txt",
+            dataset_version=dataset_version_1,
+        )
+
+        properties.add_to_dataset(
+            file="only_dataset_version.txt",
+            dataset_version=dataset_version_1,
+        )
+
+        properties.add(
             file="properties_and_two_datasets.txt",
             properties={
                 "name": "test with properties and datasets",
                 "random": random_string,
             },
-            datasets=[dataset_version_1, dataset_version_2],
+        )
+        properties.add_to_dataset(
+            file="properties_and_two_datasets.txt",
+            dataset_version=dataset_version_1,
+        )
+        properties.add_to_dataset(
+            file="properties_and_two_datasets.txt",
+            dataset_version=dataset_version_2,
         )
 
     assert properties._files_properties.get("properties_and_dataset_version.txt") == {
@@ -95,10 +111,12 @@ def test_add_files_to_dataset(tmp_path, random_string):
     assert properties._files_properties.get("properties_and_two_datasets.txt") == {
         "name": "test with properties and datasets",
         "random": random_string,
-        "valohai.dataset-versions": [
-            "dataset://dataset-1/version",
-            "dataset://dataset-2/another-version",
-        ],
+        "valohai.dataset-versions": list(
+            {
+                "dataset://dataset-1/version",
+                "dataset://dataset-2/another-version",
+            }
+        ),
     }, "Should add both properties and multiple dataset versions"
 
 
@@ -115,13 +133,16 @@ def test_large_number_of_files(tmp_metadata_file, random_string):
     start = time.perf_counter()
     with valohai.output_properties() as properties:
         properties.properties_file = tmp_metadata_file
-        dataset_version = properties.dataset_uri("test-dataset", "v1")
+        dataset_version = properties.dataset_version_uri("test-dataset", "v1")
 
         for i in range(nr_of_files):
-            properties.set(
+            properties.add(
                 file=f"file_{i}.txt",
                 properties=test_properties,
-                datasets=[dataset_version],
+            )
+            properties.add_to_dataset(
+                file=f"file_{i}.txt",
+                dataset_version=dataset_version,
             )
     end = time.perf_counter()
 
