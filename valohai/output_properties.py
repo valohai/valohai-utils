@@ -70,28 +70,6 @@ class OutputProperties:
             properties={"valohai.dataset-versions": list(dataset_versions)},
         )
 
-    def set(
-        self,
-        *,
-        file: File,
-        properties: Optional[Properties] = None,
-        datasets: Optional[List[DatasetVersionURI]] = None,
-    ) -> None:
-        """
-        Set properties for a file.
-        If the file already has properties, they will be overwritten.
-
-        Args:
-            file: The path to the file (relative to the execution outputs root directory).
-            properties: The metadata properties for the file.
-            datasets: List of URIs of the dataset versions the file belongs to.
-        """
-        props: Properties = properties or {}
-        dataset_props: Properties = (
-            {"valohai.dataset-versions": datasets} if datasets else {}
-        )
-        self._files_properties[str(file)] = {**props, **dataset_props}
-
     @staticmethod
     def dataset_version_uri(dataset: str, version: str) -> DatasetVersionURI:
         """Return the dataset URI for the given dataset and version."""
