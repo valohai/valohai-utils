@@ -34,7 +34,7 @@ class OutputProperties:
         self._initialize_existing_properties()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:  # type: ignore[no-untyped-def]
         self._save()
         self._log_created_datasets()
 
@@ -85,7 +85,7 @@ class OutputProperties:
         except FileNotFoundError:
             return
 
-    def _save(self):
+    def _save(self) -> None:
         self.properties_file.write_text(
             "".join(
                 format_line(file_path, file_metadata)
@@ -93,7 +93,7 @@ class OutputProperties:
             )
         )
 
-    def _log_created_datasets(self):
+    def _log_created_datasets(self) -> None:
         """Print out a summary of created datasets to the execution log."""
         datasets = [
             file_metadata["valohai.dataset-versions"]
