@@ -16,8 +16,8 @@ def vte(tmpdir):
 def use_test_config_dir(vte, monkeypatch):
     vte.build()
     monkeypatch.setenv("VH_CONFIG_DIR", str(vte.config_path))
-    monkeypatch.setenv("VH_INPUT_DIR", str(vte.inputs_path))
-    monkeypatch.setenv("VH_OUTPUT_DIR", str(vte.outputs_path))
+    monkeypatch.setenv("VH_INPUTS_DIR", str(vte.inputs_path))
+    monkeypatch.setenv("VH_OUTPUTS_DIR", str(vte.outputs_path))
 
     # pytest carries global state between tests if we don't flush it
     global_state.flush_global_state()

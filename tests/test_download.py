@@ -1,5 +1,7 @@
 import os
 import sys
+import uuid
+import json
 
 import pytest
 
@@ -150,3 +152,88 @@ def test_datum_url_download(tmpdir, monkeypatch, requests_mock, datum_name):
 
     assert os.path.isfile(os.path.join(inputs_dir, "example", filename))
     assert requests_mock.call_count == 4
+
+
+def test_download_by_input_id(vte, use_test_config_dir, requests_mock):
+    filename = "t10k-images-idx3-ubyte.gz"
+    input_id = str(uuid.uuid4())
+    input_request_url = "http://example.com/input-request/"
+    download_url = f"https://valohai-mnist.s3.amazonaws.com/{filename}"
+
+    # Setup:
+    # ---
+
+    # Write a config file that contains an on-demand input
+    inputs_config = {
+        "on-demand": {
+            "input_id": input_id,
+            "files": [
+                {
+                    "path": f"{vte.inputs_path}/{filename}",
+                    "name": filename,
+                    "uri": f"s3://valohai-mnist.s3.amazonaws.com/{filename}",
+                    "size": 0,
+                    "input_id": input_id,
+                    "storage_uri": f"s3://valohai-mnist.s3.amazonaws.com/{filename}",
+                    "download_intent": "on-demand",
+                },
+            ],
+        }
+    }
+    with open(os.path.join(vte.config_path, "inputs.json"), "w") as inputs_f:
+        json.dump(inputs_config, inputs_f)
+
+    # Write a config file that contains an input_request API endpoint
+    api_config = {
+        "input_request": {
+            "url": input_request_url,
+            "method": "POST",
+        },
+    }
+    with open(os.path.join(vte.config_path, "api.json"), "w") as api_f:
+        json.dump(api_config, api_f)
+
+    # Set up requests_mock
+    requests_mock.post(
+        input_request_url,
+        json=[
+            {
+                "name": "on-demand",
+                "files": [
+                    {
+                        "input_id": input_id,
+                        "url": download_url,
+                        "original_uri": f"s3://valohai-mnist.s3.amazonaws.com/{filename}",
+                        "filename": filename,
+                        "download_intent": "on-demand",
+                    },
+                ],
+            },
+        ],
+    )
+    requests_mock.get(download_url, text="I was downloaded by valohai-utils")
+
+    # Assumptions
+    # ---
+    # The file does not exist before it is accessed by valohai-utils
+    local_filename = os.path.join(vte.inputs_path, "on-demand", filename)
+    assert not os.path.isfile(local_filename)
+
+    # Trigger the download
+    # ---
+    get_input_vfs("on-demand")
+
+    # Assertions
+    # ---
+
+    # We can tell it was downloaded the way we expected it to be
+    assert requests_mock.call_count == 2
+    first_rq, second_rq = requests_mock.request_history
+    assert first_rq.url == f"{input_request_url}?inputs={input_id}"
+    assert second_rq.url == download_url
+
+    # The file now exists and contains the downloaded data
+    assert os.path.isfile(local_filename)
+    with open(local_filename, "r") as local_file:
+        file_contents = local_file.read()
+    assert file_contents == "I was downloaded by valohai-utils"
