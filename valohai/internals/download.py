@@ -1,10 +1,12 @@
 import contextlib
 import os
 import tempfile
+import shutil
 from typing import Any, Dict, Union
 
 from requests import Response
 from valohai.internals.utils import uri_to_filename, get_sha256_hash
+from valohai.internals.api_calls import send_api_request
 
 
 def resolve_datum(datum_id: str) -> Dict[str, Any]:
@@ -122,4 +124,38 @@ def _do_download(url: str, path: str) -> None:
             if prog:
                 prog.update(len(chunk))
             f.write(chunk)
-    os.replace(tmp_path, path)
+    try:
+        os.replace(tmp_path, path)
+    except OSError:
+        # different filesystems, for example a tmp filesystem, Docker volume, etc
+        if os.path.isfile(path):
+            os.remove(path)
+        shutil.copy(tmp_path, path)
+
+
+def request_download_urls(input_id: str) -> Dict[str, str]:
+    """Request download URLs for the input from Valohai.
+
+    Returns a dict of filename -> download URL for the given input.
+    """
+    try:
+        import requests
+    except ImportError as ie:
+        raise RuntimeError("Can't download on demand without requests") from ie
+
+    try:
+        response = send_api_request(
+            endpoint="input_request", params={"inputs": [input_id]}
+        )
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise RuntimeError("Could not get new input download URLs") from e
+
+    # While we should only get the single input we request in the response, this does handle the case
+    # that we also get unrelated inputs.
+    return dict(
+        (input_file["filename"], input_file["url"])
+        for input_request in response.json()
+        for input_file in input_request["files"]
+        if input_file["input_id"] == input_id
+    )
