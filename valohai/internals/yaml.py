@@ -25,6 +25,7 @@ def generate_step(
     inputs: Dict[str, Any],
     environment: Optional[str] = None,
     multifile: bool = False,
+    upload_store: Optional[str] = None,
 ) -> Step:
     # We need to generate a POSIX-compliant command, even if we are running this method in Windows
     # The path separator must be forced to POSIX
@@ -35,6 +36,7 @@ def generate_step(
         command=get_command(relative_source_path, multifile=multifile),
         source_path=relative_source_path if multifile else None,
         environment=environment,
+        upload_store=upload_store,
     )
 
     for key, value in parameters.items():
@@ -93,6 +95,7 @@ def generate_config(
     inputs: InputDict,
     environment: Optional[str] = None,
     multifile: bool = False,
+    upload_store: Optional[str] = None,
 ) -> Config:
     step_obj = generate_step(
         relative_source_path=relative_source_path,
@@ -102,6 +105,7 @@ def generate_config(
         inputs=inputs,
         environment=environment,
         multifile=multifile,
+        upload_store=upload_store,
     )
     config = Config()
     config.steps[step_obj.name] = step_obj
@@ -140,6 +144,7 @@ def parse_config_from_source(source_path: str, config_path: str) -> Config:
         parameters=parsed.parameters,
         inputs=parsed.inputs,
         multifile=parsed.multifile,
+        upload_store=parsed.upload_store,
     )
 
 
