@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from valohai.execution import get_config
+import valohai
 from valohai.paths import get_config_path
 
 # execution configuration example
@@ -37,13 +37,13 @@ def test_config_does_not_exist():
     ), "Config file should not exist by default when not running in Valohai"
 
     # try reading a non-existent config file
-    assert get_config() is None, "Execution should not exist"
+    assert valohai.execution().config is None, "Execution should not exist"
 
 
 def test_get_config(fake_config):
     fake_config.write_text(json.dumps(EXAMPLE_CONFIG))
 
-    config = get_config()
+    config = valohai.execution().config
     assert config is not None, "Execution config should exist"
 
     assert config.id == EXAMPLE_CONFIG["valohai.execution-id"]

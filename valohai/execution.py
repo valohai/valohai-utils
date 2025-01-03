@@ -17,22 +17,27 @@ class ExecutionConfig:
     title: Optional[str]
 
 
-def get_config() -> Optional[ExecutionConfig]:
-    """
-    Fetch execution configuration information.
+class Execution:
+    @property
+    def config(self) -> Optional[ExecutionConfig]:
+        """
+        Fetch execution configuration information.
 
-    Returns:
-        ExecutionConfig: The execution configuration information
-                         or None when running locally.
-    """
-    config_file = Path(get_config_path()) / "execution.json"
-    try:
-        config = json.loads(config_file.read_bytes())
-    except FileNotFoundError:
-        return None
+        Returns:
+            ExecutionConfig: The execution configuration information
+                             or None when running locally.
+        """
+        config_file = Path(get_config_path()) / "execution.json"
+        try:
+            config = json.loads(config_file.read_bytes())
+        except FileNotFoundError:
+            return None
 
-    return ExecutionConfig(
-        counter=config.get("valohai.execution-counter"),
-        id=config.get("valohai.execution-id"),
-        title=config.get("valohai.execution-title"),
-    )
+        return ExecutionConfig(
+            counter=config.get("valohai.execution-counter"),
+            id=config.get("valohai.execution-id"),
+            title=config.get("valohai.execution-title"),
+        )
+
+
+execution = Execution
