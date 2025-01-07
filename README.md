@@ -1,23 +1,29 @@
 # valohai-utils
+
 Python helper library for the Valohai machine learning platform.
 
-# Install
-```bash
+## Install
+
+```shell
 pip install valohai-utils
 ```
 
-# Execution
+## Execution
+
 Run locally
-```bash
+
+```shell
 python mycode.py
 ```
+
 Run in the cloud
-```bash
+
+```shell
 vh yaml step mycode.py
 vh exec run -a mystep
 ```
 
-# What does valohai-utils do?
+## What does valohai-utils do?
 
 - Generates and updates the `valohai.yaml` configuration file based on the source code
 - Agnostic input handling (single file, multiple files, zip, tar)
@@ -27,9 +33,9 @@ vh exec run -a mystep
 - Straightforward way to print metrics as Valohai metadata
 - Code parity between local vs. cloud
 
-# Parameters
+## Parameters
 
-[Valohai parameters ](https://help.valohai.com/hc/en-us/articles/4419896836881-Use-parameters) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary:
+[Valohai parameters](https://help.valohai.com/hc/en-us/articles/4419896836881-Use-parameters) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary:
 
 ```python
 default_parameters = {
@@ -42,7 +48,8 @@ The dictionary is fed to `valohai.prepare()` method:
 
 The values given are **default** values. You can override them from the command-line or using the Valohai web UI.
 
-## Example
+### Example
+
 ```python
 import valohai
 
@@ -56,7 +63,7 @@ for i in range(valohai.parameters('iterations').value):
     print("Iteration %s" % i)
 ```
 
-# Inputs
+## Inputs
 
 [Valohai inputs](https://help.valohai.com/hc/en-us/articles/4422921110929-Add-input-files-to-your-execution) are the data files required by the experiment. They are automatically downloaded for you, if the data is from a public source. You define inputs with a dictionary:
 
@@ -94,7 +101,8 @@ The dictionary is fed to `valohai.prepare()` method.
 
 The url(s) given are **defaults**. You can override them from the command-line or using the Valohai web UI.
 
-## Example
+### Example
+
 ```python
 import csv
 import valohai
@@ -109,13 +117,14 @@ with open(valohai.inputs("myinput").path()) as csv_file:
     reader = csv.reader(csv_file, delimiter=',')
 ```
 
-# Outputs
+## Outputs
 
 [Valohai outputs](https://help.valohai.com/hc/en-us/articles/4419909997713-Upload-output-data) are the files that your step produces an end result.
 
 When you are ready to save your output file, you can query for the correct path from the `valohai-utils`.
 
-## Example
+### Example
+
 ```python
 image = Image.open(in_path)
 new_image = image.resize((width, height))
@@ -127,18 +136,20 @@ Sometimes there are so many outputs that you may want to compress them into a si
 
 In this case, once you have all your outputs saved, you can finalize the output with the `compress()` method.
 
-## Example
+### Example
+
 ```python
 valohai.outputs('resized').compress("*.png", "images.zip", remove_originals=True)
 ```
 
-# Logging
+## Logging
 
 You can log metrics using the [Valohai metadata system](https://help.valohai.com/hc/en-us/articles/4419919418129-Collect-and-view-metrics) and then render interactive graphs on the web interface. The `valohai-utils` logger will print JSON logs that Valohai will parse as metadata.
 
 It is important for visualization that logs for single epoch are flushed out as a single JSON object.
 
-## Example
+### Example
+
 ```python
 import valohai
 
@@ -149,7 +160,8 @@ for epoch in range(100):
         logger.log("loss", loss)
 ```
 
-## Example 2
+### Example 2
+
 ```python
 import valohai
 
@@ -161,7 +173,20 @@ for epoch in range(100):
     logger.flush()
 ```
 
-# Distributed Workloads
+## Execution Info
+
+`valohai.execution` contains information about the current execution context.
+
+```python
+import valohai
+
+execution_config = valohai.execution().config
+print(f"Execution ID: {execution_config.id}")
+print(f"Execution title: {execution_config.title}")
+print(f"Execution counter: {execution_config.counter}")
+```
+
+## Distributed Workloads
 
 `valohai.distributed` contains a toolset for running distributed tasks on Valohai.
 
@@ -188,11 +213,12 @@ if valohai.distributed.is_distributed_task():
     rank = valohai.distributed.rank  # 0, 1, 2, etc. depending on run context
 ```
 
-# Full example
+## Full example
 
-## Preprocess step for resizing image files
+### Preprocess step for resizing image files
 
 This example step will do the following:
+
 1. Take image files (or an archive containing images) as input.
 2. Resize each image to the size provided by the width & height parameters.
 3. Compress the resized images into `resized/images.zip` Valohai output file.
@@ -241,44 +267,46 @@ if __name__ == '__main__':
 ```
 
 CLI command:
-```
+
+```shell
 vh yaml step resize.py
 ```
 
 Will produce this `valohai.yaml` config:
+
 ```yaml
 - step:
     name: resize
     image: python:3.11-slim
     command: python ./resize.py {parameters}
     parameters:
-    - name: width
-      default: 640
-      multiple-separator: ','
-      optional: false
-      type: integer
-    - name: height
-      default: 480
-      multiple-separator: ','
-      optional: false
-      type: integer
+      - name: width
+        default: 640
+        multiple-separator: ","
+        optional: false
+        type: integer
+      - name: height
+        default: 480
+        multiple-separator: ","
+        optional: false
+        type: integer
     inputs:
-    - name: images
-      default:
-      - https://dist.valohai.com/valohai-utils-tests/Example.jpg
-      - https://dist.valohai.com/valohai-utils-tests/planeshark.jpg
-      optional: false
+      - name: images
+        default:
+          - https://dist.valohai.com/valohai-utils-tests/Example.jpg
+          - https://dist.valohai.com/valohai-utils-tests/planeshark.jpg
+        optional: false
 ```
 
-# Configuration
+## Configuration
 
 There are some environment variables that affect how `valohai-utils` works when not running within a Valohai execution context.
 
-* `VH_FLAT_LOCAL_OUTPUTS`
-  * If set, flattens the local outputs directory structure into a single directory.
+- `VH_FLAT_LOCAL_OUTPUTS`
+  - If set, flattens the local outputs directory structure into a single directory.
     This means that outputs from subsequent runs can clobber old files.
 
-# Development
+## Development
 
 If you wish to further develop `valohai-utils`, remember to install development dependencies and write tests for your additions.
 
@@ -288,7 +316,7 @@ Lints are run via pre-commit.
 
 If you want pre-commit to check your commits via git hooks,
 
-```
+```shell
 pip install pre-commit
 pre-commit install
 ```
@@ -297,7 +325,7 @@ You can also run the lints manually with `pre-commit run --all-files`.
 
 ### Testing
 
-```bash
+```shell
 pip install -e . -r requirements-dev.txt
 pytest
 ```
