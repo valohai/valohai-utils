@@ -173,6 +173,19 @@ for epoch in range(100):
     logger.flush()
 ```
 
+## Execution Info
+
+`valohai.execution` contains information about the current execution context.
+
+```python
+import valohai
+
+execution_config = valohai.execution().config
+print(f"Execution ID: {execution_config.id}")
+print(f"Execution title: {execution_config.title}")
+print(f"Execution counter: {execution_config.counter}")
+```
+
 ## Distributed Workloads
 
 `valohai.distributed` contains a toolset for running distributed tasks on Valohai.
