@@ -13,7 +13,16 @@ def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
 
 
 ParseResult = namedtuple(
-    "ParseResult", ["step", "parameters", "inputs", "image", "environment", "multifile", "upload_store"]
+    "ParseResult",
+    [
+        "step",
+        "parameters",
+        "inputs",
+        "image",
+        "environment",
+        "multifile",
+        "upload_store",
+    ],
 )
 
 
