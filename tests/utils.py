@@ -3,6 +3,7 @@ import dataclasses
 import glob
 import json
 import os
+import pytest
 
 from difflib import unified_diff as diff
 
@@ -75,10 +76,11 @@ def read_yaml_test_data(root_path):
         dirname = os.path.dirname(source_path)
         name, extension = os.path.splitext(os.path.basename(source_path))
         test_data.append(
-            (
+            pytest.param(
                 f"{dirname}/{name}.original.valohai.yaml",
                 source_path,
                 f"{dirname}/{name}.expected.valohai.yaml",
+                id=f"{dirname}/{name}",
             )
         )
     return test_data
