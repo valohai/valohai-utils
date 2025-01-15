@@ -7,7 +7,7 @@ name = "valohai-utils"
 dynamic = ["version"]
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 authors = [
     { name = "Valohai", email = "hait@valohai.com" },
 ]
@@ -32,7 +32,7 @@ packages = [
 
 
 [tool.ruff]
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.lint]
 ignore = [
