@@ -13,6 +13,7 @@ def prepare(
     image: Optional[str] = None,
     environment: Optional[str] = None,
     multifile: bool = False,
+    upload_store: Optional[str] = None,
 ) -> None:
     """Define the name of the step and its required inputs, parameters and Docker image
 
@@ -26,13 +27,14 @@ def prepare(
     :param image: Default docker image
     :param environment: Default environment ID or slug
     :param multifile: allow step to be prepared from multiple different source files
-
+    :param upload_store: Upload store UUID for storing execution outputs
     """
 
     global_state.step_name = step
     global_state.image_name = image
     global_state.environment = environment
     global_state.multifile = multifile
+    global_state.upload_store = upload_store
 
     load_global_state(
         default_inputs_from_prepare=default_inputs,
