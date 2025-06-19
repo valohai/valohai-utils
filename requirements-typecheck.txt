@@ -4,11 +4,13 @@ mypy==1.10.0
     # via -r requirements-typecheck.in
 mypy-extensions==1.0.0
     # via mypy
+tomli==2.2.1
+    # via mypy
 types-pyyaml==6.0.12.20240311
     # via -r requirements-typecheck.in
 types-requests==2.31.0.20240406
     # via -r requirements-typecheck.in
 typing-extensions==4.11.0
     # via mypy
-urllib3==2.2.2
+urllib3==2.5.0
     # via types-requests
