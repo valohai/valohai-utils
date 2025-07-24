@@ -62,6 +62,8 @@ def _merge_step(original: Step, parsed: Step) -> Step:
         description=original.description,
         outputs=original.outputs,
         mounts=original.mounts,
+        environment_variables=original.environment_variables,
+        environment_variable_groups=original.environment_variable_groups,
         source_path=parsed.source_path,
     )
 
