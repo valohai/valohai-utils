@@ -14,7 +14,7 @@ authors = [
 dependencies = [
     "requests",
     "valohai-papi>=0.1.1",
-    "valohai-yaml>=0.22.0",
+    "valohai-yaml>=0.47.0",
 ]
 
 [tool.hatch.version]
