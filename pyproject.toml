@@ -7,7 +7,7 @@ name = "valohai-utils"
 dynamic = ["version"]
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
     { name = "Valohai", email = "hait@valohai.com" },
 ]
