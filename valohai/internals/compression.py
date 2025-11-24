@@ -47,7 +47,9 @@ def guess_compressible(name: str) -> bool:
     if encoding:  # Likely a compression
         return False
 
-    if type and "compressed" in type:  # The mime type already says it's compressed
+    if (  # noqa: SIM103
+        type and "compressed" in type  # The mime type already says it's compressed
+    ):
         return False
 
     return True  # Okay, give it a shot!
@@ -91,7 +93,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             elif isinstance(data, bytes):
                 dest.write(data)
             else:
-                shutil.copyfileobj(data, dest, 524288)  # type: ignore[misc]
+                shutil.copyfileobj(data, dest, 524288)
         assert zinfo.file_size
 
     def put(self, archive_name: str, source: FilenameOrStream) -> None:

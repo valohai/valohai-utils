@@ -32,9 +32,9 @@ EXAMPLE_CONFIG = {
 
 def test_config_does_not_exist():
     config_path = Path(get_config_path())
-    assert (
-        not config_path.exists()
-    ), "Config file should not exist by default when not running in Valohai"
+    assert not config_path.exists(), (
+        "Config file should not exist by default when not running in Valohai"
+    )
 
     # try reading a non-existent config file
     assert valohai.execution().config is None, "Execution should not exist"

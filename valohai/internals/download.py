@@ -107,7 +107,7 @@ def _do_download(url: str, path: str) -> None:
             f"The `requests` module must be available for download support (attempting to download {url})"
         ) from ie
 
-    tmp_path = tempfile.NamedTemporaryFile().name
+    tmp_path = tempfile.NamedTemporaryFile().name  # noqa (TODO: fix)
     print(f"Downloading {url} -> {path}")  # noqa
     r = requests.get(url, stream=True)
     r.raise_for_status()

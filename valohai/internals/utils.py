@@ -3,9 +3,7 @@ def uri_to_filename(uri: str) -> str:
 
 
 def string_to_bool(value: str) -> bool:
-    if value.lower() == "false":
-        return False
-    return True
+    return value.lower() != "false"
 
 
 def get_sha256_hash(filepath: str) -> str:
@@ -21,6 +19,4 @@ def get_sha256_hash(filepath: str) -> str:
 
 
 def is_local_file_path(path_str: str) -> bool:
-    if "://" in path_str:
-        return False
-    return True
+    return "://" not in path_str
