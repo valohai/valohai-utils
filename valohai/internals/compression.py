@@ -47,7 +47,9 @@ def guess_compressible(name: str) -> bool:
     if encoding:  # Likely a compression
         return False
 
-    if type and "compressed" in type:  # The mime type already says it's compressed
+    if (  # noqa: SIM103
+        type and "compressed" in type  # The mime type already says it's compressed
+    ):
         return False
 
     return True  # Okay, give it a shot!

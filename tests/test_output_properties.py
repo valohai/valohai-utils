@@ -155,15 +155,15 @@ def test_large_number_of_files(tmp_metadata_file, random_string):
             )
     end = time.perf_counter()
 
-    assert (
-        len(properties.properties_file.read_bytes().splitlines()) == nr_of_files
-    ), "Should have written all entries to file"
+    assert len(properties.properties_file.read_bytes().splitlines()) == nr_of_files, (
+        "Should have written all entries to file"
+    )
 
     elapsed_time = end - start
     logger.debug(f"File entries: {nr_of_files:,}; elapsed time: {elapsed_time:.2f} s")
-    assert (
-        elapsed_time < 2.0
-    ), "Should actually be under 1 second; something has changed considerably"
+    assert elapsed_time < 2.0, (
+        "Should actually be under 1 second; something has changed considerably"
+    )
 
 
 def read_json_lines(properties_file: Path):
