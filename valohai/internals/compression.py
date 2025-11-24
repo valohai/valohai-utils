@@ -93,7 +93,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
             elif isinstance(data, bytes):
                 dest.write(data)
             else:
-                shutil.copyfileobj(data, dest, 524288)  # type: ignore[misc]
+                shutil.copyfileobj(data, dest, 524288)
         assert zinfo.file_size
 
     def put(self, archive_name: str, source: FilenameOrStream) -> None:
