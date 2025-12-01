@@ -14,5 +14,5 @@ mypy:
 ifeq ($(MYPY),)
 	@echo "mypy not found, skipping"
 else
-	$(MYPY) --python-executable="$(PYTHON)" .
+	$(MYPY) --strict --python-executable="$(PYTHON)" .
 endif
