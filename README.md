@@ -323,6 +323,20 @@ pre-commit install
 
 You can also run the lints manually with `pre-commit run --all-files`.
 
+### Static Type Checking
+
+Install typing dependencies in your dev environment:
+
+```shell
+pip install -r requirements-typecheck.txt -e .
+```
+
+Run mypy:
+
+```shell
+make mypy
+```
+
 ### Testing
 
 ```shell
