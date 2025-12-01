@@ -2,3 +2,5 @@ pytest-cov
 requests-mock
 valohai-cli
 valohai-yaml>=0.46.0  # required for stable YAML generation
+types-requests  # allows type checking for requests
+types-PyYAML  # allows type checking for YAML parsing
