@@ -12,7 +12,7 @@ from valohai.internals.api_calls import send_api_request
 def resolve_datum(datum_id: str) -> Dict[str, Any]:
     datum_id_or_alias = datum_id
     try:
-        from valohai_cli.api import request  # type: ignore
+        from valohai_cli.api import request
     except ImportError as ie:
         raise RuntimeError("Can't resolve datum without valohai-cli") from ie
 
@@ -26,7 +26,7 @@ def resolve_datum(datum_id: str) -> Dict[str, Any]:
         resp_by_id.raise_for_status()
         data = resp_by_id.json()
     except ValueError:
-        from valohai_cli.settings import settings  # type: ignore
+        from valohai_cli.settings import settings
 
         project = settings.get_project(".")
         if project is None:
