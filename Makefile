@@ -1,3 +1,4 @@
+MYPY := $(shell which mypy)
 PYTHON := $(shell which python)
 
 .PHONY: default mypy
@@ -10,4 +11,8 @@ default:
 
 # Static type checking with mypy
 mypy:
-	mypy --python-executable="$(PYTHON)" .
+ifeq ($(MYPY),)
+	@echo "mypy not found, skipping"
+else
+	$(MYPY) --python-executable="$(PYTHON)" .
+endif
