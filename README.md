@@ -323,6 +323,14 @@ pre-commit install
 
 You can also run the lints manually with `pre-commit run --all-files`.
 
+### Static Type Checking
+
+Run type checks (`mypy` must be installed separately):
+
+```shell
+make mypy
+```
+
 ### Testing
 
 ```shell
