@@ -8,6 +8,8 @@ from tarfile import TarFile, TarInfo
 from typing import IO, TYPE_CHECKING, List, Optional, Union
 from zipfile import ZipFile, ZipInfo
 
+from valohai.types import CanWriteBytes
+
 if TYPE_CHECKING:
     DirEntry = os.DirEntry[str]
 
@@ -89,10 +91,10 @@ class FileInContainer(File):
             if should_close:
                 destination.close()
 
-    def _do_extract(self, destination: IO[bytes]) -> None:
+    def _do_extract(self, destination: CanWriteBytes) -> None:
         # if a file has a better idea how to write itself into an IO, this is the place
         with self.open() as f:
-            shutil.copyfileobj(f, destination)  # type: ignore[misc]
+            shutil.copyfileobj(f, destination)
 
     @property
     def path_in_container(self) -> str:

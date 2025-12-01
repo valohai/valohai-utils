@@ -6,7 +6,10 @@ import tarfile
 import threading
 import zipfile
 from mimetypes import guess_type
-from typing import IO, Union
+from typing import IO, Union, cast
+
+from valohai.types import CanWriteBytes
+
 
 FilenameOrStream = Union[str, IO[bytes]]
 
@@ -86,12 +89,13 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
         zinfo.external_attr = 0o600 << 16  # ?rw-------
         # this trusts `open` to fixup file_size.
         with self._lock, self.open(zinfo, mode="w") as dest:
+            typed_dest = cast(CanWriteBytes, dest)
             if isinstance(data, str):
-                dest.write(data.encode("utf-8"))
+                typed_dest.write(data.encode("utf-8"))
             elif isinstance(data, bytes):
-                dest.write(data)
+                typed_dest.write(data)
             else:
-                shutil.copyfileobj(data, dest, 524288)  # type: ignore[misc]
+                shutil.copyfileobj(data, typed_dest, 524288)
         assert zinfo.file_size
 
     def put(self, archive_name: str, source: FilenameOrStream) -> None:
