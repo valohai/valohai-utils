@@ -117,7 +117,7 @@ def _do_download(url: str, path: str) -> None:
 
         prog = tqdm(total=total, unit="iB", unit_scale=True)
     except ImportError:
-        prog = contextlib.nullcontext()
+        prog = contextlib.nullcontext()  # type: ignore
 
     with prog as prog, open(tmp_path, "wb") as f:
         for chunk in r.iter_content(1048576):
