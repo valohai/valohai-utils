@@ -61,10 +61,6 @@ max-complexity = 10
 exclude = "tests/*"
 
 [[tool.mypy.overrides]]
-module = "setuptools.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
 module = "tqdm.*"
 ignore_missing_imports = true
 
