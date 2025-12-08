@@ -87,7 +87,7 @@ class Output:
         # exception trying to unlink the name that has been already `replace`d out...
 
         suffix = get_canonical_extension(filename)
-        tmp_file = tempfile.NamedTemporaryFile(
+        tmp_file = tempfile.NamedTemporaryFile(  # noqa: SIM115 (see above)
             dir=os.path.dirname(target_path), suffix=suffix, delete=False
         )
         with tmp_file, open_archive(tmp_file.name) as archive:  # type: ignore
