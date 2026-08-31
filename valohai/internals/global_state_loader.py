@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 from typing import Any
 
 from valohai_yaml.utils import listify
 
-from valohai.internals import global_state
+from valohai.internals import global_state, json_utils
 from valohai.internals.input_info import InputInfo
 from valohai.internals.utils import string_to_bool
 from valohai.paths import get_inputs_config_path, get_parameters_config_path
@@ -127,8 +126,7 @@ def load_inputs_from_config() -> InputDict:
     inputs = {}
     config_path = get_inputs_config_path()
     if os.path.isfile(config_path):
-        with open(config_path) as json_file:
-            inputs = json.load(json_file)
+        inputs = json_utils.load_file(config_path)
     return inputs
 
 
@@ -136,8 +134,7 @@ def load_parameters_from_config() -> ParameterDict:
     parameters = {}
     config_path = get_parameters_config_path()
     if os.path.isfile(config_path):
-        with open(config_path) as json_file:
-            parameters = json.load(json_file)
+        parameters = json_utils.load_file(config_path)
     return parameters
 
 

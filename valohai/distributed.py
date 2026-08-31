@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import json
 import warnings
 
 from valohai import paths
+from valohai.internals import json_utils
 from valohai.internals.distributed_config import DistributedConfig, Member
 
 
@@ -18,7 +18,7 @@ class Distributed:
         # not a property to mimic `is_running_in_valohai`
         try:
             return bool(self.config.group_name)
-        except (FileNotFoundError, json.JSONDecodeError):
+        except (FileNotFoundError, ValueError):
             return False
         except Exception as exc:
             warnings.warn(f"Failed to parse distributed config: {exc}")
@@ -61,8 +61,7 @@ class Distributed:
     @property
     def config(self) -> DistributedConfig:
         if not self._config:
-            with open(self._get_config_path()) as json_file:
-                json_data = json.load(json_file)
+            json_data = json_utils.load_file(self._get_config_path())
             self._config = DistributedConfig.from_json_data(json_data)
         return self._config
 

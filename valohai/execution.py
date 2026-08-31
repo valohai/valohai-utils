@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from valohai.internals import json_utils
 from valohai.paths import get_config_path
 
 
@@ -30,7 +30,7 @@ class Execution:
         """
         config_file = Path(get_config_path()) / "execution.json"
         try:
-            config = json.loads(config_file.read_bytes())
+            config = json_utils.loads(config_file.read_bytes())
         except FileNotFoundError:
             return None
 

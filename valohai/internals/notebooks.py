@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import json
 import os
 import shlex
 from typing import Any
+
+from valohai.internals import json_utils
 
 NotebookDict = dict[str, Any]
 
@@ -21,7 +22,7 @@ def parse_ipynb(content_or_str: str | NotebookDict) -> NotebookDict:
     :return: Notebook data.
     """
     if isinstance(content_or_str, str):
-        content = json.loads(content_or_str)
+        content = json_utils.loads(content_or_str)
     else:
         content = content_or_str
     if not isinstance(content, dict):
@@ -56,7 +57,7 @@ def get_notebook_command(notebook_relative_path: str) -> list[str]:
     _notebook_dir, notebook_name = os.path.split(notebook_relative_path)
     papermill_command = " ".join(
         [
-            "papermill -k python3 -f /valohai/config/parameters.yaml",
+            "papermill -k python3 -f /valohai/config/parameters.json",
             shlex.quote(
                 f"/valohai/repository/{notebook_relative_path.replace(os.sep, '/')}"
             ),

@@ -11,6 +11,7 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Union
 
+from valohai.internals import json_utils
 from valohai.paths import get_outputs_path
 
 File = Union[str, Path]  # path to the file (relative to outputs directory)
@@ -79,7 +80,7 @@ class OutputProperties:
     def _initialize_existing_properties(self) -> None:
         try:
             for json_line in self.properties_file.read_bytes().splitlines():
-                line = json.loads(json_line)
+                line = json_utils.loads(json_line)
                 if isinstance(line.get("file"), str) and "metadata" in line:
                     self._files_properties[line["file"]] = line["metadata"]
         except FileNotFoundError:
