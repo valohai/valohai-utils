@@ -30,10 +30,6 @@ packages = [
     "/valohai",
 ]
 
-
-[tool.ruff]
-target-version = "py38"
-
 [tool.ruff.lint]
 ignore = [
     "E501",
@@ -48,6 +44,7 @@ select = [
     "RET",
     "SIM",
     "T2",
+    "UP",
     "W",
 ]
 
