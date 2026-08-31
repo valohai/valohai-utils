@@ -32,25 +32,19 @@
 - pipeline:
     name: mypipeline
     edges:
-    - configuration: {}
-      source: batch_feature_extraction_1.output.a*
+    - source: batch_feature_extraction_1.output.a*
       target: train_model_1.input.aaa
-    - configuration: {}
-      source: batch_feature_extraction_1.output.a*
+    - source: batch_feature_extraction_1.output.a*
       target: train_model_1.input.bbb
-    - configuration: {}
-      source: train_model_1.output.*
+    - source: train_model_1.output.*
       target: evaluate_1.input.models
     nodes:
     - name: batch_feature_extraction_1
-      on-error: stop-all
       step: Batch feature extraction
       type: execution
     - name: train_model_1
-      on-error: stop-all
       step: Train model
       type: task
     - name: evaluate_1
-      on-error: stop-all
       step: Evaluate
       type: execution
