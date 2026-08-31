@@ -12,8 +12,8 @@ from valohai.internals.notebooks import (
     parse_ipynb,
 )
 from valohai.internals.parsing import parse
-from valohai.types import InputDict, ParameterDict
 from valohai.internals.utils import is_local_file_path
+from valohai.types import InputDict, ParameterDict
 
 
 def generate_step(

@@ -1,7 +1,8 @@
 import pytest
 
 from valohai.internals.parsing import parse
-from .utils import get_parsing_tests, ParsingTestData
+
+from .utils import ParsingTestData, get_parsing_tests
 
 
 @pytest.mark.parametrize("test_data", get_parsing_tests(), ids=lambda ptd: ptd.name)

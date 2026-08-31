@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import Tuple, Any
-import urllib.parse
-import requests
-import json
 import enum
-import sys
 import hmac
-import time
+import json
 import os
 import re
+import sys
+import time
+import urllib.parse
+from typing import Any, Tuple
+
+import requests
 
 
 class StrEnum(str, enum.Enum):

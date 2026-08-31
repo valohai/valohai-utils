@@ -1,13 +1,13 @@
+import json
 import os
 import sys
 import uuid
-import json
 
 import pytest
+from valohai_cli import settings as settings_module
 
 import valohai
 from valohai.internals.inputs import get_input_info, get_input_vfs
-from valohai_cli import settings as settings_module
 
 
 def test_download(tmpdir, monkeypatch, requests_mock):

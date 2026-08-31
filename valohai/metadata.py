@@ -1,6 +1,7 @@
 import json
 import sys
 from typing import Any, Dict, TextIO
+
 from valohai.config import is_valohai_deployment
 from valohai.internals.notebooks import is_in_notebook
 

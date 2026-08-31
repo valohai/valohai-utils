@@ -1,12 +1,13 @@
 import contextlib
 import os
-import tempfile
 import shutil
+import tempfile
 from typing import Any, Dict, Union
 
 from requests import Response
-from valohai.internals.utils import uri_to_filename, get_sha256_hash
+
 from valohai.internals.api_calls import send_api_request
+from valohai.internals.utils import get_sha256_hash, uri_to_filename
 
 
 def resolve_datum(datum_id: str) -> Dict[str, Any]:

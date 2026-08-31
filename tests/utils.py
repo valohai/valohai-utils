@@ -1,12 +1,12 @@
 from __future__ import annotations
+
 import dataclasses
 import glob
 import json
 import os
-import pytest
-
 from difflib import unified_diff as diff
 
+import pytest
 from valohai_yaml.objs import Config
 
 from valohai.yaml import config_to_yaml

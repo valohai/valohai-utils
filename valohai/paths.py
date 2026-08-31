@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from valohai.config import is_running_in_valohai, is_flat_output_path
+from valohai.config import is_flat_output_path, is_running_in_valohai
 from valohai.consts import (
     VH_LOCAL_CONFIG_DIR,
     VH_LOCAL_INPUTS_DIR,
