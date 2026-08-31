@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import os
-from typing import Any, Optional
+from typing import Any
 
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
@@ -23,9 +25,9 @@ def generate_step(
     image: str,
     parameters: dict[str, Any],
     inputs: dict[str, Any],
-    environment: Optional[str] = None,
+    environment: str | None = None,
     multifile: bool = False,
-    upload_store: Optional[str] = None,
+    upload_store: str | None = None,
 ) -> Step:
     # We need to generate a POSIX-compliant command, even if we are running this method in Windows
     # The path separator must be forced to POSIX
@@ -93,9 +95,9 @@ def generate_config(
     image: str,
     parameters: ParameterDict,
     inputs: InputDict,
-    environment: Optional[str] = None,
+    environment: str | None = None,
     multifile: bool = False,
-    upload_store: Optional[str] = None,
+    upload_store: str | None = None,
 ) -> Config:
     step_obj = generate_step(
         relative_source_path=relative_source_path,

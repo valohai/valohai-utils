@@ -82,7 +82,7 @@ class Logger:
                 # Wrap in `vh_metadata` so deployment log machinery detects this
                 to_print = {"vh_metadata": to_print}
             # Start with \n, ensuring JSON prints on its own line
-            print(  # noqa: T201
+            print(
                 f"\n{json.dumps(to_print, default=str)}",
                 file=self._get_output_stream(),
             )

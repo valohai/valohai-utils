@@ -1,4 +1,6 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from valohai.distributed import Distributed
 from valohai.internals.input_info import InputInfo
@@ -6,10 +8,10 @@ from valohai.internals.input_info import InputInfo
 loaded: bool = False
 inputs: dict[str, InputInfo] = {}
 parameters: dict[str, Any] = {}
-step_name: Optional[str] = None
-image_name: Optional[str] = None
-environment: Optional[str] = None
-upload_store: Optional[str] = None
+step_name: str | None = None
+image_name: str | None = None
+environment: str | None = None
+upload_store: str | None = None
 distributed = Distributed()
 multifile: bool = False
 

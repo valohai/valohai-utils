@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import contextlib
 import os
 import shutil
 import tempfile
-from typing import Any, Union
+from typing import Any
 
 from requests import Response
 
@@ -48,9 +50,9 @@ def resolve_datum(datum_id: str) -> dict[str, Any]:
 
 def verify_datum(
     datum_obj: dict[str, Any],
-    input_folder_path: Union[str, None] = None,
+    input_folder_path: str | None = None,
     *,
-    file_path: Union[str, None] = None,
+    file_path: str | None = None,
 ) -> str:
     datum_file_path: str
     if input_folder_path is not None:

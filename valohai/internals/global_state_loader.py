@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import sys
-from typing import Any, Optional, Union
+from typing import Any
 
 from valohai_yaml.utils import listify
 
@@ -14,8 +16,8 @@ from valohai.types import InputDict, ParameterDict
 
 
 def load_global_state(
-    default_inputs_from_prepare: Optional[InputDict] = None,
-    default_parameters_from_prepare: Optional[ParameterDict] = None,
+    default_inputs_from_prepare: InputDict | None = None,
+    default_parameters_from_prepare: ParameterDict | None = None,
 ) -> None:
     """Loads inputs & parameters and stores their value in the global_state
 
@@ -205,7 +207,7 @@ def sift_defaults(values: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def convert_to_input_info(input: Union[str, list[str], dict[str, Any]]) -> InputInfo:
+def convert_to_input_info(input: str | list[str] | dict[str, Any]) -> InputInfo:
     """Converts inputs from different formats into an InputInfo
 
     Inputs can be defined in either .prepare() or inputs.json

@@ -33,7 +33,7 @@ class DataFormat(StrEnum):
 
 
 class AuthType(StrEnum):
-    static_token = "static_token"  # noqa
+    static_token = "static_token"
     hmac = "hmac"
 
 

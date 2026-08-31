@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from valohai.internals import global_state, vfs
 from valohai.internals.download_type import DownloadType
@@ -27,6 +27,6 @@ def get_input_vfs(
     return v
 
 
-def get_input_info(name: str) -> Optional[InputInfo]:
+def get_input_info(name: str) -> InputInfo | None:
     load_global_state_if_necessary()
     return global_state.inputs.get(name, None)

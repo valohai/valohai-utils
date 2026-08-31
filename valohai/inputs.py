@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections.abc import Iterable, Iterator
-from typing import IO, Optional, Union
+from typing import IO
 
 from valohai.internals import vfs
 from valohai.internals.download_type import DownloadType
@@ -8,16 +10,14 @@ from valohai.paths import get_inputs_path
 
 
 class Input:
-    def __init__(
-        self, name: str, default: Optional[Union[str, list[str]]] = None
-    ) -> None:
+    def __init__(self, name: str, default: str | list[str] | None = None) -> None:
         self.name = str(name)
         self.default = default
 
     def paths(
         self,
-        path_filter: Optional[str] = None,
-        default: Optional[Iterable[str]] = None,
+        path_filter: str | None = None,
+        default: Iterable[str] | None = None,
         process_archives: bool = True,
         force_download: bool = False,
     ) -> Iterator[str]:
@@ -60,11 +60,11 @@ class Input:
 
     def path(
         self,
-        path_filter: Optional[str] = None,
-        default: Optional[str] = None,
+        path_filter: str | None = None,
+        default: str | None = None,
         process_archives: bool = True,
         force_download: bool = False,
-    ) -> Optional[str]:
+    ) -> str | None:
         """Get path to a file for a given input name.
 
         Returns a file system path for an input.
@@ -88,7 +88,7 @@ class Input:
 
     def streams(
         self,
-        path_filter: Optional[str] = None,
+        path_filter: str | None = None,
         process_archives: bool = True,
         force_download: bool = False,
     ) -> Iterator[IO[bytes]]:
@@ -120,10 +120,10 @@ class Input:
 
     def stream(
         self,
-        path_filter: Optional[str] = None,
+        path_filter: str | None = None,
         process_archives: bool = True,
         force_download: bool = False,
-    ) -> Optional[IO[bytes]]:
+    ) -> IO[bytes] | None:
         """Get a stream for to a file for a given input name.
 
         Returns an IO stream to a file for this input.

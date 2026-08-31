@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import glob
 import os
 import pathlib
 from stat import S_IREAD, S_IRGRP, S_IROTH
-from typing import Callable, Union
+from typing import Callable
 
 from valohai_yaml.utils import listify
 
@@ -19,7 +21,7 @@ def get_glob_pattern(source: str) -> str:
 
 
 def expand_globs(
-    sources: Union[str, list[str]], preprocessor: Callable[[str], str] = lambda s: s
+    sources: str | list[str], preprocessor: Callable[[str], str] = lambda s: s
 ) -> set[tuple[str, str]]:
     """Returns a set of paths as a result of expanding all the source wildcards
 

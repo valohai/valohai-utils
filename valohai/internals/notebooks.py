@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
 import os
 import shlex
-from typing import Any, Union
+from typing import Any
 
 NotebookDict = dict[str, Any]
 
@@ -9,7 +11,7 @@ NotebookDict = dict[str, Any]
 # TODO: DRY between libs
 
 
-def parse_ipynb(content_or_str: Union[str, NotebookDict]) -> NotebookDict:
+def parse_ipynb(content_or_str: str | NotebookDict) -> NotebookDict:
     """
     "Smartly" parse content that contains a notebook.
     * If a string, it's first JSON deserialized.

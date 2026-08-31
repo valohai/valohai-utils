@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import os
-from typing import Optional
 
 from valohai.config import is_flat_output_path, is_running_in_valohai
 from valohai.consts import (
@@ -19,7 +20,7 @@ def get_config_path() -> str:
     )
 
 
-def get_inputs_path(input_name: Optional[str] = None) -> str:
+def get_inputs_path(input_name: str | None = None) -> str:
     if is_running_in_valohai():
         path = os.environ.get("VH_INPUTS_DIR", "/valohai/inputs")
     else:

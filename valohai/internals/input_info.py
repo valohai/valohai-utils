@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import glob
 import os
 from collections.abc import Iterable
-from typing import Any, Optional, Union
+from typing import Any
 
 from valohai_yaml.utils import listify
 
@@ -16,12 +18,12 @@ class FileInfo:
         self,
         *,
         name: str,
-        uri: Optional[str] = None,
-        path: Optional[str] = None,
-        size: Optional[int] = None,
-        checksums: Optional[dict[str, str]] = None,
-        metadata: Optional[list[dict[str, Any]]] = None,
-        datum_id: Optional[str] = None,
+        uri: str | None = None,
+        path: str | None = None,
+        size: int | None = None,
+        checksums: dict[str, str] | None = None,
+        metadata: list[dict[str, Any]] | None = None,
+        datum_id: str | None = None,
     ) -> None:
         self.name = str(name)
         self.uri = str(uri) if uri else None
@@ -32,7 +34,7 @@ class FileInfo:
         self.metadata = list(metadata) if metadata else []
         self.datum_id = str(datum_id) if datum_id else None
 
-    def is_downloaded(self) -> Optional[bool]:
+    def is_downloaded(self) -> bool | None:
         return bool(self.path and os.path.isfile(self.path))
 
     def download(self, path: str, force_download: bool = False) -> None:
@@ -44,7 +46,7 @@ class FileInfo:
         # TODO: Store size & checksums if they become useful
 
     @classmethod
-    def from_json_data(cls, json_data: dict[str, Any]) -> "FileInfo":
+    def from_json_data(cls, json_data: dict[str, Any]) -> FileInfo:
         return cls(
             name=json_data["name"],
             uri=json_data.get("uri"),
@@ -57,7 +59,7 @@ class FileInfo:
 
 
 class InputInfo:
-    def __init__(self, files: Iterable[FileInfo], input_id: Optional[str] = None):
+    def __init__(self, files: Iterable[FileInfo], input_id: str | None = None):
         self.files = list(files)
         self.input_id = input_id
 
@@ -87,14 +89,14 @@ class InputInfo:
                 f.download(path, force_download=(download == DownloadType.ALWAYS))
 
     @classmethod
-    def from_json_data(cls, json_data: dict[str, Any]) -> "InputInfo":
+    def from_json_data(cls, json_data: dict[str, Any]) -> InputInfo:
         return cls(
             input_id=json_data.get("input_id"),
             files=[FileInfo.from_json_data(d) for d in json_data.get("files", ())],
         )
 
     @classmethod
-    def from_urls_and_paths(cls, urls_and_paths: Union[str, list[str]]) -> "InputInfo":
+    def from_urls_and_paths(cls, urls_and_paths: str | list[str]) -> InputInfo:
         files = []
 
         for value in listify(urls_and_paths):

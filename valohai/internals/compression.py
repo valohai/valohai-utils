@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import contextlib
 import io
 import os
@@ -76,7 +78,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
     def writestream(
         self,
         arcname: str,
-        data: Union[str, bytes, IO[bytes]],
+        data: str | bytes | IO[bytes],
         compress_type: int,
         compresslevel: int,
     ) -> None:
