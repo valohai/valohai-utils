@@ -6,7 +6,6 @@ from typing import IO
 from valohai.internals import vfs
 from valohai.internals.download_type import DownloadType
 from valohai.internals.inputs import get_input_vfs
-from valohai.paths import get_inputs_path
 
 
 class Input:
@@ -145,9 +144,9 @@ class Input:
         )
         return next(streams, None)
 
-    def dir_path(
-        self,
-    ) -> str:
+    def dir_path(self) -> str:
+        from valohai.paths import get_inputs_path
+
         return get_inputs_path(self.name)
 
 

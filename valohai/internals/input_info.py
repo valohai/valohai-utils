@@ -10,7 +10,6 @@ from valohai_yaml.utils import listify
 from valohai.internals.download import download_url, request_download_urls
 from valohai.internals.download_type import DownloadType
 from valohai.internals.utils import uri_to_filename
-from valohai.paths import get_inputs_path
 
 
 class FileInfo:
@@ -77,6 +76,8 @@ class InputInfo:
             or not self.is_downloaded()
             and download == DownloadType.OPTIONAL
         ):
+            from valohai.paths import get_inputs_path
+
             path = get_inputs_path(name)
             os.makedirs(path, exist_ok=True)
             if self.input_id:
