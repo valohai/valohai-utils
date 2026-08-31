@@ -71,16 +71,14 @@ class ValohaiTestEnvironment:
                     {
                         "checksums": {},
                         "name": "hello/label1/hello/foo.jpg",
-                        "path": "%s/images_in_subdirs/hello/label1/hello/foo.jpg"
-                        % self.inputs_path,
+                        "path": f"{self.inputs_path}/images_in_subdirs/hello/label1/hello/foo.jpg",
                         "size": 1024,
                         "uri": "",
                     },
                     {
                         "checksums": {},
                         "name": "hello/label2/hello/foo.jpg",
-                        "path": "%s/images_in_subdirs/hello/label2/hello/foo.jpg"
-                        % self.inputs_path,
+                        "path": f"{self.inputs_path}/images_in_subdirs/hello/label2/hello/foo.jpg",
                         "size": 1024,
                         "uri": "",
                     },

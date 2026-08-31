@@ -2,7 +2,7 @@ import contextlib
 import os
 import shutil
 import tempfile
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 from requests import Response
 
@@ -10,7 +10,7 @@ from valohai.internals.api_calls import send_api_request
 from valohai.internals.utils import get_sha256_hash, uri_to_filename
 
 
-def resolve_datum(datum_id: str) -> Dict[str, Any]:
+def resolve_datum(datum_id: str) -> dict[str, Any]:
     datum_id_or_alias = datum_id
     try:
         from valohai_cli.api import request  # type: ignore
@@ -47,7 +47,7 @@ def resolve_datum(datum_id: str) -> Dict[str, Any]:
 
 
 def verify_datum(
-    datum_obj: Dict[str, Any],
+    datum_obj: dict[str, Any],
     input_folder_path: Union[str, None] = None,
     *,
     file_path: Union[str, None] = None,
@@ -134,7 +134,7 @@ def _do_download(url: str, path: str) -> None:
         shutil.copy(tmp_path, path)
 
 
-def request_download_urls(input_id: str) -> Dict[str, str]:
+def request_download_urls(input_id: str) -> dict[str, str]:
     """Request download URLs for the input from Valohai.
 
     Returns a dict of filename -> download URL for the given input.

@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
@@ -21,8 +21,8 @@ def generate_step(
     relative_source_path: str,
     step: str,
     image: str,
-    parameters: Dict[str, Any],
-    inputs: Dict[str, Any],
+    parameters: dict[str, Any],
+    inputs: dict[str, Any],
     environment: Optional[str] = None,
     multifile: bool = False,
     upload_store: Optional[str] = None,
@@ -164,7 +164,7 @@ def get_parameter_type_name(name: str, value: Any) -> str:
     )
 
 
-def get_command(relative_source_path: str, multifile: bool) -> List[str]:
+def get_command(relative_source_path: str, multifile: bool) -> list[str]:
     if is_notebook_path(relative_source_path):
         return get_notebook_command(relative_source_path)
 

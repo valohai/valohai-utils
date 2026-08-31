@@ -8,7 +8,7 @@ import re
 import sys
 import time
 import urllib.parse
-from typing import Any, Tuple
+from typing import Any
 
 import requests
 
@@ -158,7 +158,7 @@ class Webhook:
 
     def get_static_token_query_and_headers(
         self,
-    ) -> Tuple[dict[str, str], dict[str, str]]:
+    ) -> tuple[dict[str, str], dict[str, str]]:
         if not self.resolve_auth_secret():
             raise WebhookException(
                 "Must supply auth secret if using static token auth type"
@@ -180,7 +180,7 @@ class Webhook:
 
     def get_auth_query_and_headers(
         self, encoded_data: bytes | None = None
-    ) -> Tuple[dict[str, str], dict[str, str]]:
+    ) -> tuple[dict[str, str], dict[str, str]]:
         query: dict[str, str]
         headers: dict[str, str]
 

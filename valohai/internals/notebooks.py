@@ -1,9 +1,9 @@
 import json
 import os
 import shlex
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 
-NotebookDict = Dict[str, Any]
+NotebookDict = dict[str, Any]
 
 # TODO: This file is a copy-pasta from https://github.com/valohai/jupyhai
 # TODO: DRY between libs
@@ -50,7 +50,7 @@ def get_notebook_source_code(contents: NotebookDict) -> str:
     return "\n".join(source)
 
 
-def get_notebook_command(notebook_relative_path: str) -> List[str]:
+def get_notebook_command(notebook_relative_path: str) -> list[str]:
     notebook_dir, notebook_name = os.path.split(notebook_relative_path)
     papermill_command = " ".join(
         [

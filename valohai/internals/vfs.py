@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from contextlib import ExitStack
 from tarfile import TarFile, TarInfo
-from typing import IO, TYPE_CHECKING, List, Optional, Union
+from typing import IO, TYPE_CHECKING, Optional, Union
 from zipfile import ZipFile, ZipInfo
 
 if TYPE_CHECKING:
@@ -187,7 +187,7 @@ def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
 
 
 class VFS:
-    files: List[File]
+    files: list[File]
 
     def __init__(self) -> None:
         self.files = []
@@ -199,7 +199,7 @@ class VFS:
     def __exit__(self, *exc_details) -> None:  # type: ignore[no-untyped-def]
         self.exit_stack.__exit__(*exc_details)
 
-    def filter(self, path: str) -> List[File]:
+    def filter(self, path: str) -> list[File]:
         pattern = re.compile(
             path.replace("**", "*").replace("*", ".*")
         )  # support for both * and ** notation
@@ -227,7 +227,7 @@ def add_disk_file(
 
 def find_files(vfs: VFS, root: str, *, process_archives: bool) -> None:
     def _walk(path: str) -> None:
-        dent: "DirEntry"
+        dent: DirEntry
         for dent in os.scandir(path):
             if dent.is_dir():
                 _walk(dent.path)

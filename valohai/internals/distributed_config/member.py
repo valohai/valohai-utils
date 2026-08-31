@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class Member:
@@ -9,9 +9,9 @@ class Member:
         identity: str,
         job_id: str,
         member_id: str,
-        exposed_ports: Dict[str, str],
-        local_ips: List[str],
-        public_ips: List[str],
+        exposed_ports: dict[str, str],
+        local_ips: list[str],
+        public_ips: list[str],
         rank: Optional[int] = None,
     ):
         self.announce_time = announce_time
@@ -46,7 +46,7 @@ class Member:
             ) from ie
 
     @classmethod
-    def from_json_data(cls, json_data: Dict[str, Any]) -> "Member":
+    def from_json_data(cls, json_data: dict[str, Any]) -> "Member":
         return cls(
             announce_time=json_data["announce_time"],
             identity=json_data["identity"],

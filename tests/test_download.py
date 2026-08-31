@@ -234,6 +234,6 @@ def test_download_by_input_id(vte, use_test_config_dir, requests_mock):
 
     # The file now exists and contains the downloaded data
     assert os.path.isfile(local_filename)
-    with open(local_filename, "r") as local_file:
+    with open(local_filename) as local_file:
         file_contents = local_file.read()
     assert file_contents == "I was downloaded by valohai-utils"

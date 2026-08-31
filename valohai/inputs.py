@@ -1,4 +1,5 @@
-from typing import IO, Iterable, Iterator, List, Optional, Union
+from collections.abc import Iterable, Iterator
+from typing import IO, Optional, Union
 
 from valohai.internals import vfs
 from valohai.internals.download_type import DownloadType
@@ -8,7 +9,7 @@ from valohai.paths import get_inputs_path
 
 class Input:
     def __init__(
-        self, name: str, default: Optional[Union[str, List[str]]] = None
+        self, name: str, default: Optional[Union[str, list[str]]] = None
     ) -> None:
         self.name = str(name)
         self.default = default

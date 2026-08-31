@@ -1,6 +1,6 @@
 import json
 import sys
-from typing import Any, Dict, TextIO
+from typing import Any, TextIO
 
 from valohai.config import is_valohai_deployment
 from valohai.internals.notebooks import is_in_notebook
@@ -9,7 +9,7 @@ _supported_types = [int, float]
 
 
 class Logger:
-    partial_logs: Dict[str, Any]
+    partial_logs: dict[str, Any]
 
     def __init__(self) -> None:
         self.partial_logs = {}

@@ -1,6 +1,7 @@
 import glob
 import os
-from typing import Any, Dict, Iterable, List, Optional, Union
+from collections.abc import Iterable
+from typing import Any, Optional, Union
 
 from valohai_yaml.utils import listify
 
@@ -18,8 +19,8 @@ class FileInfo:
         uri: Optional[str] = None,
         path: Optional[str] = None,
         size: Optional[int] = None,
-        checksums: Optional[Dict[str, str]] = None,
-        metadata: Optional[List[Dict[str, Any]]] = None,
+        checksums: Optional[dict[str, str]] = None,
+        metadata: Optional[list[dict[str, Any]]] = None,
         datum_id: Optional[str] = None,
     ) -> None:
         self.name = str(name)
@@ -43,7 +44,7 @@ class FileInfo:
         # TODO: Store size & checksums if they become useful
 
     @classmethod
-    def from_json_data(cls, json_data: Dict[str, Any]) -> "FileInfo":
+    def from_json_data(cls, json_data: dict[str, Any]) -> "FileInfo":
         return cls(
             name=json_data["name"],
             uri=json_data.get("uri"),
@@ -86,14 +87,14 @@ class InputInfo:
                 f.download(path, force_download=(download == DownloadType.ALWAYS))
 
     @classmethod
-    def from_json_data(cls, json_data: Dict[str, Any]) -> "InputInfo":
+    def from_json_data(cls, json_data: dict[str, Any]) -> "InputInfo":
         return cls(
             input_id=json_data.get("input_id"),
             files=[FileInfo.from_json_data(d) for d in json_data.get("files", ())],
         )
 
     @classmethod
-    def from_urls_and_paths(cls, urls_and_paths: Union[str, List[str]]) -> "InputInfo":
+    def from_urls_and_paths(cls, urls_and_paths: Union[str, list[str]]) -> "InputInfo":
         files = []
 
         for value in listify(urls_and_paths):

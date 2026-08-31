@@ -1,6 +1,6 @@
 import json
 import warnings
-from typing import List, Optional
+from typing import Optional
 
 from valohai import paths
 from valohai.internals.distributed_config import DistributedConfig, Member
@@ -39,7 +39,7 @@ class Distributed:
     def required_count(self) -> int:
         return self.config.required_count
 
-    def members(self) -> List[Member]:
+    def members(self) -> list[Member]:
         return self.config.members
 
     def member(self, member_id: str) -> Member:

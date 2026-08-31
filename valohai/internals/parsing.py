@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ast
 from collections import namedtuple
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 def is_module_function_call(node: ast.Call, module: str, function: str) -> bool:
@@ -55,11 +55,11 @@ class PrepareParser(ast.NodeVisitor):
         valohai.prepare(parameters=get_parameters())
     """
 
-    assignments: Dict[str, Any]
-    parameters: Dict[str, Any]
-    inputs: Dict[str, Any]
-    step: Optional[str]
-    environment: Optional[str]
+    assignments: dict[str, Any]
+    parameters: dict[str, Any]
+    inputs: dict[str, Any]
+    step: str | None
+    environment: str | None
     multifile: bool
 
     def __init__(self) -> None:

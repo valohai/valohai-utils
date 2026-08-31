@@ -1,11 +1,11 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from valohai.distributed import Distributed
 from valohai.internals.input_info import InputInfo
 
 loaded: bool = False
-inputs: Dict[str, InputInfo] = {}
-parameters: Dict[str, Any] = {}
+inputs: dict[str, InputInfo] = {}
+parameters: dict[str, Any] = {}
 step_name: Optional[str] = None
 image_name: Optional[str] = None
 environment: Optional[str] = None
