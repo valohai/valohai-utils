@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import json
 import os
 import shlex
 from typing import Any
+
+from valohai.internals import json_utils
 
 NotebookDict = dict[str, Any]
 
@@ -21,7 +22,7 @@ def parse_ipynb(content_or_str: str | NotebookDict) -> NotebookDict:
     :return: Notebook data.
     """
     if isinstance(content_or_str, str):
-        content = json.loads(content_or_str)
+        content = json_utils.loads(content_or_str)
     else:
         content = content_or_str
     if not isinstance(content, dict):
