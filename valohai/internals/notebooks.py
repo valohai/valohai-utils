@@ -53,7 +53,7 @@ def get_notebook_source_code(contents: NotebookDict) -> str:
 
 
 def get_notebook_command(notebook_relative_path: str) -> list[str]:
-    notebook_dir, notebook_name = os.path.split(notebook_relative_path)
+    _notebook_dir, notebook_name = os.path.split(notebook_relative_path)
     papermill_command = " ".join(
         [
             "papermill -k python3 -f /valohai/config/parameters.yaml",

@@ -156,9 +156,9 @@ def request_download_urls(input_id: str) -> dict[str, str]:
 
     # While we should only get the single input we request in the response, this does handle the case
     # that we also get unrelated inputs.
-    return dict(
-        (input_file["filename"], input_file["url"])
+    return {
+        input_file["filename"]: input_file["url"]
         for input_request in response.json()
         for input_file in input_request["files"]
         if input_file["input_id"] == input_id
-    )
+    }

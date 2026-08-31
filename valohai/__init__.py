@@ -16,6 +16,7 @@ from valohai.triggers import triggers
 Pipeline = papi.Papi
 
 __all__ = [
+    "Pipeline",
     "distributed",
     "execution",
     "inputs",
@@ -24,7 +25,6 @@ __all__ = [
     "outputs",
     "parameters",
     "prepare",
-    "Pipeline",
     "set_status_detail",
     "triggers",
 ]

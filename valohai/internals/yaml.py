@@ -191,5 +191,5 @@ def get_source_code(source_path: str) -> str:
 
 
 def is_notebook_path(source_path: str) -> bool:
-    filename, extension = os.path.splitext(source_path)
+    _filename, extension = os.path.splitext(source_path)
     return extension == ".ipynb"

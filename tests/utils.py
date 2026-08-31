@@ -74,7 +74,7 @@ def read_yaml_test_data(root_path):
         f"{root_path}/*.ipynb"
     ):
         dirname = os.path.dirname(source_path)
-        name, extension = os.path.splitext(os.path.basename(source_path))
+        name, _extension = os.path.splitext(os.path.basename(source_path))
         test_data.append(
             pytest.param(
                 f"{dirname}/{name}.original.valohai.yaml",
