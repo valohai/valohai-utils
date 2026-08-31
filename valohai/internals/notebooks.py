@@ -56,7 +56,7 @@ def get_notebook_command(notebook_relative_path: str) -> list[str]:
     _notebook_dir, notebook_name = os.path.split(notebook_relative_path)
     papermill_command = " ".join(
         [
-            "papermill -k python3 -f /valohai/config/parameters.yaml",
+            "papermill -k python3 -f /valohai/config/parameters.json",
             shlex.quote(
                 f"/valohai/repository/{notebook_relative_path.replace(os.sep, '/')}"
             ),

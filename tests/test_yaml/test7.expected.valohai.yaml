@@ -3,7 +3,7 @@
     image: valohai/pypermill
     command:
     - pip install -r requirements.txt
-    - papermill -k python3 -f /valohai/config/parameters.yaml /valohai/repository/./test7.ipynb
+    - papermill -k python3 -f /valohai/config/parameters.json /valohai/repository/./test7.ipynb
       /valohai/outputs/test7.ipynb
     parameters:
     - name: epochs
