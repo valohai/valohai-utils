@@ -41,18 +41,14 @@
 - pipeline:
     name: simple-pipeline
     edges:
-    - configuration: {}
-      source: generate.output.images*
+    - source: generate.output.images*
       target: train.input.dataset-images
-    - configuration: {}
-      source: generate.output.labels*
+    - source: generate.output.labels*
       target: train.input.dataset-labels
     nodes:
     - name: generate
-      on-error: stop-all
       step: generate-dataset
       type: execution
     - name: train
-      on-error: stop-all
       step: train-model
       type: execution
