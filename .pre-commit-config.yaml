@@ -3,7 +3,7 @@ ci:
   autofix_prs: false
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: fa1ed65ba95bfa7771a71003a9d74402541f5a5c  # frozen: v0.14.6
+    rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49  # frozen: v0.16.5
     hooks:
       - id: ruff-check
         args:
