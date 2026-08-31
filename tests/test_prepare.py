@@ -1,7 +1,9 @@
 import os
 import sys
 
+import pytest
 import valohai
+from valohai.internals.global_state import flush_global_state
 from valohai.internals.inputs import get_input_info
 
 
@@ -92,3 +94,54 @@ def test_prepare(tmpdir, monkeypatch):
 
     for p in valohai.inputs("localdata_with_wildcard").paths():
         assert os.path.isfile(p)
+
+
+@pytest.mark.parametrize(
+    ("parameters", "cli_arg", "expected_value", "expected_type"),
+    [
+        (
+            {
+                "test_int_param": {
+                    "type": "integer",
+                    "default": None,
+                    "optional": True,
+                    "description": "Test integer parameter with default value None.",
+                }
+            },
+            "--test_int_param=1",
+            1,
+            int,
+        ),
+        (
+            {"test_param": {"type": "float", "default": None, "optional": True}},
+            "--test_param=1.5",
+            1.5,
+            float,
+        ),
+        (
+            {"test_param": {"type": "string", "default": None, "optional": True}},
+            "--test_param=1",
+            "1",
+            str,
+        ),
+        (
+            {"test_param": {"type": "flag", "default": None, "optional": True}},
+            "--test_param=true",
+            True,
+            bool,
+        ),
+    ],
+    ids=["integer", "float", "string", "flag"],
+)
+def test_prepare_explicit_parameter_with_none_default_from_cli(
+    monkeypatch, parameters, cli_arg, expected_value, expected_type
+):
+    flush_global_state()
+    parameter_name = next(iter(parameters))
+    monkeypatch.setattr(sys, "argv", ["", cli_arg])
+
+    valohai.prepare(step="test", default_parameters=parameters)
+
+    value = valohai.parameters(parameter_name).value
+    assert value == expected_value
+    assert isinstance(value, expected_type)

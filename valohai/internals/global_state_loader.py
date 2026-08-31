@@ -52,6 +52,7 @@ def load_global_state(
     cli_inputs, cli_parameters = parse_overrides_from_cli(
         input_names=set(inputs),
         parameters=parameters,
+        parameter_definitions=default_parameters_from_prepare,
     )
     inputs = {key: cli_inputs.get(key, value) for key, value in inputs.items()}
     final_parameters = {
@@ -86,6 +87,7 @@ def parse_overrides_from_cli(
     *,
     input_names: Set[str],
     parameters: ParameterDict,
+    parameter_definitions: Optional[ParameterDict] = None,
 ) -> Tuple[Dict[str, List[str]], Dict[str, Any]]:
     """Override inputs and parameters from the command-line
 
@@ -98,12 +100,24 @@ def parse_overrides_from_cli(
         parser.add_argument(f"--{name}", type=str, nargs="+")
     for name, value in parameters.items():
         # TODO: this does not properly handle `value` possibly being a default dict
-
         if isinstance(value, bool):
             # We need to fiddle booleans in a bit different way, since they are treated as flags per default
             parser.add_argument(f"--{name}", type=string_to_bool, nargs="?", const=True)
         elif isinstance(value, list):
             parser.add_argument(f"--{name}", type=lambda s: str(s).split(","))
+        elif value is None:
+            parameter_type = get_explicit_parameter_type(parameter_definitions, name)
+            if parameter_type == "flag":
+                parser.add_argument(
+                    f"--{name}", type=string_to_bool, nargs="?", const=True
+                )
+            else:
+                converter = None
+                if isinstance(parameter_type, str):
+                    converter = {"integer": int, "float": float, "string": str}.get(
+                        parameter_type
+                    )
+                parser.add_argument(f"--{name}", type=converter or type(value))
         else:
             parser.add_argument(f"--{name}", type=type(value))
     known_args, unknown_args = parser.parse_known_args()
@@ -118,6 +132,18 @@ def parse_overrides_from_cli(
     cli_parameters = sift_cli_parameters(known_args, set(parameters.keys()))
 
     return cli_inputs, cli_parameters
+
+
+def get_explicit_parameter_type(
+    parameter_definitions: Optional[ParameterDict], name: str
+) -> Any:
+    if not parameter_definitions:
+        return None
+
+    parameter_definition = parameter_definitions.get(name)
+    if not isinstance(parameter_definition, dict):
+        return None
+    return parameter_definition.get("type")
 
 
 def load_inputs_from_config() -> InputDict:
