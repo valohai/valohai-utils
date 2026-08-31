@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 import warnings
-from typing import List, Optional
 
 from valohai import paths
 from valohai.internals.distributed_config import DistributedConfig, Member
@@ -11,7 +12,7 @@ class Distributed:
     Distributed toolkit accessed through `valohai.distributed`.
     """
 
-    _config: Optional[DistributedConfig] = None
+    _config: DistributedConfig | None = None
 
     def is_distributed_task(self) -> bool:
         # not a property to mimic `is_running_in_valohai`
@@ -32,14 +33,14 @@ class Distributed:
         return self.config.member_id
 
     @property
-    def rank(self) -> Optional[int]:
+    def rank(self) -> int | None:
         return self.me().rank
 
     @property
     def required_count(self) -> int:
         return self.config.required_count
 
-    def members(self) -> List[Member]:
+    def members(self) -> list[Member]:
         return self.config.members
 
     def member(self, member_id: str) -> Member:

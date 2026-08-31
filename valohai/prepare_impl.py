@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from valohai.internals import global_state
 from valohai.internals.global_state_loader import load_global_state
@@ -8,12 +8,12 @@ from valohai.types import InputDict, ParameterDict
 def prepare(
     *,
     step: str,
-    default_parameters: Optional[ParameterDict] = None,
-    default_inputs: Optional[InputDict] = None,
-    image: Optional[str] = None,
-    environment: Optional[str] = None,
+    default_parameters: ParameterDict | None = None,
+    default_inputs: InputDict | None = None,
+    image: str | None = None,
+    environment: str | None = None,
     multifile: bool = False,
-    upload_store: Optional[str] = None,
+    upload_store: str | None = None,
 ) -> None:
     """Define the name of the step and its required inputs, parameters and Docker image
 

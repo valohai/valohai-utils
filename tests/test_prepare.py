@@ -51,7 +51,7 @@ def test_prepare(tmpdir, monkeypatch):
             "--makeme321=321",
             "--makemenegative=-0.123",
             "--some_totally_random_parameter_to_ignore=666",
-            f"--overrideme={str(local_file)}",
+            f"--overrideme={local_file!s}",
             "--list_bar=bar1,bar2,bar3",
         ]
         m.setattr(

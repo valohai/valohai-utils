@@ -1,12 +1,13 @@
-import pytest
 from typing import Callable
 
+import pytest
+
 from valohai.webhooks import (
-    Webhook,
     AuthType,
     HMACAlgorithm,
-    TimestampType,
     RequestNamespace,
+    TimestampType,
+    Webhook,
 )
 
 VALID_WEBHOOK_CONFIGS = [
@@ -23,8 +24,10 @@ VALID_WEBHOOK_CONFIGS = [
             "auth_algorithm": HMACAlgorithm.sha256,
             "auth_secret": "foobar",
         },
-        lambda request: request.headers["Authorization"]
-        == "15b944e3ab6db92072ebef4cc272912905c8b0295ec44d826b09949b10ee2510",
+        lambda request: (
+            request.headers["Authorization"]
+            == "15b944e3ab6db92072ebef4cc272912905c8b0295ec44d826b09949b10ee2510"
+        ),
     ),
     (
         "hmac_customized",
@@ -36,8 +39,10 @@ VALID_WEBHOOK_CONFIGS = [
             "auth_secret_prefix": "v0=",
             "auth_key": "X-Special-HMAC",
         },
-        lambda request: request.headers["X-Special-HMAC"]
-        == "v0=15b944e3ab6db92072ebef4cc272912905c8b0295ec44d826b09949b10ee2510",
+        lambda request: (
+            request.headers["X-Special-HMAC"]
+            == "v0=15b944e3ab6db92072ebef4cc272912905c8b0295ec44d826b09949b10ee2510"
+        ),
     ),
     (
         "hmac_with_timestamp",
@@ -52,8 +57,10 @@ VALID_WEBHOOK_CONFIGS = [
             "timestamp_key": "X-Special-Timestamp",
             "hmac_format": b"v123:%(body)s:%(timestamp)d",
         },
-        lambda request: "X-Special-Timestamp" in request.headers
-        and "X-Special-Timestamped-HMAC" in request.headers,
+        lambda request: (
+            "X-Special-Timestamp" in request.headers
+            and "X-Special-Timestamped-HMAC" in request.headers
+        ),
     ),
     (
         "secret_from_env",

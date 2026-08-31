@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import sys
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any
 
 from valohai_yaml.utils import listify
 
@@ -14,8 +16,8 @@ from valohai.types import InputDict, ParameterDict
 
 
 def load_global_state(
-    default_inputs_from_prepare: Optional[InputDict] = None,
-    default_parameters_from_prepare: Optional[ParameterDict] = None,
+    default_inputs_from_prepare: InputDict | None = None,
+    default_parameters_from_prepare: ParameterDict | None = None,
 ) -> None:
     """Loads inputs & parameters and stores their value in the global_state
 
@@ -84,9 +86,9 @@ def load_global_state_if_necessary() -> None:
 
 def parse_overrides_from_cli(
     *,
-    input_names: Set[str],
+    input_names: set[str],
     parameters: ParameterDict,
-) -> Tuple[Dict[str, List[str]], Dict[str, Any]]:
+) -> tuple[dict[str, list[str]], dict[str, Any]]:
     """Override inputs and parameters from the command-line
 
     :param input_names: List of input names
@@ -140,8 +142,8 @@ def load_parameters_from_config() -> ParameterDict:
 
 
 def sift_cli_inputs(
-    args: argparse.Namespace, expected_keys: Set[str]
-) -> Dict[str, List[str]]:
+    args: argparse.Namespace, expected_keys: set[str]
+) -> dict[str, list[str]]:
     """Sift inputs from all the command-line args
 
     :param expected_keys: List of expected input names
@@ -160,8 +162,8 @@ def sift_cli_inputs(
 
 
 def sift_cli_parameters(
-    args: argparse.Namespace, expected_keys: Set[str]
-) -> Dict[str, Any]:
+    args: argparse.Namespace, expected_keys: set[str]
+) -> dict[str, Any]:
     """Sift parameters from all the command-line args
 
     :param expected_keys: List of expected parameter names
@@ -174,7 +176,7 @@ def sift_cli_parameters(
     }
 
 
-def sift_defaults(values: Dict[str, Any]) -> Dict[str, Any]:
+def sift_defaults(values: dict[str, Any]) -> dict[str, Any]:
     """Returns the default values which user defined in .prepare()
 
     Works for both inputs and parameters.
@@ -205,7 +207,7 @@ def sift_defaults(values: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
-def convert_to_input_info(input: Union[str, List[str], Dict[str, Any]]) -> InputInfo:
+def convert_to_input_info(input: str | list[str] | dict[str, Any]) -> InputInfo:
     """Converts inputs from different formats into an InputInfo
 
     Inputs can be defined in either .prepare() or inputs.json

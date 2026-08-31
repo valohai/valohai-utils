@@ -38,10 +38,7 @@ vh exec run -a mystep
 [Valohai parameters](https://help.valohai.com/hc/en-us/articles/4419896836881-Use-parameters) are variables & hyper-parameters that are parsed from the command-line. You define parameters in a dictionary:
 
 ```python
-default_parameters = {
-    'iterations': 100,
-    'learning_rate': 0.001
-}
+default_parameters = {"iterations": 100, "learning_rate": 0.001}
 ```
 
 The dictionary is fed to `valohai.prepare()` method:
@@ -54,12 +51,12 @@ The values given are **default** values. You can override them from the command-
 import valohai
 
 default_parameters = {
-    'iterations': 10,
+    "iterations": 10,
 }
 
 valohai.prepare(step="helloworld", default_parameters=default_parameters)
 
-for i in range(valohai.parameters('iterations').value):
+for i in range(valohai.parameters("iterations").value):
     print("Iteration %s" % i)
 ```
 
@@ -68,33 +65,26 @@ for i in range(valohai.parameters('iterations').value):
 [Valohai inputs](https://help.valohai.com/hc/en-us/articles/4422921110929-Add-input-files-to-your-execution) are the data files required by the experiment. They are automatically downloaded for you, if the data is from a public source. You define inputs with a dictionary:
 
 ```python
-default_inputs = {
-    'input_name': 'http://example.com/1.png'
-}
+default_inputs = {"input_name": "http://example.com/1.png"}
 ```
 
 An input can also be a list of URLs or a folder:
 
 ```python
 default_inputs = {
-    'input_name': [
-        'http://example.com/1.png',
-        'http://example.com/2.png'
+    "input_name": ["http://example.com/1.png", "http://example.com/2.png"],
+    "input_folder": [
+        "s3://mybucket/images/*",
+        "azure://mycontainer/images/*",
+        "gs://mybucket/images/*",
     ],
-    'input_folder': [
-        's3://mybucket/images/*',
-        'azure://mycontainer/images/*',
-        'gs://mybucket/images/*'
-    ]
 }
 ```
 
 Or it can be an archive full of files (uncompressed automagically on-demand):
 
 ```python
-default_inputs = {
-    'images': 'http://example.com/myimages.zip'
-}
+default_inputs = {"images": "http://example.com/myimages.zip"}
 ```
 
 The dictionary is fed to `valohai.prepare()` method.
@@ -108,13 +98,13 @@ import csv
 import valohai
 
 default_inputs = {
-    'myinput': 'https://pokemon-images-example.s3-eu-west-1.amazonaws.com/pokemon.csv'
+    "myinput": "https://pokemon-images-example.s3-eu-west-1.amazonaws.com/pokemon.csv",
 }
 
 valohai.prepare(step="test", default_inputs=default_inputs)
 
 with open(valohai.inputs("myinput").path()) as csv_file:
-    reader = csv.reader(csv_file, delimiter=',')
+    reader = csv.reader(csv_file, delimiter=",")
 ```
 
 ## Outputs
@@ -128,7 +118,7 @@ When you are ready to save your output file, you can query for the correct path 
 ```python
 image = Image.open(in_path)
 new_image = image.resize((width, height))
-out_path = valohai.outputs('resized').path('resized_image.png')
+out_path = valohai.outputs("resized").path("resized_image.png")
 new_image.save(out_path)
 ```
 
@@ -139,7 +129,7 @@ In this case, once you have all your outputs saved, you can finalize the output 
 ### Example
 
 ```python
-valohai.outputs('resized').compress("*.png", "images.zip", remove_originals=True)
+valohai.outputs("resized").compress("*.png", "images.zip", remove_originals=True)
 ```
 
 ## Logging
@@ -194,17 +184,14 @@ print(f"Execution counter: {execution_config.counter}")
 import valohai
 
 if valohai.distributed.is_distributed_task():
-
     # `master()` reports the same worker on all contexts
     master = valohai.distributed.master()
-    master_url = f'tcp://{master.primary_local_ip}:1234'
+    master_url = f"tcp://{master.primary_local_ip}:1234"
 
     # `members()` contains all workers in the distributed task
-    member_public_ips = ",".join([
-        m.primary_public_ip
-        for m
-        in valohai.distributed.members()
-    ])
+    member_public_ips = ",".join(
+        [m.primary_public_ip for m in valohai.distributed.members()]
+    )
 
     # `me()` has full details about the current worker context
     details = valohai.distributed.me()
@@ -239,7 +226,9 @@ default_inputs = {
     ],
 }
 
-valohai.prepare(step="resize", default_parameters=default_parameters, default_inputs=default_inputs)
+valohai.prepare(
+    step="resize", default_parameters=default_parameters, default_inputs=default_inputs
+)
 
 
 def resize_image(in_path, out_path, width, height, logger):
@@ -252,18 +241,18 @@ def resize_image(in_path, out_path, width, height, logger):
     new_image.save(out_path)
 
 
-if __name__ == '__main__':
-    for image_path in valohai.inputs('images').paths():
+if __name__ == "__main__":
+    for image_path in valohai.inputs("images").paths():
         with valohai.metadata.logger() as logger:
             filename = os.path.basename(image_path)
             resize_image(
                 in_path=image_path,
-                out_path=valohai.outputs('resized').path(filename),
-                width=valohai.parameters('width').value,
-                height=valohai.parameters('height').value,
-                logger=logger
+                out_path=valohai.outputs("resized").path(filename),
+                width=valohai.parameters("width").value,
+                height=valohai.parameters("height").value,
+                logger=logger,
             )
-    valohai.outputs('resized').compress("*", "images.zip", remove_originals=True)
+    valohai.outputs("resized").compress("*", "images.zip", remove_originals=True)
 ```
 
 CLI command:

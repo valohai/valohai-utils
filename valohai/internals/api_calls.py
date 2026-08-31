@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any
 
 from valohai import paths
 
@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     import requests
 
 
-def get_api_requests_kwargs(endpoint: str) -> Dict[str, Any]:
+def get_api_requests_kwargs(endpoint: str) -> dict[str, Any]:
     """
     Get the "presigned call" dict for a given endpoint from the
     API JSON configuration file.  Will happily throw all sorts of

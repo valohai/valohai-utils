@@ -1,6 +1,7 @@
 import json
 import sys
-from typing import Any, Dict, TextIO
+from typing import Any, TextIO
+
 from valohai.config import is_valohai_deployment
 from valohai.internals.notebooks import is_in_notebook
 
@@ -8,7 +9,7 @@ _supported_types = [int, float]
 
 
 class Logger:
-    partial_logs: Dict[str, Any]
+    partial_logs: dict[str, Any]
 
     def __init__(self) -> None:
         self.partial_logs = {}
@@ -81,7 +82,7 @@ class Logger:
                 # Wrap in `vh_metadata` so deployment log machinery detects this
                 to_print = {"vh_metadata": to_print}
             # Start with \n, ensuring JSON prints on its own line
-            print(  # noqa: T201
+            print(
                 f"\n{json.dumps(to_print, default=str)}",
                 file=self._get_output_stream(),
             )

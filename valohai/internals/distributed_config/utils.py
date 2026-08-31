@@ -1,19 +1,22 @@
-from typing import TYPE_CHECKING, Dict, Iterable, Union
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from valohai.internals.distributed_config import Member
 
 
-def rank_members(members: Iterable["Member"]) -> None:
+def rank_members(members: Iterable[Member]) -> None:
     """Add ranks to members in-place."""
     mapping = compute_member_id_ranks([m.member_id for m in members])
     for m in members:
         m.rank = mapping[m.member_id]
 
 
-def compute_member_id_ranks(member_ids: Iterable[str]) -> Dict[str, int]:
+def compute_member_id_ranks(member_ids: Iterable[str]) -> dict[str, int]:
     """Given member ids, return member id to rank mapping."""
-    id_to_sortable: Dict[str, Union[str, int]]
+    id_to_sortable: dict[str, str | int]
     try:
         id_to_sortable = {member_id: int(member_id) for member_id in member_ids}
     except ValueError:

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from valohai_yaml.objs import Config, Parameter, Step
 from valohai_yaml.objs.input import Input, KeepDirectories
@@ -12,8 +14,8 @@ from valohai.internals.notebooks import (
     parse_ipynb,
 )
 from valohai.internals.parsing import parse
-from valohai.types import InputDict, ParameterDict
 from valohai.internals.utils import is_local_file_path
+from valohai.types import InputDict, ParameterDict
 
 
 def generate_step(
@@ -21,11 +23,11 @@ def generate_step(
     relative_source_path: str,
     step: str,
     image: str,
-    parameters: Dict[str, Any],
-    inputs: Dict[str, Any],
-    environment: Optional[str] = None,
+    parameters: dict[str, Any],
+    inputs: dict[str, Any],
+    environment: str | None = None,
     multifile: bool = False,
-    upload_store: Optional[str] = None,
+    upload_store: str | None = None,
 ) -> Step:
     # We need to generate a POSIX-compliant command, even if we are running this method in Windows
     # The path separator must be forced to POSIX
@@ -93,9 +95,9 @@ def generate_config(
     image: str,
     parameters: ParameterDict,
     inputs: InputDict,
-    environment: Optional[str] = None,
+    environment: str | None = None,
     multifile: bool = False,
-    upload_store: Optional[str] = None,
+    upload_store: str | None = None,
 ) -> Config:
     step_obj = generate_step(
         relative_source_path=relative_source_path,
@@ -164,7 +166,7 @@ def get_parameter_type_name(name: str, value: Any) -> str:
     )
 
 
-def get_command(relative_source_path: str, multifile: bool) -> List[str]:
+def get_command(relative_source_path: str, multifile: bool) -> list[str]:
     if is_notebook_path(relative_source_path):
         return get_notebook_command(relative_source_path)
 
@@ -189,5 +191,5 @@ def get_source_code(source_path: str) -> str:
 
 
 def is_notebook_path(source_path: str) -> bool:
-    filename, extension = os.path.splitext(source_path)
+    _filename, extension = os.path.splitext(source_path)
     return extension == ".ipynb"

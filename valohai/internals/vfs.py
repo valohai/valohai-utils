@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import hashlib
 import os
 import re
@@ -5,7 +7,7 @@ import shutil
 import tempfile
 from contextlib import ExitStack
 from tarfile import TarFile, TarInfo
-from typing import IO, TYPE_CHECKING, List, Optional, Union
+from typing import IO, TYPE_CHECKING
 from zipfile import ZipFile, ZipInfo
 
 if TYPE_CHECKING:
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class File:
-    parent_file: Optional["File"] = None
+    parent_file: File | None = None
 
     def open(self) -> IO[bytes]:
         raise NotImplementedError(f"{self.__class__.__name__}.open() not implemented")
@@ -37,17 +39,15 @@ class File:
 class FileOnDisk(File):
     _name: str
     path: str
-    dir_entry: Optional["DirEntry"]
+    dir_entry: DirEntry | None
 
-    def __init__(
-        self, name: str, path: str, dir_entry: Optional["DirEntry"] = None
-    ) -> None:
+    def __init__(self, name: str, path: str, dir_entry: DirEntry | None = None) -> None:
         self._name = name
         self.path = path
         self.dir_entry = dir_entry
 
     def open(self) -> IO[bytes]:
-        return open(self.path, "rb")  # noqa: SIM115
+        return open(self.path, "rb")
 
     @property
     def name(self) -> str:
@@ -61,11 +61,11 @@ class FileOnDisk(File):
 
 class FileInContainer(File):
     parent_file: FileOnDisk
-    _concrete_path: Optional[str] = None
+    _concrete_path: str | None = None
 
     def open_concrete(self, delete: bool = True) -> IO[bytes]:
         if self._concrete_path and os.path.isfile(self._concrete_path):
-            return open(self._concrete_path, "rb")  # noqa: SIM115
+            return open(self._concrete_path, "rb")
 
         file_path = os.path.join(
             self.parent_file.container_temp_root, self.path_in_container
@@ -77,7 +77,7 @@ class FileInContainer(File):
         self._concrete_path = tf.name
         return tempfile._TemporaryFileWrapper(tf, tf.name, delete=delete)
 
-    def extract(self, destination: Union[str, IO[bytes]]) -> None:
+    def extract(self, destination: str | IO[bytes]) -> None:
         if isinstance(destination, str):
             destination = open(destination, "wb")  # noqa: SIM115
             should_close = True
@@ -160,7 +160,7 @@ class FileInTar(FileInContainer):
         return self.tarinfo.path
 
 
-def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
+def find_files_in_zip(vr: VFS, df: FileOnDisk) -> None:
     zf = ZipFile(df.path)
     df.zipfile = zf  # type: ignore
     vr.exit_stack.callback(zf.close)
@@ -173,7 +173,7 @@ def find_files_in_zip(vr: "VFS", df: FileOnDisk) -> None:
     )
 
 
-def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
+def find_files_in_tar(vr: VFS, df: FileOnDisk) -> None:
     tf = TarFile.open(df.path)
     df.tarfile = tf  # type: ignore
     vr.exit_stack.callback(tf.close)
@@ -187,19 +187,19 @@ def find_files_in_tar(vr: "VFS", df: FileOnDisk) -> None:
 
 
 class VFS:
-    files: List[File]
+    files: list[File]
 
     def __init__(self) -> None:
         self.files = []
         self.exit_stack = ExitStack()
 
-    def __enter__(self) -> "VFS":
+    def __enter__(self) -> VFS:
         return self
 
     def __exit__(self, *exc_details) -> None:  # type: ignore[no-untyped-def]
         self.exit_stack.__exit__(*exc_details)
 
-    def filter(self, path: str) -> List[File]:
+    def filter(self, path: str) -> list[File]:
         pattern = re.compile(
             path.replace("**", "*").replace("*", ".*")
         )  # support for both * and ** notation
@@ -210,7 +210,7 @@ def add_disk_file(
     vfs: VFS,
     name: str,
     path: str,
-    dir_entry: Optional["DirEntry"] = None,
+    dir_entry: DirEntry | None = None,
     process_archives: bool = False,
 ) -> None:
     disk_file = FileOnDisk(name=name, path=path, dir_entry=dir_entry)
@@ -227,7 +227,7 @@ def add_disk_file(
 
 def find_files(vfs: VFS, root: str, *, process_archives: bool) -> None:
     def _walk(path: str) -> None:
-        dent: "DirEntry"
+        dent: DirEntry
         for dent in os.scandir(path):
             if dent.is_dir():
                 _walk(dent.path)

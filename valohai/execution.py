@@ -1,9 +1,10 @@
 """Helper for getting information about the current execution."""
 
+from __future__ import annotations
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 from valohai.paths import get_config_path
 
@@ -12,14 +13,14 @@ from valohai.paths import get_config_path
 class ExecutionConfig:
     """Information about the current execution."""
 
-    counter: Optional[int]
-    id: Optional[str]
-    title: Optional[str]
+    counter: int | None
+    id: str | None
+    title: str | None
 
 
 class Execution:
     @property
-    def config(self) -> Optional[ExecutionConfig]:
+    def config(self) -> ExecutionConfig | None:
         """
         Fetch execution configuration information.
 

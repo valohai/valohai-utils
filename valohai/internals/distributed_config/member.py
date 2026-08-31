@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 
 class Member:
@@ -9,10 +11,10 @@ class Member:
         identity: str,
         job_id: str,
         member_id: str,
-        exposed_ports: Dict[str, str],
-        local_ips: List[str],
-        public_ips: List[str],
-        rank: Optional[int] = None,
+        exposed_ports: dict[str, str],
+        local_ips: list[str],
+        public_ips: list[str],
+        rank: int | None = None,
     ):
         self.announce_time = announce_time
         self.identity = identity
@@ -46,7 +48,7 @@ class Member:
             ) from ie
 
     @classmethod
-    def from_json_data(cls, json_data: Dict[str, Any]) -> "Member":
+    def from_json_data(cls, json_data: dict[str, Any]) -> Member:
         return cls(
             announce_time=json_data["announce_time"],
             identity=json_data["identity"],

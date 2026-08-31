@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from valohai.internals.distributed_config.member import Member
 from valohai.internals.distributed_config.utils import rank_members
@@ -11,7 +11,7 @@ class DistributedConfig:
         group_name: str,
         member_id: str,
         required_count: int,
-        members: List[Member],
+        members: list[Member],
     ):
         self.group_name = group_name
         self.member_id = member_id
@@ -19,7 +19,7 @@ class DistributedConfig:
         self.members = members
 
     @classmethod
-    def from_json_data(cls, json_data: Dict[str, Any]) -> "DistributedConfig":
+    def from_json_data(cls, json_data: dict[str, Any]) -> "DistributedConfig":
         members = [Member.from_json_data(m) for m in json_data["members"]]
         rank_members(members)
         return cls(

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import contextlib
 import io
 import os
@@ -76,7 +78,7 @@ class ZipArchive(BaseArchive, zipfile.ZipFile):
     def writestream(
         self,
         arcname: str,
-        data: Union[str, bytes, IO[bytes]],
+        data: str | bytes | IO[bytes],
         compress_type: int,
         compresslevel: int,
     ) -> None:
@@ -141,7 +143,7 @@ def open_archive(path: str) -> BaseArchive:
     if path.endswith(".tar"):
         return TarArchive.open(path, "w")
 
-    if path.endswith(".tgz") or path.endswith(".tar.gz"):
+    if path.endswith((".tgz", ".tar.gz")):
         return TarArchive.open(path, "w:gz")
 
     raise ValueError(f"Unrecognized compression format for {path}")

@@ -9,13 +9,13 @@ import logging
 from collections import Counter, defaultdict
 from itertools import chain
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, Union
+from typing import Any, Union
 
 from valohai.paths import get_outputs_path
 
 File = Union[str, Path]  # path to the file (relative to outputs directory)
-Properties = Dict[str, Any]  # metadata properties for a file
-FilesProperties = DefaultDict[File, Properties]
+Properties = dict[str, Any]  # metadata properties for a file
+FilesProperties = defaultdict[File, Properties]
 DatasetVersionURI = str  # dataset version URI (e.g. 'dataset://dataset-1/version')
 
 logger = logging.getLogger()

@@ -1,13 +1,13 @@
+import json
 import os
 import sys
 import uuid
-import json
 
 import pytest
+from valohai_cli import settings as settings_module
 
 import valohai
 from valohai.internals.inputs import get_input_info, get_input_vfs
-from valohai_cli import settings as settings_module
 
 
 def test_download(tmpdir, monkeypatch, requests_mock):
@@ -234,6 +234,6 @@ def test_download_by_input_id(vte, use_test_config_dir, requests_mock):
 
     # The file now exists and contains the downloaded data
     assert os.path.isfile(local_filename)
-    with open(local_filename, "r") as local_file:
+    with open(local_filename) as local_file:
         file_contents = local_file.read()
     assert file_contents == "I was downloaded by valohai-utils"
