@@ -23,6 +23,14 @@ def test_compress(output_files, format, remove_originals):
     if format == "zip":
         with zipfile.ZipFile(package_path) as zf:
             assert zf.namelist()
+            # https://github.com/valohai/valohai-utils/issues/125:
+            # zipped output files should be at least group/world readable,
+            # like uncompressed output files already are.
+            for info in zf.infolist():
+                mode = (info.external_attr >> 16) & 0o777
+                assert mode & 0o044 == 0o044, (
+                    f"{info.filename} has mode {oct(mode)}, not group/world readable"
+                )
     elif "tar" in format:
         with tarfile.open(package_path, "r:*") as tf:
             assert len(list(tf))
