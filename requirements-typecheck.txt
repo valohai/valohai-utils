@@ -10,6 +10,8 @@ mypy-extensions==1.1.0
     # via mypy
 pathspec==1.1.1
     # via mypy
+tomli==2.4.1
+    # via mypy
 types-pyyaml==6.0.12.20260815
     # via -r requirements-typecheck.in
 types-requests==2.33.0.20260712
@@ -18,5 +20,5 @@ types-tqdm==4.70.0.20260827
     # via -r requirements-typecheck.in
 typing-extensions==4.16.0
     # via mypy
-urllib3==2.7.0
+urllib3==2.8.0
     # via types-requests
